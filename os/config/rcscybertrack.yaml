@@ -1,0 +1,37 @@
+system:
+  hostname: rcscybertrack-appliance
+  timezone: UTC
+  log_level: INFO
+
+management:
+  api:
+    enabled: true
+    host: 127.0.0.1
+    port: 8000
+
+firewall:
+  enabled: true
+  backend: nftables
+
+network:
+  interfaces:
+    enabled: true
+  routing:
+    enabled: true
+  dhcp:
+    enabled: true
+  dns:
+    enabled: true
+
+vpn:
+  enabled: false
+
+sdwan:
+  enabled: false
+
+security:
+  authentication:
+    token_expire_minutes: 60
+    secret_key: "change-this-in-production-use-env-var-in-prod"
+  audit:
+    log_path: "os/config/audit.log"

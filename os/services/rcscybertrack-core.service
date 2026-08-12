@@ -1,0 +1,36 @@
+[Unit]
+Description=RCS CyberTrack Core Management Service
+After=network.target
+
+[Service]
+Type=simple
+User=rcscybertrack
+Group=rcscybertrack
+WorkingDirectory=/usr/share/rcscybertrack
+Environment=PYTHONPATH=.
+ExecStart=/usr/share/rcscybertrack/.venv/bin/uvicorn management.api.server:app --host 127.0.0.1 --port 8000 --workers 2
+
+# Restart Policy
+Restart=on-failure
+RestartSec=5s
+
+# Hardening / Sandboxing
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/usr/share/rcscybertrack/os/config /usr/share/rcscybertrack/firewall/rules /usr/share/rcscybertrack/network
+ReadOnlyPaths=/usr/share/rcscybertrack/management /usr/share/rcscybertrack/firewall/engine
+PrivateDevices=true
+ProtectControlGroups=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX AF_NETLINK
+
+# Resource Limits
+LimitNOFILE=65535
+CPUWeight=100
+StartupCPUWeight=100
+
+[Install]
+WantedBy=multi-user.target
