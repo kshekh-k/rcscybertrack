@@ -26,15 +26,15 @@ fi
 
 # 2. Check Python version (requires >= 3.12)
 echo -e "\n[*] Checking Python environment..."
-if ! command -v python3 &> /dev/null; then
+if [ ! -x .venv/bin/python ]; then
     echo -e "    ${RED}Error: Python3 is not installed.${NC}"
     exit 1
 fi
 
-PYTHON_VERSION=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
+PYTHON_VERSION=$(.venv/bin/python -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
 echo -e "    Python version: ${GREEN}${PYTHON_VERSION}${NC}"
 
-python3 -c '
+.venv/bin/python -c '
 import sys
 if sys.version_info < (3, 12):
     print(f"Error: Python >= 3.12 is required, found {sys.version}", file=sys.stderr)
@@ -61,7 +61,8 @@ fi
 
 # 5. Check Python dependencies
 echo -e "\n[*] Checking Python modules..."
-python3 -c '
+.venv/bin/python -c '
+import sys
 modules = ["fastapi", "uvicorn", "pydantic", "yaml", "jwt", "bcrypt"]
 missing = []
 for m in modules:
@@ -82,11 +83,11 @@ else:
 # 6. Validate configurations via Pydantic model
 echo -e "\n[*] Validating system and firewall configurations..."
 if [ -f os/config/rcscybertrack.yaml ]; then
-    if PYTHONPATH=. python3 -c "from management.config import load_config, Path; load_config(Path('os/config/rcscybertrack.yaml'))" &> /dev/null; then
+    if PYTHONPATH=. .venv/bin/python -c "from management.config import load_config, Path; load_config(Path('os/config/rcscybertrack.yaml'))" &> /dev/null; then
         echo -e "    Configuration: ${GREEN}os/config/rcscybertrack.yaml is VALID${NC}"
     else
         echo -e "    ${RED}Error: Pydantic configuration validation failed!${NC}"
-        PYTHONPATH=. python3 -c "from management.config import load_config, Path; load_config(Path('os/config/rcscybertrack.yaml'))"
+        PYTHONPATH=. .venv/bin/python -c "from management.config import load_config, Path; load_config(Path('os/config/rcscybertrack.yaml'))"
         exit 1
     fi
 else

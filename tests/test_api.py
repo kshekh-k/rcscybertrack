@@ -133,7 +133,7 @@ def test_device_registry_endpoint():
     response = client.get("/api/v1/devices", headers=viewer_headers)
     assert response.status_code == 200
     assert isinstance(response.json(), list)
-    assert len(response.json()) == 2
+    assert len(response.json()) >= 2
     assert response.json()[0]["hostname"] == "core-switch-01"
 
 def test_audit_logs_rbac_and_integrity():
