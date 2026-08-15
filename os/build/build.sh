@@ -11,6 +11,27 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+# Parse command-line arguments
+INSTALL_MODE=false
+
+for arg in "$@"; do
+    case "$arg" in
+        --install)
+            INSTALL_MODE=true
+            ;;
+        *)
+            echo -e "${RED}Error: Unknown argument '$arg'${NC}" >&2
+            echo -e "Usage: $0 [--install]" >&2
+            exit 1
+            ;;
+    esac
+done
+
+if [ "$INSTALL_MODE" = true ] && [ "${EUID:-$(id -u)}" -ne 0 ]; then
+    echo -e "${RED}Error: --install mode requires root privileges (run with sudo).${NC}" >&2
+    exit 1
+fi
+
 echo -e "${BLUE}=== RCS CyberTrack Appliance Builder ===${NC}"
 
 # 1. Detect Linux Distribution
@@ -111,3 +132,55 @@ echo -e "    Would create /var/log/rcscybertrack"
 echo -e "    Would copy os/services/rcscybertrack-core.service to /etc/systemd/system/"
 
 echo -e "\n${GREEN}=== RCS CyberTrack build check completed successfully! ===${NC}"
+
+# 9. System installation
+if [ "$INSTALL_MODE" = true ]; then
+    echo -e "\n[*] Installing RCS CyberTrack system files and service..."
+
+    echo -e "    Creating directory /etc/rcscybertrack..."
+    mkdir -p "/etc/rcscybertrack"
+
+    echo -e "    Creating directory /var/log/rcscybertrack..."
+    mkdir -p "/var/log/rcscybertrack"
+
+    echo -e "    Copying configuration file to /etc/rcscybertrack/rcscybertrack.yaml..."
+    cp "os/config/rcscybertrack.yaml" "/etc/rcscybertrack/rcscybertrack.yaml"
+
+    echo -e "    Copying systemd service unit to /etc/systemd/system/rcscybertrack-core.service..."
+    cp "os/services/rcscybertrack-core.service" "/etc/systemd/system/rcscybertrack-core.service"
+
+    echo -e "    Setting ownership and permissions..."
+    chmod 755 "/etc/rcscybertrack"
+    chmod 644 "/etc/rcscybertrack/rcscybertrack.yaml"
+    chmod 755 "/var/log/rcscybertrack"
+    chmod 644 "/etc/systemd/system/rcscybertrack-core.service"
+
+    chown root:root "/etc/rcscybertrack"
+    chown root:root "/etc/rcscybertrack/rcscybertrack.yaml"
+    chown root:root "/etc/systemd/system/rcscybertrack-core.service"
+    if id rcscybertrack &>/dev/null; then
+        chown -R rcscybertrack:rcscybertrack "/var/log/rcscybertrack"
+    else
+        chown -R root:root "/var/log/rcscybertrack"
+    fi
+
+    echo -e "    Reloading systemd daemon..."
+    systemctl daemon-reload
+
+    echo -e "    Enabling rcscybertrack-core.service..."
+    systemctl enable rcscybertrack-core.service
+
+    echo -e "    Starting rcscybertrack-core.service..."
+    systemctl start rcscybertrack-core.service
+
+    echo -e "    Checking service status..."
+    SERVICE_STATUS=$(systemctl is-active rcscybertrack-core.service || true)
+    if [ "$SERVICE_STATUS" = "active" ]; then
+        echo -e "    Service status: ${GREEN}${SERVICE_STATUS}${NC}"
+        echo -e "\n${GREEN}=== RCS CyberTrack installation completed successfully! ===${NC}"
+    else
+        echo -e "    Service status: ${RED}${SERVICE_STATUS}${NC}"
+        echo -e "\n${RED}=== RCS CyberTrack installation failed: service is not active ===${NC}" >&2
+        exit 1
+    fi
+fi
