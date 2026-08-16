@@ -15,25 +15,109 @@ from management.audit.audit import audit_logger
 
 logger = logging.getLogger("rcscybertrack.auth")
 
-SECRET_KEY = os.getenv("CYBERTRACK_JWT_SECRET", "rcs-cybertrack-super-secret-key-change-in-production")
+UNSAFE_JWT_SECRETS = {
+    "rcs-cybertrack-super-secret-key-change-in-production",
+    "change-this-in-production-use-env-var-in-prod",
+    "CHANGE_ME_IN_PRODUCTION_SUPER_SECRET_64_CHAR_HEX_KEY",
+    "secret", "supersecret", "password", "12345678", "admin123"
+}
+
+UNSAFE_BOOTSTRAP_PASSWORDS = {
+    "admin123", "operator123", "auditor123", "viewer123",
+    "password", "12345678", "admin12345"
+}
+
+def get_app_env() -> str:
+    return os.getenv("CYBERTRACK_ENV", "development").strip().lower()
+
+def is_production() -> bool:
+    return get_app_env() in ("production", "prod")
+
+def get_jwt_secret() -> str:
+    secret = os.getenv("CYBERTRACK_JWT_SECRET", "").strip()
+    is_prod = is_production()
+
+    if is_prod:
+        if not secret:
+            raise ValueError("Production configuration error: CYBERTRACK_JWT_SECRET environment variable is required in production mode.")
+        if secret in UNSAFE_JWT_SECRETS or secret.startswith("CHANGE_ME") or secret.startswith("change-this"):
+            raise ValueError("Production configuration error: CYBERTRACK_JWT_SECRET is set to an unsafe default or placeholder string.")
+        if len(secret) < 16:
+            raise ValueError("Production configuration error: CYBERTRACK_JWT_SECRET must be at least 16 characters long.")
+        return secret
+    else:
+        if not secret:
+            return "rcs-cybertrack-dev-jwt-secret-key-for-testing-only"
+        return secret
+
+# Backward-compatibility alias
+def get_secret_key() -> str:
+    return get_jwt_secret()
+
+SECRET_KEY = get_jwt_secret()
 ALGORITHM = "HS256"
 TOKEN_EXPIRE_MINUTES = int(os.getenv("CYBERTRACK_TOKEN_EXPIRE_MINUTES", "60"))
 MAX_FAILED_LOGIN_ATTEMPTS = int(os.getenv("CYBERTRACK_MAX_FAILED_LOGIN_ATTEMPTS", "5"))
 LOCKOUT_DURATION_MINUTES = int(os.getenv("CYBERTRACK_LOCKOUT_DURATION_MINUTES", "15"))
 MIN_PASSWORD_LENGTH = int(os.getenv("CYBERTRACK_MIN_PASSWORD_LENGTH", "8"))
 
-# Bootstrap Account Environment Controls
-BOOTSTRAP_ADMIN_USER = os.getenv("CYBERTRACK_BOOTSTRAP_ADMIN_USERNAME", "admin")
-BOOTSTRAP_ADMIN_PASS = os.getenv("CYBERTRACK_BOOTSTRAP_ADMIN_PASSWORD", "admin123")
+def is_bootstrap_enabled() -> bool:
+    env_val = os.getenv("CYBERTRACK_BOOTSTRAP_ENABLED")
+    if env_val is not None:
+        return env_val.strip().lower() in ("true", "1", "yes")
+    return not is_production()
 
-BOOTSTRAP_OPERATOR_USER = os.getenv("CYBERTRACK_BOOTSTRAP_OPERATOR_USERNAME", "operator")
-BOOTSTRAP_OPERATOR_PASS = os.getenv("CYBERTRACK_BOOTSTRAP_OPERATOR_PASSWORD", "operator123")
+def validate_bootstrap_password(password: str, role_name: str, is_prod: bool) -> None:
+    min_len = int(os.getenv("CYBERTRACK_MIN_PASSWORD_LENGTH", "8"))
+    if not password:
+        raise ValueError(f"Bootstrap configuration error: Password for role '{role_name}' cannot be empty.")
+    if len(password) < min_len:
+        raise ValueError(f"Bootstrap configuration error: Password for role '{role_name}' must be at least {min_len} characters long.")
+    if is_prod:
+        if password in UNSAFE_BOOTSTRAP_PASSWORDS or password.startswith("CHANGE_ME") or password.startswith("CHANGE_"):
+            raise ValueError(f"Production bootstrap error: Password for role '{role_name}' cannot use a known default or placeholder string.")
 
-BOOTSTRAP_AUDITOR_USER = os.getenv("CYBERTRACK_BOOTSTRAP_AUDITOR_USERNAME", "auditor")
-BOOTSTRAP_AUDITOR_PASS = os.getenv("CYBERTRACK_BOOTSTRAP_AUDITOR_PASSWORD", "auditor123")
+def get_bootstrap_credentials() -> dict:
+    is_prod = is_production()
 
-BOOTSTRAP_VIEWER_USER = os.getenv("CYBERTRACK_BOOTSTRAP_VIEWER_USERNAME", "viewer")
-BOOTSTRAP_VIEWER_PASS = os.getenv("CYBERTRACK_BOOTSTRAP_VIEWER_PASSWORD", "viewer123")
+    admin_user = os.getenv("CYBERTRACK_BOOTSTRAP_ADMIN_USERNAME", "admin")
+    admin_pass = os.getenv("CYBERTRACK_BOOTSTRAP_ADMIN_PASSWORD")
+    if not admin_pass:
+        if is_prod:
+            raise ValueError("Production bootstrap error: CYBERTRACK_BOOTSTRAP_ADMIN_PASSWORD environment variable is required.")
+        admin_pass = "admin123"
+    validate_bootstrap_password(admin_pass, "admin", is_prod)
+
+    operator_user = os.getenv("CYBERTRACK_BOOTSTRAP_OPERATOR_USERNAME", "operator")
+    operator_pass = os.getenv("CYBERTRACK_BOOTSTRAP_OPERATOR_PASSWORD")
+    if not operator_pass:
+        if is_prod:
+            raise ValueError("Production bootstrap error: CYBERTRACK_BOOTSTRAP_OPERATOR_PASSWORD environment variable is required.")
+        operator_pass = "operator123"
+    validate_bootstrap_password(operator_pass, "operator", is_prod)
+
+    auditor_user = os.getenv("CYBERTRACK_BOOTSTRAP_AUDITOR_USERNAME", "auditor")
+    auditor_pass = os.getenv("CYBERTRACK_BOOTSTRAP_AUDITOR_PASSWORD")
+    if not auditor_pass:
+        if is_prod:
+            raise ValueError("Production bootstrap error: CYBERTRACK_BOOTSTRAP_AUDITOR_PASSWORD environment variable is required.")
+        auditor_pass = "auditor123"
+    validate_bootstrap_password(auditor_pass, "auditor", is_prod)
+
+    viewer_user = os.getenv("CYBERTRACK_BOOTSTRAP_VIEWER_USERNAME", "viewer")
+    viewer_pass = os.getenv("CYBERTRACK_BOOTSTRAP_VIEWER_PASSWORD")
+    if not viewer_pass:
+        if is_prod:
+            raise ValueError("Production bootstrap error: CYBERTRACK_BOOTSTRAP_VIEWER_PASSWORD environment variable is required.")
+        viewer_pass = "viewer123"
+    validate_bootstrap_password(viewer_pass, "viewer", is_prod)
+
+    return {
+        "admin": (admin_user, admin_pass),
+        "operator": (operator_user, operator_pass),
+        "auditor": (auditor_user, auditor_pass),
+        "viewer": (viewer_user, viewer_pass)
+    }
 
 # --- Password Cryptography Helpers ---
 
@@ -54,47 +138,58 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 # --- Bootstrap Default Development Users ---
 
 def bootstrap_default_users(db: Session) -> None:
-    """Bootstrap default accounts if database contains zero users."""
+    """Bootstrap default accounts if database contains zero users and bootstrap is enabled."""
+    if not is_bootstrap_enabled():
+        logger.info("Bootstrap seeding is disabled via configuration.")
+        return
+
     user_count = db.query(UserDB).count()
     if user_count == 0:
         logger.info("Initializing bootstrap administrative accounts...")
+        creds = get_bootstrap_credentials()
+
+        admin_u, admin_p = creds["admin"]
+        op_u, op_p = creds["operator"]
+        aud_u, aud_p = creds["auditor"]
+        vw_u, vw_p = creds["viewer"]
+
         default_accounts = [
             UserDB(
                 id="usr-admin",
-                username=BOOTSTRAP_ADMIN_USER,
+                username=admin_u,
                 email="admin@rcs-cybertrack.local",
                 full_name="Primary System Administrator",
-                password_hash=hash_password(BOOTSTRAP_ADMIN_PASS),
+                password_hash=hash_password(admin_p),
                 role="admin",
                 enabled=True,
                 mfa_enabled=True
             ),
             UserDB(
                 id="usr-operator",
-                username=BOOTSTRAP_OPERATOR_USER,
+                username=op_u,
                 email="operator@rcs-cybertrack.local",
                 full_name="Security Operator",
-                password_hash=hash_password(BOOTSTRAP_OPERATOR_PASS),
+                password_hash=hash_password(op_p),
                 role="operator",
                 enabled=True,
                 mfa_enabled=True
             ),
             UserDB(
                 id="usr-auditor",
-                username=BOOTSTRAP_AUDITOR_USER,
+                username=aud_u,
                 email="auditor@rcs-cybertrack.local",
                 full_name="Compliance Auditor",
-                password_hash=hash_password(BOOTSTRAP_AUDITOR_PASS),
+                password_hash=hash_password(aud_p),
                 role="auditor",
                 enabled=True,
                 mfa_enabled=False
             ),
             UserDB(
                 id="usr-viewer",
-                username=BOOTSTRAP_VIEWER_USER,
+                username=vw_u,
                 email="viewer@rcs-cybertrack.local",
                 full_name="Read-Only Monitor",
-                password_hash=hash_password(BOOTSTRAP_VIEWER_PASS),
+                password_hash=hash_password(vw_p),
                 role="viewer",
                 enabled=True,
                 mfa_enabled=False
@@ -144,7 +239,6 @@ def authenticate_user(db: Session, username: str, password: str, client_ip: str 
 
     # 3. Account locked check
     if user.locked_until:
-        # Normalize locked_until to timezone aware if naive
         locked_until = user.locked_until
         if locked_until.tzinfo is None:
             locked_until = locked_until.replace(tzinfo=datetime.timezone.utc)
@@ -221,7 +315,8 @@ def create_access_token(data: dict, expires_delta: Optional[datetime.timedelta] 
     else:
         expire = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    secret_key = get_jwt_secret()
+    return jwt.encode(to_encode, secret_key, algorithm=ALGORITHM)
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/auth/token")
 
@@ -232,7 +327,8 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        secret_key = get_jwt_secret()
+        payload = jwt.decode(token, secret_key, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception

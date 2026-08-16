@@ -44,7 +44,7 @@ class SDWANConfig(BaseModel):
 
 class AuthConfig(BaseModel):
     token_expire_minutes: int = Field(60, ge=5, le=1440)
-    secret_key: str = Field(default="change-this-in-production-use-env-var-in-prod")
+    secret_key: Optional[str] = None
 
 class AuditConfig(BaseModel):
     log_path: str = "os/config/audit.log"
