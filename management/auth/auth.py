@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 
 import management.env  # Ensure .env is loaded
 from management.database.database import get_db
-from management.database.models import UserDB
+from management.database.models import UserDB, RevokedTokenDB
 from management.audit.audit import audit_logger
 
 logger = logging.getLogger("rcscybertrack.auth")
@@ -378,6 +378,57 @@ def decode_access_token(token: str) -> dict:
 
     return payload
 
+def is_token_revoked(db: Session, jti: str) -> bool:
+    if not jti:
+        return True
+    record = db.query(RevokedTokenDB).filter(RevokedTokenDB.jti == jti).first()
+    return record is not None
+
+def revoke_token(db: Session, token: str, reason: str = "logout", client_ip: str = "127.0.0.1") -> dict:
+    payload = decode_access_token(token)
+    jti = payload.get("jti")
+    username = payload.get("sub")
+    exp_ts = payload.get("exp")
+
+    if not jti or not username or not exp_ts:
+        raise ValueError("Invalid token structure for revocation")
+
+    existing = db.query(RevokedTokenDB).filter(RevokedTokenDB.jti == jti).first()
+    if existing:
+        return {"status": "success", "message": "Token already revoked"}
+
+    user = db.query(UserDB).filter(UserDB.username == username).first()
+    user_id = user.id if user else "unknown"
+    expires_at = datetime.datetime.fromtimestamp(exp_ts, tz=datetime.timezone.utc)
+
+    revoked_entry = RevokedTokenDB(
+        jti=jti,
+        user_id=user_id,
+        username=username,
+        expires_at=expires_at,
+        reason=reason
+    )
+    db.add(revoked_entry)
+    db.commit()
+
+    audit_logger.log(
+        user=username,
+        action="LOGOUT",
+        resource="auth",
+        resource_id="token",
+        result="success",
+        details={"jti": jti, "reason": reason, "client_ip": client_ip}
+    )
+
+    return {"status": "success", "message": "Successfully logged out"}
+
+def cleanup_expired_revoked_tokens(db: Session) -> int:
+    """Removes expired revocation records from the database."""
+    now_utc = datetime.datetime.now(datetime.timezone.utc)
+    deleted_count = db.query(RevokedTokenDB).filter(RevokedTokenDB.expires_at < now_utc).delete(synchronize_session=False)
+    db.commit()
+    return deleted_count
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/auth/token")
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> UserDB:
@@ -389,11 +440,15 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     try:
         payload = decode_access_token(token)
         username: str = payload.get("sub")
-        if not username:
+        jti: str = payload.get("jti")
+        if not username or not jti:
             raise credentials_exception
     except Exception:
         raise credentials_exception
-        
+
+    if is_token_revoked(db, jti):
+        raise credentials_exception
+
     user = db.query(UserDB).filter(UserDB.username == username).first()
     if user is None or not user.enabled:
         raise credentials_exception

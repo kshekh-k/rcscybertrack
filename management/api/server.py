@@ -22,10 +22,13 @@ from management.auth.rbac import (
 )
 from management.auth.auth import (
     create_access_token,
+    decode_access_token,
     get_current_user,
     verify_password,
     authenticate_user,
-    bootstrap_default_users
+    bootstrap_default_users,
+    revoke_token,
+    oauth2_scheme
 )
 
 # Initialize database schemas and bootstrap default administrative users
@@ -123,6 +126,31 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
         )
     access_token = create_access_token(data={"sub": user.username})
     return {"access_token": access_token, "token_type": "bearer"}
+
+@app.post("/api/v1/auth/logout")
+def logout(
+    token: str = Depends(oauth2_scheme),
+    db: Session = Depends(get_db)
+):
+    try:
+        payload = decode_access_token(token)
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    username = payload.get("sub")
+    user = db.query(UserDB).filter(UserDB.username == username).first()
+    if not user or not user.enabled:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    return revoke_token(db, token, reason="logout")
 
 # --- System & Health Endpoints ---
 

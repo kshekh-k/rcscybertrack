@@ -38,6 +38,16 @@ class ConfigVersionDB(Base):
     created_at = Column(DateTime(timezone=True), nullable=False, default=utc_now)
     applied_at = Column(DateTime(timezone=True), nullable=True)
 
-    def __repr__(self):
-        return f"<ConfigVersionDB(v={self.version_number}, status='{self.status}', created_by='{self.created_by}')>"
+class RevokedTokenDB(Base):
+    __tablename__ = "revoked_tokens"
 
+    id = Column(String(64), primary_key=True, default=lambda: f"rvk-{uuid.uuid4().hex[:8]}")
+    jti = Column(String(64), unique=True, index=True, nullable=False)
+    user_id = Column(String(64), nullable=False, index=True)
+    username = Column(String(64), nullable=False)
+    revoked_at = Column(DateTime(timezone=True), nullable=False, default=utc_now)
+    expires_at = Column(DateTime(timezone=True), nullable=False)
+    reason = Column(String(128), nullable=False, default="logout")
+
+    def __repr__(self):
+        return f"<RevokedTokenDB(jti='{self.jti}', username='{self.username}', reason='{self.reason}')>"
