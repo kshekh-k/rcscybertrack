@@ -112,7 +112,7 @@ class ConfigEngineService:
         }
 
     def commit_candidate(self, db: Session, commit_message: str, username: str) -> ConfigVersionResponse:
-        candidate = self.get_candidate_version(db)
+        candidate = db.query(ConfigVersionDB).filter(ConfigVersionDB.status == "candidate").order_by(ConfigVersionDB.version_number.desc()).first()
         if not candidate:
             raise ValueError("No staged candidate configuration found to commit")
 
@@ -172,15 +172,26 @@ class ConfigEngineService:
             # Revert to previous active
             active = self.get_active_version(db)
             if active and active.id != target.id:
-                os_adapter.apply_config(json.loads(active.config_payload))
-                audit_logger.log(
-                    user=username,
-                    action="CONFIG_ROLLED_BACK",
-                    resource="config",
-                    resource_id=active.id,
-                    result="warning",
-                    details={"reverted_to": active.version_number}
-                )
+                rb_ok, rb_msg = os_adapter.apply_config(json.loads(active.config_payload))
+                rb_v_ok, rb_v_msg = os_adapter.verify_health()
+                if rb_ok and rb_v_ok:
+                    audit_logger.log(
+                        user=username,
+                        action="CONFIG_ROLLED_BACK",
+                        resource="config",
+                        resource_id=active.id,
+                        result="warning",
+                        details={"reverted_to": active.version_number, "verification": rb_v_msg}
+                    )
+                else:
+                    audit_logger.log(
+                        user=username,
+                        action="CONFIG_ROLLBACK_FAILED",
+                        resource="config",
+                        resource_id=active.id,
+                        result="failure",
+                        details={"apply_error": rb_msg, "verify_error": rb_v_msg}
+                    )
             raise ValueError(f"Health verification failed after apply ({verify_msg}). Configuration automatically rolled back.")
 
         # Archive former active configurations
@@ -220,6 +231,18 @@ class ConfigEngineService:
         if not applied_ok:
             raise ValueError(f"Rollback apply failed: {msg}")
 
+        verify_ok, verify_msg = os_adapter.verify_health()
+        if not verify_ok:
+            audit_logger.log(
+                user=username,
+                action="CONFIG_ROLLBACK_VERIFY_FAILED",
+                resource="config",
+                resource_id=target.id,
+                result="failure",
+                details={"error": verify_msg}
+            )
+            raise ValueError(f"Rollback apply succeeded but post-rollback health verification failed: {verify_msg}")
+
         # Mark former active as archived
         db.query(ConfigVersionDB).filter(ConfigVersionDB.status == "active").update({"status": "archived"})
 
@@ -235,7 +258,7 @@ class ConfigEngineService:
             resource="config",
             resource_id=target.id,
             result="warning",
-            details={"rolled_back_to_version": target.version_number}
+            details={"rolled_back_to_version": target.version_number, "verification": verify_msg}
         )
 
         return to_config_response(target)

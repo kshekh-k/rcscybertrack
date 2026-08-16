@@ -69,6 +69,12 @@ class OSAdapter:
         fw_status = self.fw_backend.discover()
         if not fw_status.available:
             logger.warning("Firewall backend unavailable during health verification (%s)", fw_status.reason)
+            return False, f"Firewall backend unavailable: {fw_status.reason}"
+
+        v_ok, v_msg = self.fw_backend.verify()
+        if not v_ok:
+            return False, f"Firewall backend verification failed: {v_msg}"
+
         return True, "Post-apply health verification PASSED"
 
 os_adapter = OSAdapter()

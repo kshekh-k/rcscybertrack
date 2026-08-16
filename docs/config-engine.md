@@ -46,10 +46,11 @@ Cryptographic SHA-256 Audit Log
 
 ---
 
-## 3. Failure-Safe Automatic Rollback
+## 3. Failure-Safe Automatic Rollback & Verified Rollback Guarantee
 
 If an applied configuration fails the post-apply health verification check (`os_adapter.verify_health()`):
 1. The Configuration Engine immediately catches the failure.
 2. Executes `os_adapter.apply_config(previous_active_payload)`.
-3. Automatically restores system state to the last known working version.
-4. Appends a `CONFIG_VERIFY_FAILED` and `CONFIG_ROLLED_BACK` event to the cryptographic audit log.
+3. Performs a post-rollback health verification check to verify system stability before reporting completion.
+4. Appends `CONFIG_VERIFY_FAILED` and `CONFIG_ROLLED_BACK` events to the cryptographic audit log.
+5. Manual `rollback_to_version` calls similarly enforce health verification before returning success.

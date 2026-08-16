@@ -123,11 +123,15 @@ class UserService:
         if target.id == actor.id:
             if req.enabled is False:
                 raise ValueError("You cannot disable your own active user account")
-            if req.role and req.role != actor.role:
+            if req.role is not None and req.role != actor.role:
                 raise ValueError("You cannot alter your own administrative role level")
 
+        # Role Privilege Checks
+        if actor.role != "admin" and req.role is not None and req.role != target.role:
+            raise ValueError("Only administrators can alter user roles")
+
         # Last Admin Protection Check
-        if target.role == "admin" and (req.role != "admin" or req.enabled is False):
+        if target.role == "admin" and target.enabled and ((req.role is not None and req.role != "admin") or req.enabled is False):
             active_admin_count = db.query(UserDB).filter(UserDB.role == "admin", UserDB.enabled == True).count()
             if active_admin_count <= 1:
                 raise ValueError("Cannot disable or demote the last remaining administrator account")

@@ -131,7 +131,7 @@ def get_health():
     # Public endpoint
     return {"status": "healthy", "service": "rcs-cybertrack-core"}
 
-@app.get("/api/v1/system", dependencies=[Depends(require_viewer)])
+@app.get("/api/v1/system", dependencies=[Depends(require_permission("system.read"))])
 def get_system():
     return {
         "hostname": config.system.hostname,
@@ -143,12 +143,12 @@ def get_system():
 
 # --- Firewall Endpoints ---
 
-@app.get("/api/v1/firewall/rules", response_model=List[FirewallRule], dependencies=[Depends(require_viewer)])
+@app.get("/api/v1/firewall/rules", response_model=List[FirewallRule], dependencies=[Depends(require_permission("firewall.read"))])
 def get_firewall_rules():
     return firewall_engine.rules
 
 @app.post("/api/v1/firewall/rules", response_model=FirewallRule, status_code=status.HTTP_201_CREATED)
-def create_firewall_rule(rule: FirewallRule, current_user: Dict = Depends(require_operator)):
+def create_firewall_rule(rule: FirewallRule, current_user: UserDB = Depends(require_permission("firewall.write"))):
     # Check if ID already exists
     for r in firewall_engine.rules:
         if r.id == rule.id:
@@ -181,7 +181,7 @@ def create_firewall_rule(rule: FirewallRule, current_user: Dict = Depends(requir
     return rule
 
 @app.put("/api/v1/firewall/rules/{rule_id}", response_model=FirewallRule)
-def update_firewall_rule(rule_id: str, updated_rule: FirewallRule, current_user: Dict = Depends(require_operator)):
+def update_firewall_rule(rule_id: str, updated_rule: FirewallRule, current_user: UserDB = Depends(require_permission("firewall.write"))):
     if rule_id != updated_rule.id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -223,7 +223,7 @@ def update_firewall_rule(rule_id: str, updated_rule: FirewallRule, current_user:
     return updated_rule
 
 @app.delete("/api/v1/firewall/rules/{rule_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_firewall_rule(rule_id: str, current_user: Dict = Depends(require_operator)):
+def delete_firewall_rule(rule_id: str, current_user: UserDB = Depends(require_permission("firewall.write"))):
     found_idx = -1
     for idx, r in enumerate(firewall_engine.rules):
         if r.id == rule_id:
@@ -364,17 +364,17 @@ def _save_firewall_rules():
 
 # --- Network Endpoints ---
 
-@app.get("/api/v1/network/interfaces", response_model=List[InterfaceConfig], dependencies=[Depends(require_viewer)])
+@app.get("/api/v1/network/interfaces", response_model=List[InterfaceConfig], dependencies=[Depends(require_permission("network.read"))])
 def get_network_interfaces():
     return network_manager.interfaces
 
-@app.get("/api/v1/network/routes", response_model=List[RouteConfig], dependencies=[Depends(require_viewer)])
+@app.get("/api/v1/network/routes", response_model=List[RouteConfig], dependencies=[Depends(require_permission("network.read"))])
 def get_network_routes():
     return network_manager.routes
 
 # --- Device Endpoints ---
 
-@app.get("/api/v1/devices", response_model=List[Device], dependencies=[Depends(require_viewer)])
+@app.get("/api/v1/devices", response_model=List[Device], dependencies=[Depends(require_permission("devices.read"))])
 def get_devices():
     # Refresh the read-only kernel-neighbor inventory before returning devices.
     device_registry.discover_devices()
@@ -453,11 +453,11 @@ def disable_user(user_id: str, current_user: UserDB = Depends(require_permission
 
 # --- Security Alert Endpoints ---
 
-@app.get("/api/v1/alerts", response_model=List[AlertModel], dependencies=[Depends(require_viewer)])
+@app.get("/api/v1/alerts", response_model=List[AlertModel], dependencies=[Depends(require_permission("alerts.read"))])
 def get_alerts(severity: Optional[str] = None, status: Optional[str] = None):
     return alert_service.list_alerts(severity=severity, status=status)
 
-@app.get("/api/v1/alerts/{alert_id}", response_model=AlertModel, dependencies=[Depends(require_viewer)])
+@app.get("/api/v1/alerts/{alert_id}", response_model=AlertModel, dependencies=[Depends(require_permission("alerts.read"))])
 def get_alert_by_id(alert_id: str):
     alert = alert_service.get_alert(alert_id)
     if not alert:
@@ -465,7 +465,7 @@ def get_alert_by_id(alert_id: str):
     return alert
 
 @app.post("/api/v1/alerts/{alert_id}/acknowledge", response_model=AlertModel)
-def acknowledge_alert(alert_id: str, req: AlertAcknowledgeRequest, current_user: Dict = Depends(require_operator)):
+def acknowledge_alert(alert_id: str, req: AlertAcknowledgeRequest, current_user: UserDB = Depends(require_permission("alerts.write"))):
     alert = alert_service.acknowledge_alert(alert_id, req.acknowledged_by, req.note)
     if not alert:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Alert '{alert_id}' not found")
@@ -479,7 +479,7 @@ def acknowledge_alert(alert_id: str, req: AlertAcknowledgeRequest, current_user:
     return alert
 
 @app.post("/api/v1/alerts/{alert_id}/resolve", response_model=AlertModel)
-def resolve_alert(alert_id: str, req: AlertResolveRequest, current_user: Dict = Depends(require_operator)):
+def resolve_alert(alert_id: str, req: AlertResolveRequest, current_user: UserDB = Depends(require_permission("alerts.write"))):
     alert = alert_service.resolve_alert(alert_id, req.resolved_by, req.mitigation_note)
     if not alert:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Alert '{alert_id}' not found")
@@ -495,12 +495,12 @@ def resolve_alert(alert_id: str, req: AlertResolveRequest, current_user: Dict = 
 
 # --- System Settings Endpoints ---
 
-@app.get("/api/v1/settings", response_model=SystemSettings, dependencies=[Depends(require_viewer)])
+@app.get("/api/v1/settings", response_model=SystemSettings, dependencies=[Depends(require_permission("system.read"))])
 def get_settings():
     return settings_service.get_settings()
 
 @app.put("/api/v1/settings", response_model=SystemSettings)
-def update_settings(new_settings: SystemSettings, current_user: Dict = Depends(require_admin)):
+def update_settings(new_settings: SystemSettings, current_user: UserDB = Depends(require_permission("system.write"))):
     updated = settings_service.update_settings(new_settings)
     audit_logger.log(
         user=_get_username(current_user),
@@ -569,12 +569,12 @@ def get_config_history(db: Session = Depends(get_db)):
 
 # --- VPN Endpoints ---
 
-@app.get("/api/v1/vpn/connections", response_model=List[VpnConnectionModel], dependencies=[Depends(require_viewer)])
+@app.get("/api/v1/vpn/connections", response_model=List[VpnConnectionModel], dependencies=[Depends(require_permission("vpn.read"))])
 def get_vpn_connections():
     return vpn_service.list_connections()
 
 @app.post("/api/v1/vpn/connections", response_model=VpnConnectionModel, status_code=status.HTTP_201_CREATED)
-def create_vpn_connection(req: VpnCreateRequest, current_user: Dict = Depends(require_operator)):
+def create_vpn_connection(req: VpnCreateRequest, current_user: UserDB = Depends(require_permission("vpn.write"))):
     conn = vpn_service.create_connection(req)
     audit_logger.log(
         user=_get_username(current_user),
@@ -586,31 +586,31 @@ def create_vpn_connection(req: VpnCreateRequest, current_user: Dict = Depends(re
     )
     return conn
 
-@app.get("/api/v1/vpn/peers", response_model=List[VpnPeerModel], dependencies=[Depends(require_viewer)])
+@app.get("/api/v1/vpn/peers", response_model=List[VpnPeerModel], dependencies=[Depends(require_permission("vpn.read"))])
 def get_vpn_peers():
     return vpn_service.list_peers()
 
 # --- SD-WAN Endpoints ---
 
-@app.get("/api/v1/sdwan/links", response_model=List[WanLinkModel], dependencies=[Depends(require_viewer)])
+@app.get("/api/v1/sdwan/links", response_model=List[WanLinkModel], dependencies=[Depends(require_permission("sdwan.read"))])
 def get_sdwan_links():
     return sdwan_service.list_links()
 
-@app.get("/api/v1/sdwan/policies", response_model=List[SdwanPolicyModel], dependencies=[Depends(require_viewer)])
+@app.get("/api/v1/sdwan/policies", response_model=List[SdwanPolicyModel], dependencies=[Depends(require_permission("sdwan.read"))])
 def get_sdwan_policies():
     return sdwan_service.list_policies()
 
 # --- Telemetry Analytics Endpoints ---
 
-@app.get("/api/v1/analytics/traffic", response_model=List[TrafficMetricPointModel], dependencies=[Depends(require_viewer)])
+@app.get("/api/v1/analytics/traffic", response_model=List[TrafficMetricPointModel], dependencies=[Depends(require_permission("analytics.read"))])
 def get_traffic_analytics():
     return telemetry_service.get_traffic_metrics()
 
-@app.get("/api/v1/analytics/top-sources", response_model=List[TopTalkerModel], dependencies=[Depends(require_viewer)])
+@app.get("/api/v1/analytics/top-sources", response_model=List[TopTalkerModel], dependencies=[Depends(require_permission("analytics.read"))])
 def get_top_sources():
     return telemetry_service.get_top_sources()
 
-@app.get("/api/v1/analytics/top-destinations", response_model=List[TopTalkerModel], dependencies=[Depends(require_viewer)])
+@app.get("/api/v1/analytics/top-destinations", response_model=List[TopTalkerModel], dependencies=[Depends(require_permission("analytics.read"))])
 def get_top_destinations():
     return telemetry_service.get_top_destinations()
 

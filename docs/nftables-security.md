@@ -45,7 +45,12 @@ Permissions: `chmod 0440 /etc/sudoers.d/rcs-cybertrack`.
 
 ---
 
-## 4. Fail-Closed Error Handling
+## 4. Fail-Closed Error Handling & Production Hardening
 
 If passwordless privilege escalation is unavailable or returns an error, the backend fails closed and returns HTTP 500:
 `"Privileged nftables execution failed: sudo passwordless privilege rule for '/usr/sbin/nft' is missing or netlink access was denied"`
+
+### Hardening Features:
+1. **IPv4 & IPv6 Support**: Rules compile to `ip saddr`/`ip daddr` for IPv4 and `ip6 saddr`/`ip6 daddr` for IPv6 based on validated IP family. Mixed IPv4/IPv6 rules are rejected.
+2. **Command Injection & Metacharacter Rejection**: All fields (addresses, ports, interfaces, rule IDs) reject newlines, null bytes, semicolons, shell metacharacters (`;&|$` ` `), and command words (`exec`, `eval`, `system`, `bash`, `sh`, `sudo`).
+3. **Configuration-Driven Management Ports**: Management ports default to `8000` (API) and `22` (SSH) for backward compatibility, and can be customized cleanly via `PolicyConfig` (`api_port`, `ssh_port`).

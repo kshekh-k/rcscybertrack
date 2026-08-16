@@ -3,7 +3,17 @@ import ipaddress
 from typing import Dict, List, Optional, Union
 from pydantic import BaseModel, Field, field_validator
 
-FORBIDDEN_PATTERNS = re.compile(r"[;$&|`\n\r]|\b(exec|system|cmd|shell|eval)\b", re.IGNORECASE)
+FORBIDDEN_PATTERNS = re.compile(r"[;$&|`\n\r\t\0'\"]|\b(exec|system|cmd|shell|eval|bash|sh|sudo|python|perl)\b", re.IGNORECASE)
+
+def _get_ip_version(addr_str: str) -> Optional[int]:
+    if not addr_str or addr_str.lower() == "any":
+        return None
+    try:
+        if "/" in addr_str:
+            return ipaddress.ip_network(addr_str, strict=False).version
+        return ipaddress.ip_address(addr_str).version
+    except ValueError:
+        return None
 
 class AddressPortModel(BaseModel):
     address: str = "any"
@@ -64,13 +74,13 @@ class FirewallRuleModel(BaseModel):
     action: str = Field("allow", pattern="^(allow|deny|reject)$")
     direction: str = Field("input", pattern="^(input|output|forward)$")
     interface: Optional[str] = None
-    protocol: str = Field("any", pattern="^(tcp|udp|icmp|any)$")
+    protocol: str = Field("any", pattern="^(tcp|udp|icmp|icmpv6|any)$")
     source: AddressPortModel = Field(default_factory=AddressPortModel)
     destination: AddressPortModel = Field(default_factory=AddressPortModel)
     state: List[str] = Field(default_factory=list)
     logging: bool = False
 
-    @field_validator("id", "interface")
+    @field_validator("id", "interface", "protocol")
     @classmethod
     def check_safe_string(cls, v: Optional[str]) -> Optional[str]:
         if v and FORBIDDEN_PATTERNS.search(v):
@@ -81,6 +91,8 @@ class PolicyConfigModel(BaseModel):
     input: str = Field("drop", pattern="^(accept|drop|reject|allow|deny)$")
     output: str = Field("accept", pattern="^(accept|drop|reject|allow|deny)$")
     forward: str = Field("drop", pattern="^(accept|drop|reject|allow|deny)$")
+    api_port: int = Field(8000, ge=1, le=65535)
+    ssh_port: int = Field(22, ge=1, le=65535)
 
 def _map_action(action: str) -> str:
     if action in ("allow", "accept"):
@@ -97,12 +109,17 @@ class NftablesCompiler:
         pol = PolicyConfigModel(**policy)
         validated_rules = [FirewallRuleModel(**r) for r in rules]
 
-        # Duplicate ID check
+        # Duplicate ID and IP family mismatch check
         rule_ids = set()
         for r in validated_rules:
             if r.id in rule_ids:
                 raise ValueError(f"Duplicate firewall rule ID detected: '{r.id}'")
             rule_ids.add(r.id)
+
+            src_ver = _get_ip_version(r.source.address)
+            dst_ver = _get_ip_version(r.destination.address)
+            if src_ver and dst_ver and src_ver != dst_ver:
+                raise ValueError(f"Cannot combine IPv4 ({r.source.address}) and IPv6 ({r.destination.address}) in a single rule")
 
         lines = [
             f"# RCS CyberTrack Managed Firewall Ruleset",
@@ -117,8 +134,8 @@ class NftablesCompiler:
         lines.append(f"        type filter hook input priority 0; policy {_map_action(pol.input)};")
         lines.append('        iifname "lo" accept comment "rcscybertrack:mgmt-loopback"')
         lines.append('        ct state { established, related } accept comment "rcscybertrack:mgmt-state"')
-        lines.append('        tcp dport 8000 accept comment "rcscybertrack:mgmt-api"')
-        lines.append('        tcp dport 22 accept comment "rcscybertrack:mgmt-ssh"')
+        lines.append(f'        tcp dport {pol.api_port} accept comment "rcscybertrack:mgmt-api"')
+        lines.append(f'        tcp dport {pol.ssh_port} accept comment "rcscybertrack:mgmt-ssh"')
 
         for r in validated_rules:
             if r.direction == "input":
@@ -155,11 +172,17 @@ class NftablesCompiler:
             else:
                 parts.append(f'iifname "{r.interface}"')
 
+        src_ver = _get_ip_version(r.source.address)
+        dst_ver = _get_ip_version(r.destination.address)
+        is_ipv6 = (src_ver == 6 or dst_ver == 6 or r.protocol == "icmpv6")
+
         if r.source.address != "any":
-            parts.append(f"ip saddr {r.source.address}")
+            prefix = "ip6 saddr" if is_ipv6 else "ip saddr"
+            parts.append(f"{prefix} {r.source.address}")
 
         if r.destination.address != "any":
-            parts.append(f"ip daddr {r.destination.address}")
+            prefix = "ip6 daddr" if is_ipv6 else "ip daddr"
+            parts.append(f"{prefix} {r.destination.address}")
 
         if r.protocol in ("tcp", "udp"):
             parts.append(r.protocol)
@@ -167,6 +190,8 @@ class NftablesCompiler:
                 parts.append(f"sport {str(r.source.port).replace(':', '-')}")
             if r.destination.port is not None:
                 parts.append(f"dport {str(r.destination.port).replace(':', '-')}")
+        elif r.protocol == "icmpv6":
+            parts.append("ip6 nexthdr icmpv6")
         elif r.protocol == "icmp":
             parts.append("ip protocol icmp")
 

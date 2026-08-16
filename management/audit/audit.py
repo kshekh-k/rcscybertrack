@@ -17,6 +17,25 @@ class AuditEvent(BaseModel):
     details: Dict = Field(default_factory=dict)
     chain_hash: str = ""  # The cryptographic hash linking this log to the previous one
 
+SENSITIVE_KEYS = {
+    "password", "password_hash", "passwd", "secret", "secret_key",
+    "token", "access_token", "private_key", "credential", "credentials",
+    "api_key", "auth_token", "jwt_secret"
+}
+
+def sanitize_details(val):
+    if isinstance(val, dict):
+        sanitized = {}
+        for k, v in val.items():
+            if any(s_key in k.lower() for s_key in SENSITIVE_KEYS):
+                sanitized[k] = "[REDACTED]"
+            else:
+                sanitized[k] = sanitize_details(v)
+        return sanitized
+    elif isinstance(val, list):
+        return [sanitize_details(item) for item in val]
+    return val
+
 class AuditLogger:
     def __init__(self, log_path: Path):
         self.log_path = log_path
@@ -67,7 +86,7 @@ class AuditLogger:
             resource_id=resource_id,
             result=result,
             source_ip=source_ip,
-            details=details or {},
+            details=sanitize_details(details or {}),
         )
         
         # Cryptographic link calculation
