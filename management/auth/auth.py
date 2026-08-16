@@ -1,4 +1,5 @@
 import os
+import uuid
 import datetime
 import logging
 from typing import Optional
@@ -49,6 +50,22 @@ def get_jwt_secret() -> str:
         if not secret:
             return "rcs-cybertrack-dev-jwt-secret-key-for-testing-only"
         return secret
+
+def get_jwt_issuer() -> str:
+    iss = os.getenv("CYBERTRACK_JWT_ISSUER", "").strip()
+    if not iss:
+        if is_production():
+            raise ValueError("Production configuration error: CYBERTRACK_JWT_ISSUER environment variable is required in production mode.")
+        return "rcs-cybertrack-api"
+    return iss
+
+def get_jwt_audience() -> str:
+    aud = os.getenv("CYBERTRACK_JWT_AUDIENCE", "").strip()
+    if not aud:
+        if is_production():
+            raise ValueError("Production configuration error: CYBERTRACK_JWT_AUDIENCE environment variable is required in production mode.")
+        return "rcs-cybertrack-client"
+    return aud
 
 # Backward-compatibility alias
 def get_secret_key() -> str:
@@ -309,14 +326,57 @@ def authenticate_user(db: Session, username: str, password: str, client_ip: str 
 # --- JWT Generation & Verification ---
 
 def create_access_token(data: dict, expires_delta: Optional[datetime.timedelta] = None) -> str:
+    now_utc = datetime.datetime.now(datetime.timezone.utc)
     to_encode = data.copy()
     if expires_delta:
-        expire = datetime.datetime.now(datetime.timezone.utc) + expires_delta
+        expire = now_utc + expires_delta
     else:
-        expire = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp": expire})
+        expire = now_utc + datetime.timedelta(minutes=TOKEN_EXPIRE_MINUTES)
+
+    to_encode.update({
+        "exp": expire,
+        "iat": now_utc,
+        "jti": uuid.uuid4().hex,
+        "iss": get_jwt_issuer(),
+        "aud": get_jwt_audience(),
+        "type": "access"
+    })
     secret_key = get_jwt_secret()
     return jwt.encode(to_encode, secret_key, algorithm=ALGORITHM)
+
+def decode_access_token(token: str) -> dict:
+    secret_key = get_jwt_secret()
+    expected_iss = get_jwt_issuer()
+    expected_aud = get_jwt_audience()
+    leeway = int(os.getenv("CYBERTRACK_JWT_LEEWAY_SECONDS", "10"))
+
+    payload = jwt.decode(
+        token,
+        secret_key,
+        algorithms=[ALGORITHM],
+        issuer=expected_iss,
+        audience=expected_aud,
+        leeway=leeway,
+        options={
+            "verify_signature": True,
+            "verify_exp": True,
+            "verify_iat": True,
+            "verify_iss": True,
+            "verify_aud": True,
+            "require": ["sub", "exp", "iat", "jti", "iss", "aud", "type"]
+        }
+    )
+
+    if payload.get("type") != "access":
+        raise jwt.InvalidTokenError("Invalid token type")
+
+    now_ts = datetime.datetime.now(datetime.timezone.utc).timestamp()
+    iat_val = payload.get("iat")
+    if isinstance(iat_val, (int, float)):
+        if iat_val > now_ts + leeway:
+            raise jwt.InvalidTokenError("Token issued in the future")
+
+    return payload
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/auth/token")
 
@@ -327,12 +387,11 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        secret_key = get_jwt_secret()
-        payload = jwt.decode(token, secret_key, algorithms=[ALGORITHM])
+        payload = decode_access_token(token)
         username: str = payload.get("sub")
-        if username is None:
+        if not username:
             raise credentials_exception
-    except jwt.PyJWTError:
+    except Exception:
         raise credentials_exception
         
     user = db.query(UserDB).filter(UserDB.username == username).first()
