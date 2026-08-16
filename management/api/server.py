@@ -5,6 +5,7 @@ import yaml
 import management.env  # Ensure .env is loaded
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -98,15 +99,81 @@ app = FastAPI(
     version="0.5.1"
 )
 
-cors_origins_raw = os.getenv("CYBERTRACK_CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173")
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        response = await call_next(request)
+
+        response.headers.setdefault("X-Content-Type-Options", "nosniff")
+        response.headers.setdefault("X-Frame-Options", "DENY")
+        response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+        response.headers.setdefault(
+            "Permissions-Policy",
+            "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
+        )
+        response.headers.setdefault(
+            "Cross-Origin-Opener-Policy",
+            "same-origin",
+        )
+        response.headers.setdefault(
+            "Cross-Origin-Resource-Policy",
+            "same-origin",
+        )
+
+        is_production = os.getenv("CYBERTRACK_ENV", "development").strip().lower() == "production"
+        is_https = (
+            request.url.scheme == "https" or
+            request.headers.get("x-forwarded-proto", "").lower() == "https" or
+            os.getenv("CYBERTRACK_HSTS_ENABLED", "false").strip().lower() in ("true", "1", "yes")
+        )
+        if is_production and is_https:
+            response.headers.setdefault("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+
+        return response
+
+
+cors_origins_raw = os.getenv("CYBERTRACK_CORS_ORIGINS")
+
+if not cors_origins_raw:
+    if os.getenv("CYBERTRACK_ENV", "development").strip().lower() == "production":
+        raise RuntimeError(
+            "Production CORS configuration error: "
+            "CYBERTRACK_CORS_ORIGINS environment variable is required."
+        )
+    cors_origins_raw = "http://localhost:5173,http://127.0.0.1:5173"
+
 cors_origins = [origin.strip() for origin in cors_origins_raw.split(",") if origin.strip()]
+
+if not cors_origins:
+    raise RuntimeError(
+        "CORS configuration error: at least one allowed origin is required."
+    )
+
+if "*" in cors_origins:
+    if os.getenv("CYBERTRACK_ENV", "development").strip().lower() == "production":
+        raise RuntimeError(
+            "Production CORS configuration error: wildcard origin '*' is not allowed."
+        )
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=cors_origins if cors_origins else ["*"],
+    allow_origins=cors_origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=[
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE",
+        "OPTIONS",
+    ],
+    allow_headers=[
+        "Authorization",
+        "Content-Type",
+        "Accept",
+    ],
+)
+
+app.add_middleware(
+    SecurityHeadersMiddleware,
 )
 
 # --- Authentication Token Route ---

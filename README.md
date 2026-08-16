@@ -46,7 +46,10 @@ Once running, interactive documentation is available at:
 * **Swagger UI (Interactive API Client)**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 * **ReDoc (Static documentation)**: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
 
-### Default Credentials
+### Default Credentials (Development Mode Only)
+> [!IMPORTANT]
+> Default credentials are provided for local development and testing. In production mode (`CYBERTRACK_ENV=production`), automatic bootstrapping is disabled by default (`CYBERTRACK_BOOTSTRAP_ENABLED=false`) and unsafe default passwords are strictly rejected.
+
 | Username | Password | Role | Permissions |
 | :--- | :--- | :--- | :--- |
 | `admin` | `admin123` | `admin` | Read + Write + Audit Trails |
