@@ -96,7 +96,7 @@ device_registry = DeviceRegistry()
 app = FastAPI(
     title="RCS CyberTrack Core Management API",
     description="High-Assurance Backend Management Platform for Security Appliances",
-    version="0.5.1"
+    version="0.6.0"
 )
 
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
