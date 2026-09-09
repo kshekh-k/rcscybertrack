@@ -1,0 +1,10 @@
+=== GIT BASELINE ===
+Branch: new-update
+Commit: d23a582
+Tags: v0.6.0
+Diff check: CLEAN
+Status:
+?? RCS_CyberTrack_v0.6.1_Staging_Deployment_Report.pdf
+?? RCS_CyberTrack_v0.6.1_Staging_Deployment_Report_20260818_001004.pdf
+?? deployment-evidence/
+?? docs/V0.6.1_STAGING_DEPLOYMENT_REPORT.md

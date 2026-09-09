@@ -1,0 +1,2220 @@
+Package: apt
+Priority: important
+Section: admin
+Installed-Size: 4398
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 3.2.0
+Recommends: ca-certificates
+Replaces: apt-transport-https (<< 1.5~alpha4~), apt-utils (<< 1.3~exp2~)
+Suggests: apt-doc, aptitude | synaptic | wajig, dpkg-dev (>= 1.17.2), gnupg | gnupg2 | gnupg1, powermgmt-base
+Provides: apt-transport-https (= 3.2.0)
+Depends: base-passwd (>= 3.6.1) | adduser, gpgv, libapt-pkg7.0 (>= 3.2.0), ubuntu-keyring, libc6 (>= 2.38), libgcc-s1 (>= 3.3.1), libseccomp2 (>= 2.4.2), libssl3t64 (>= 3.0.0), libstdc++6 (>= 13.1), libsystemd0
+Conflicts: apt-verify, libnettle8 (<< 3.9.1-2.2~)
+Breaks: apt-transport-https (<< 1.5~alpha4~), apt-utils (<< 1.3~exp2~), aptitude (<< 0.8.10)
+Filename: pool/main/a/apt/apt_3.2.0_amd64.deb
+Size: 1485978
+MD5sum: a8aeadbd3982ad6b6e9f24f19821cbb2
+SHA1: 7b366f87c9a4de46967243c20431f8e6c54d76bf
+SHA256: c8f0ba37e66fc367f57a887fba686c67d9487b290ca83bc992baeedc994bf47a
+SHA512: 5b5998ada805b9ed35d3dabfd521f80fbcd3b05c5cc42601df95e3c15f18425586b8a15047f5bc37bd40d43bc2fb258d4f18e888fd287feeab56398cd405a211
+Description: commandline package manager
+Description-md5: 3f0b97e14afb596f4b9585c7ee559e19
+Original-Maintainer: APT Development Team <deity@lists.debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+Build-Essential: yes
+
+Package: base-files
+Priority: required
+Section: admin
+Installed-Size: 440
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 14ubuntu6
+Replaces: base, dpkg (<= 1.15.0), miscutils
+Provides: base, usr-is-merged
+Depends: libc6 (>= 2.34), libcrypt1 (>= 1:4.4.10-10ubuntu3)
+Pre-Depends: awk
+Breaks: debian-security-support (<< 2019.04.25), initscripts (<< 2.88dsf-13.3), sendfile (<< 2.1b.20080616-5.2~), ubuntu-server (<< 1.453)
+Essential: yes
+Filename: pool/main/b/base-files/base-files_14ubuntu6_amd64.deb
+Size: 75050
+MD5sum: caf1269780a8f582ae82802d01547ce3
+SHA1: 612286303cd0e9a439191075e00879c485fb29df
+SHA256: b766d8381fadc5e22249ba34632798dab333f9d896108092ce0f2d220b1b0537
+SHA512: 6d1f80bd2d76a57b8bd068d547eef80fc034121f89cca977b8b150272f020aabcef5bb7f66616b542783cfdc863bf30920fd6bd57263a67c900cd985cfa800fa
+Description: Debian base system miscellaneous files
+Description-md5: 6d16337f57b84c4747f56438355b2395
+Multi-Arch: foreign
+Original-Maintainer: Santiago Vila <sanvila@debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: base-passwd
+Priority: required
+Section: admin
+Installed-Size: 277
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 3.6.8
+Recommends: debconf (>= 0.5) | debconf-2.0
+Replaces: base
+Depends: libc6 (>= 2.34), libdebconfclient0 (>= 0.145), libselinux1 (>= 3.1~)
+Essential: yes
+Filename: pool/main/b/base-passwd/base-passwd_3.6.8_amd64.deb
+Size: 54908
+MD5sum: 992cbb1ae7b7865a89088925f3aed0c9
+SHA1: 7c38e793090221683ee57ec744f99a55d336b8e0
+SHA256: 226c75127e46de2bbd8a329ac7e55781ede395ab8a9be0f269250b24c81b9c36
+SHA512: 28e49862c1328c0bc1fbfc9aed8a00adbc25e62f4de6c05ce5e3a332c6842e3905c11aa3f82bfaae04f6a55331a6b9002fa84fd349aa96e7eb4c54afcd1ec211
+Description: Debian base system master password and group files
+Description-md5: aad0cc52ee72b2469af5552851e49f03
+Original-Maintainer: Shadow package maintainers <pkg-shadow-devel@lists.alioth.debian.org>
+Multi-Arch: foreign
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: bash
+Priority: required
+Section: shells
+Installed-Size: 2020
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 5.3-2ubuntu1
+Recommends: bash-completion
+Suggests: bash-doc
+Depends: base-files (>= 2.1.12), debianutils (>= 5.6-0.1)
+Pre-Depends: libc6 (>= 2.38), libtinfo6 (>= 6)
+Essential: yes
+Filename: pool/main/b/bash/bash_5.3-2ubuntu1_amd64.deb
+Size: 859874
+MD5sum: afc1a38e6df7a2272b708712827eb1a9
+SHA1: 6544da5bdbe57029b270535d115d0aa033ae3321
+SHA256: 82d4aba3490578089d399921bf6444ad848468a23f2cb37262625b28e3615a76
+SHA512: a36c3eb45112744eda764ba120137da8d3fc1bfc70636bb71154eb581e278b297f74d28549aef8bb00bf68c5079003b6bbf5ad5f359f3b8bdff910e5680993dd
+Homepage: http://tiswww.case.edu/php/chet/bash/bashtop.html
+Description: GNU Bourne Again SHell
+Description-md5: 3522aa7b4374048d6450e348a5bb45d9
+Multi-Arch: foreign
+Original-Maintainer: Matthias Klose <doko@debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: minimal
+
+Package: bsdutils
+Source: util-linux (2.41.3-3ubuntu2)
+Priority: required
+Section: utils
+Installed-Size: 250
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 1:2.41.3-3ubuntu2
+Recommends: bsdextrautils
+Depends: libc6 (>= 2.38), libsystemd0 (>= 254)
+Filename: pool/main/u/util-linux/bsdutils_2.41.3-3ubuntu2_amd64.deb
+Size: 80056
+MD5sum: 56922e096d6ac59614552b936ee89262
+SHA1: 84452578b12378a61f10bf0df81d29a6986e9366
+SHA256: 9a37b2435c1a2d2c5a92232d8a0690aa94664456fbf53710c3e574a099f3f0e4
+SHA512: 182460fedfa92a2d0c15851c486c80ffe8d8917fe37d7b6916bfed4843b5bd19444db438e391c184da120d8526dd62463fc1f6eb1d2b2fbea995b474a47ab066
+Homepage: https://github.com/util-linux/util-linux
+Description: basic utilities from 4.4BSD-Lite
+Description-md5: 8c14165c8e6bd7850a22f5254a29e709
+Multi-Arch: foreign
+Original-Maintainer: Chris Hofstaedtler <zeha@debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: minimal
+
+Package: coreutils
+Source: coreutils-from (0.0.0~ubuntu25)
+Priority: required
+Section: utils
+Installed-Size: 10
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: all
+Version: 9.5-1ubuntu2+0.0.0~ubuntu25
+Pre-Depends: coreutils-from-uutils | coreutils-from-gnu
+Essential: yes
+Filename: pool/main/c/coreutils-from/coreutils_9.5-1ubuntu2+0.0.0~ubuntu25_all.deb
+Size: 3060
+MD5sum: 0543e4f0b29ae5432356a34ea2cdec48
+SHA1: ebfbfe710cbbf1028732a18f8048b6b5d57ec7cf
+SHA256: 048eed9011f2dab8260beec1246994118e5406b740c81020e4d7f556ea32fcdf
+SHA512: b964f6d0bdcc69c88fa0cef66a4af14575ec9457a63d51aa886eec771b76e38bca8416ff8089c061d9ea2771e0b33eeb48386dc74dca96771508c4f596c01e15
+Description: coreutils meta package
+Description-md5: 2711d655f84e38618f4e41cdfd2a2a1a
+Multi-Arch: foreign
+Original-Maintainer: Julian Andres Klode <jak@debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: minimal
+
+Package: coreutils-from-uutils
+Source: coreutils-from
+Priority: required
+Section: utils
+Installed-Size: 237
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: all
+Version: 0.0.0~ubuntu25
+Replaces: coreutils (<< 9.5-1ubuntu2+0.0.0~ubuntu25), coreutils-from, libdigest-sha3-perl (<< 1.05-1ubuntu3~)
+Provides: coreutils, coreutils-from
+Conflicts: coreutils-from
+Pre-Depends: rust-coreutils (>> 0.1.0+git20250813), gnu-coreutils
+Breaks: coreutils (<< 9.5-1ubuntu2+0.0.0~ubuntu25), libdigest-sha3-perl (<< 1.05-1ubuntu3~)
+Filename: pool/main/c/coreutils-from/coreutils-from-uutils_0.0.0~ubuntu25_all.deb
+Size: 7124
+MD5sum: 086f6e70adbfc191c718961071c2e916
+SHA1: 20d8e6b199d23061c484d1f57226c9d8f64aac2a
+SHA256: fd89943a93fdb3e2746faff8fe1bb23106dbdd6c891df0f50fe2f8b42d6f089d
+SHA512: 7f6b26f1f96665f2dfeb96b166a1c3eab73c279bd04aaa836f9de837857796e079bf5f3432db6249a86cede7ed8a198b46789da42acb60c87834744c9e8fbb44
+Description: coreutils from the uutils project
+Description-md5: f5c8ab5130a71564f8412263f74ea6aa
+Protected: yes
+Multi-Arch: foreign
+Original-Maintainer: Julian Andres Klode <jak@debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: minimal
+
+Package: dash
+Priority: required
+Section: shells
+Installed-Size: 200
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 0.5.12-12ubuntu3
+Depends: debianutils (>= 5.6-0.1)
+Pre-Depends: libc6 (>= 2.38)
+Essential: yes
+Filename: pool/main/d/dash/dash_0.5.12-12ubuntu3_amd64.deb
+Size: 96008
+MD5sum: 681cd30b896545d89de7e9f8fa77c76d
+SHA1: 40dedac5cd26010351d27f078b8a951ce01c04be
+SHA256: 563091a9b615a5a59951c2cc4478163d099df366a051113e8ce5bb2baab7f0c8
+SHA512: 88708284cc49c5c8c23a2e5b93fc86cf68d95e94b8cbc25507a2266f28c7d3484281243cfef388db77dd4bf70d22e2ba1cd4f507829efaf56a2986c04e09d75c
+Homepage: http://gondor.apana.org.au/~herbert/dash/
+Description: POSIX-compliant shell
+Description-md5: 8d4d9c32c6b2b70328f7f774a0cc1248
+Multi-Arch: foreign
+Original-Maintainer: Andrej Shadura <andrewsh@debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: minimal
+
+Package: debconf
+Priority: required
+Section: admin
+Installed-Size: 507
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: all
+Version: 1.5.92
+Recommends: apt (>= 2.9.11~) | apt-utils, debconf-i18n
+Replaces: debconf-tiny
+Suggests: debconf-doc, debconf-kde-helper, debconf-utils, libgtk3-perl, libnet-ldap-perl, libterm-readline-gnu-perl, perl, whiptail | dialog
+Provides: debconf-2.0
+Conflicts: debconf-tiny, whiptail-utf8 (<= 0.50.17-13)
+Filename: pool/main/d/debconf/debconf_1.5.92_all.deb
+Size: 127278
+MD5sum: 99419499fec7b02f102af479cdcfc4c9
+SHA1: b1cda48425f92c4020a344f1406aeb6e509305f9
+SHA256: 025984be5dc70b32e02c8a668fdcceba674173bbda4a3e7ff93fac800dcdd122
+SHA512: 1bbd8548a974ecef181209ab6d1e16fcf216d10d791583676de1218c6e4d41235b9d92d2983d519c026c568104d6a04939966790c300a87971bc71bcd3524332
+Description: Debian configuration management system
+Description-md5: 85b82bf406dfc9a635114f44ab7fb66d
+Original-Maintainer: Debconf Developers <debconf-devel@lists.alioth.debian.org>
+Multi-Arch: foreign
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: debianutils
+Priority: required
+Section: utils
+Installed-Size: 229
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 5.23.2build1
+Pre-Depends: libc6 (>= 2.38)
+Breaks: ifupdown (<< 0.8.36+nmu1), printer-driver-pnm2ppa (<< 1.13-12), x11-common (<< 1:7.7+23~)
+Essential: yes
+Filename: pool/main/d/debianutils/debianutils_5.23.2build1_amd64.deb
+Size: 93254
+MD5sum: a9e6d7be97fbe7a7bb09dd36b75124d6
+SHA1: 573d6c61864ec53c5830519526058cf7de3dc4d9
+SHA256: eb155f0a9531b5f3b1c06e0e415c4cd7e01777e7714cf51ac094fa6afa01638f
+SHA512: cb97e8dd225e9c1d871ce25732eb876d729955532c0625ff93fb8e3cd00e760a83da0d4bc41f51d8a6a7ef7b447687524dcd393ed5a40e7f800922494defbfbf
+Description: Miscellaneous utilities specific to Debian
+Description-md5: 133cfb7cff1ec5713bc396f059f97013
+Multi-Arch: foreign
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: diffutils
+Priority: required
+Section: utils
+Installed-Size: 448
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 1:3.12-1
+Replaces: diff
+Suggests: diffutils-doc, wdiff, gnulib-l10n
+Pre-Depends: libc6 (>= 2.38)
+Essential: yes
+Filename: pool/main/d/diffutils/diffutils_3.12-1_amd64.deb
+Size: 175934
+MD5sum: c2fb202135cf08ee672cd81def0ebe48
+SHA1: ede0f5cb99a3aa5ff76c2f4b319e0f58e637a9ce
+SHA256: 1adaaf191b33e95bc172e0cae09e4a246e22fb7dcf46a34e3e9ae66f8efbe994
+SHA512: 575c5e9a09e6d39b0265b9b77536253dcedc6d15fd1a32861fa9942cd70f0f686522c8ca1b15fab8fdf4e516b84bba01644144d027ccd532a920f66bab85e499
+Homepage: https://www.gnu.org/software/diffutils/
+Description: File comparison utilities
+Description-md5: 5cf0bc18e36aa2957e62b309d6aa34f9
+Original-Maintainer: Santiago Vila <sanvila@debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: minimal
+
+Package: dpkg
+Priority: required
+Section: admin
+Installed-Size: 6206
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 1.23.7ubuntu1
+Suggests: apt, debsig-verify
+Depends: tar (>= 1.28-1)
+Pre-Depends: libbz2-1.0, libc6 (>= 2.38), liblzma5 (>= 5.4.0), libmd0 (>= 0.0.0), libselinux1 (>= 3.1~), libzstd1 (>= 1.5.5), zlib1g (>= 1:1.1.4)
+Breaks: libapt-pkg5.0 (<< 1.7~b), lsb-base (<< 10.2019031300)
+Essential: yes
+Filename: pool/main/d/dpkg/dpkg_1.23.7ubuntu1_amd64.deb
+Size: 1284540
+MD5sum: 7cbdf62ca4135d2ba59cce3a7cadaf86
+SHA1: 9b30f14fdff949236eb965adc80317750c330696
+SHA256: 6e0ee5877c0d27b0d8fbe36387035e8f03074eed055112595ab2e85ac8b5711e
+SHA512: 3d6a718ca8d51387c3cdfc432dd6fa533976f6d9ab6455b397f1c3cbfec12c1ce3293e00d37009602c309c353a42d25057f021c98d78d5947d8de021fb83400d
+Homepage: https://wiki.debian.org/Teams/Dpkg
+Description: Debian package management system
+Description-md5: 2f156c6a30cc39895ad3487111e8c190
+Multi-Arch: foreign
+Original-Maintainer: Dpkg Developers <debian-dpkg@lists.debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: minimal, server-minimal
+
+Package: e2fsprogs
+Priority: required
+Section: admin
+Installed-Size: 1530
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 1.47.2-3ubuntu4
+Recommends: e2fsprogs-l10n
+Suggests: gpart, parted, fuse2fs, e2fsck-static, libarchive13t64
+Depends: logsave
+Pre-Depends: libblkid1 (>= 2.36), libc6 (>= 2.38), libcom-err2 (>= 1.43.9), libext2fs2t64 (= 1.47.2-3ubuntu4), libss2 (>= 1.38), libuuid1 (>= 2.16)
+Filename: pool/main/e/e2fsprogs/e2fsprogs_1.47.2-3ubuntu4_amd64.deb
+Size: 613002
+MD5sum: 8a060916cd42c67304538f16a9a489ae
+SHA1: f707afbbff86c620a9fafde5fb20a0a1de9f1a45
+SHA256: a4343a8c026e1ca8e2e76a5d01abb8c2d6381961a1766b2d2363e3e23cc362ca
+SHA512: d6489ba14077ba9928d78d352dbec86209d26eefd0cea944ae6e15721a522d7a564e5372a4e56b4a872de56199e98e8c557768dd37dd66ac08ef5021e6909383
+Homepage: http://e2fsprogs.sourceforge.net
+Description: ext2/ext3/ext4 file system utilities
+Description-md5: 92d0fdf684262bbfa702eaea3f50b97e
+Original-Maintainer: Theodore Y. Ts'o <tytso@mit.edu>
+Multi-Arch: foreign
+Important: yes
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: findutils
+Priority: required
+Section: utils
+Installed-Size: 572
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 4.10.0-3build2
+Pre-Depends: libc6 (>= 2.38), libselinux1 (>= 3.1~)
+Breaks: binstats (<< 1.08-8.1), guilt (<< 0.36-0.2), libpython3.4-minimal (<< 3.4.4-2), libpython3.5-minimal (<< 3.5.1-3), lsat (<< 0.9.7.1-2.1), mc (<< 3:4.8.11-1), switchconf (<< 0.0.9-2.1)
+Essential: yes
+Filename: pool/main/f/findutils/findutils_4.10.0-3build2_amd64.deb
+Size: 307422
+MD5sum: eb283ba71280e25f289fe2938e9c2310
+SHA1: 53ba0f9c2c1cdb14fef89e3319e07481a641e1ac
+SHA256: 546d6b0c2b2f5c61494ee5d11aa1b49476213af27a66edd9e05bb3ef00940557
+SHA512: a15f433643a52f83c9bc94e751d05b5b206c6b0af095eccc35ca6278b3ede94ee448d6e36c859c11e9f47c8704aadcb7a1489a1699c474866ea1733acc4bb9f4
+Homepage: https://savannah.gnu.org/projects/findutils/
+Description: utilities for finding files--find, xargs
+Description-md5: ad1a783819241ffdf3ff5f37a676af59
+Original-Maintainer: Andreas Metzler <ametzler@debian.org>
+Multi-Arch: foreign
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: minimal
+
+Package: gcc-16-base
+Source: gcc-16
+Priority: required
+Section: libs
+Installed-Size: 105
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 16-20260322-1ubuntu1
+Breaks: gnat (<< 7)
+Filename: pool/main/g/gcc-16/gcc-16-base_16-20260322-1ubuntu1_amd64.deb
+Size: 38296
+MD5sum: 08611fe61b1fc321c4ae4d6d15a0bc81
+SHA1: 94912bc4b6eddcc03cae3f7f962c1d7930727d2a
+SHA256: 281b3188840a7abdca85a02eb2609b0efad852e8994b3804a0e4227ec4ec3f90
+SHA512: 0767f731e71e709736596d52dbe181245a8ca181cdadbac6226aad5aa7151d8ce5149ad28625facc61d8882e76fc387af5336dc289126a0bf830b9e599b3922c
+Homepage: http://gcc.gnu.org/
+Description: GCC, the GNU Compiler Collection (base package)
+Description-md5: b6e93638a6d08ea7a18929d7cf078e5d
+Multi-Arch: same
+Original-Maintainer: Debian GCC Maintainers <debian-gcc@lists.debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: gnu-coreutils
+Source: coreutils
+Priority: required
+Section: utils
+Installed-Size: 6920
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 9.7-3ubuntu2
+Replaces: coreutils (<< 9.5-1ubuntu2~)
+Pre-Depends: libacl1 (>= 2.2.23), libattr1 (>= 1:2.4.48), libc6 (>= 2.42), libgmp10 (>= 2:6.3.0+dfsg), libselinux1 (>= 3.1~), libssl3t64 (>= 3.0.0), libsystemd0 (>= 254)
+Filename: pool/main/c/coreutils/gnu-coreutils_9.7-3ubuntu2_amd64.deb
+Size: 1339676
+MD5sum: 35aa26e19123aac7bfedc916be442bca
+SHA1: 1ed06c7aa1cd3c1e316f85f2cc532ff8dbf7441e
+SHA256: 6b5b60a5c372b6e9d1dcfa1507317aae59bf809d4f4d6d363d3ef0a58a189137
+SHA512: 1bef129578a4a38e30c79de96c76e8d3238312a2f56e06e40d1c612950dfcdd27c8f1bc13356e693a754681dc8d2fc7eaf7877696edf5d0c5a29794bc7a18392
+Homepage: https://gnu.org/software/coreutils
+Description: GNU core utilities
+Description-md5: d0d975dec3625409d24be1238cede238
+Multi-Arch: foreign
+Original-Maintainer: Michael Stone <mstone@debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: minimal
+
+Package: gpgv
+Source: gnupg2
+Priority: important
+Section: utils
+Installed-Size: 336
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 2.4.8-4ubuntu3
+Suggests: gnupg
+Depends: libbz2-1.0, libc6 (>= 2.38), libgcrypt20 (>= 1.11.1), libgpg-error0 (>= 1.49), zlib1g (>= 1:1.1.4)
+Breaks: python-debian (<< 0.1.29)
+Filename: pool/main/g/gnupg2/gpgv_2.4.8-4ubuntu3_amd64.deb
+Size: 159866
+MD5sum: a7aa3aaa0c5907785c623a5d503ec8a3
+SHA1: a25fca373ae3e2808b9738fcf0faa170fdab57d8
+SHA256: b07017fead25cc8997985e77059cc4c468f01cc39a85c98ec6aa61822719d3ba
+SHA512: 590689360b66f2115165b1165d71bda689319aa3500b0ab1a3a6a5ce3aa6c630290d4b02585ac2933680e08afa41ec05c0452a66c4d8c3962b9f8c2de5032c92
+Homepage: https://www.gnupg.org/
+Description: GNU privacy guard - signature verification tool
+Description-md5: 4ea8f4f4d6a0a387a4a3aeba3e6cc888
+Multi-Arch: foreign
+Original-Maintainer: Debian GnuPG Maintainers <pkg-gnupg-maint@lists.alioth.debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+Build-Essential: yes
+
+Package: grep
+Priority: required
+Section: utils
+Installed-Size: 364
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 3.12-1
+Provides: rgrep
+Conflicts: rgrep
+Pre-Depends: libc6 (>= 2.38), libpcre2-8-0 (>= 10.32)
+Essential: yes
+Filename: pool/main/g/grep/grep_3.12-1_amd64.deb
+Size: 167746
+MD5sum: 449ab4a034513bb1b3a0a37803857ca7
+SHA1: 77c62f6080eb9ca393b23cc80db652b88fd2c61b
+SHA256: fc23170281e0455ab02ab8b0041eac4b3f46a3ae9df165c117999260ccbc093a
+SHA512: a8a14af6c32b0de719090205ad4377bccaceae610b51d1b93f0b1d7b42e88d9f00f57bd661a407de501e0c8d3496d40478fb13757bbe8556616e7abdbf64617e
+Homepage: https://www.gnu.org/software/grep/
+Description: GNU grep, egrep and fgrep
+Description-md5: f9188c5583d41955f3b3fe60b9d445f1
+Original-Maintainer: Anibal Monsalve Salazar <anibal@debian.org>
+Multi-Arch: foreign
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: minimal
+
+Package: gzip
+Priority: required
+Section: utils
+Installed-Size: 213
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 1.14-1~exp2ubuntu1
+Suggests: less
+Conflicts: zutils (<< 1.13-2~)
+Pre-Depends: libc6 (>= 2.38)
+Essential: yes
+Filename: pool/main/g/gzip/gzip_1.14-1~exp2ubuntu1_amd64.deb
+Size: 106930
+MD5sum: 1a5e3f7cb2a2761564331d1d92b5d1cb
+SHA1: 1480c1ba74e3a482354e77e74eeb956b58aabb22
+SHA256: b96f99f7964c0768c4f421b5aab71d03a25a749695c4058ff0304a101fcf1870
+SHA512: 3cd7144c895582c4c7cc8927d5f9166e8da4b685975781c8329c20bd9865f9359726d94778954b0064681648a23acb96d7c1287a974430335e0905bc63c6866f
+Homepage: https://www.gnu.org/software/gzip/
+Description: GNU compression utilities
+Description-md5: 100720c9e2c6508f1a1f3731537b38e5
+Original-Maintainer: Milan Kupcevic <milan@debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: minimal
+
+Package: hostname
+Priority: required
+Section: admin
+Installed-Size: 50
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 3.25build1
+Replaces: nis (<< 3.17-30)
+Pre-Depends: libc6 (>= 2.34)
+Breaks: nis (<< 3.17-30)
+Essential: yes
+Filename: pool/main/h/hostname/hostname_3.25build1_amd64.deb
+Size: 11168
+MD5sum: add7789482875a49c2bfa88e36f5cd3b
+SHA1: f13eed4e0dc530fcce05b5e3330f6825dbc1384d
+SHA256: fdae0a5b58249fc43cd705eb6e8e20bb1e8af7dbb1fa3a90e90eb091218c5a28
+SHA512: 69cd02060f67a34c7b76fe84534e4658f2a5f9411c8e0431d61a23f4b676daa476f2767cf974018e3cfa6af9f7eb8b94de65343af5fce2a6c70ef0710b91a1a6
+Description: utility to set/show the host name or domain name
+Description-md5: a5a22acc3c69a7f40f07f1a8dfc93af1
+Original-Maintainer: Michael Meskes <meskes@debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: minimal
+
+Package: init-system-helpers
+Priority: required
+Section: admin
+Installed-Size: 133
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: all
+Version: 1.69
+Essential: yes
+Filename: pool/main/i/init-system-helpers/init-system-helpers_1.69_all.deb
+Size: 39536
+MD5sum: cbeab7615a982a2427b316de63c8535a
+SHA1: 8134cd28f73f01272ccd154c0c30aa4f6ab03d42
+SHA256: 49c68d09ceaaf5198966cf1e077ae9bf23d345189cb90e564bcd6594fd83a9fd
+SHA512: 8db5ef8d468542689fb47d78a28d4936762339e9b001d6655074a3357e39ff9933b1be7feebda417f42d1a7bd5b447e3476b0dc3964a245a60212a37728cebb5
+Description: helper tools for all init systems
+Description-md5: facafbf6c4b9fd95c34e95938629ecef
+Original-Maintainer: Debian systemd Maintainers <pkg-systemd-maintainers@lists.alioth.debian.org>
+Multi-Arch: foreign
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libacl1
+Source: acl
+Priority: required
+Section: libs
+Installed-Size: 74
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 2.3.2-2
+Depends: libc6 (>= 2.38)
+Filename: pool/main/a/acl/libacl1_2.3.2-2_amd64.deb
+Size: 16752
+MD5sum: dd0247cd4fcb365093d0deb540309fa3
+SHA1: 5249f38e50f65d64a7872f7b5bf25d81985fd5ad
+SHA256: 77f8d49c031182bbd6c4fe4ec9ad49edb5d4607f2dac795fc6932dce0e8f541e
+SHA512: 44723f41c43ccb5cc60f0a831ab9799588676ba904100a8a93db482ab128bacbf244bb03bb66bc51792d6a9b609827fa2ded700fcecc8f582500c0e8941fa57d
+Homepage: https://savannah.nongnu.org/projects/acl/
+Description: access control list - shared library
+Description-md5: 819a4a0833dcbd5db23e4a5fd341c3aa
+Original-Maintainer: Guillem Jover <guillem@debian.org>
+Multi-Arch: same
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libapt-pkg7.0
+Source: apt
+Priority: important
+Section: libs
+Installed-Size: 3699
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 3.2.0
+Recommends: apt (>= 3.2.0)
+Provides: libapt-pkg (= 3.2.0)
+Depends: libbz2-1.0, libc6 (>= 2.38), libgcc-s1 (>= 3.3.1), liblz4-1 (>= 0.0~r127), liblzma5 (>= 5.1.1alpha+20120614), libssl3t64 (>= 3.0.0), libstdc++6 (>= 14), libsystemd0 (>= 221), libudev1 (>= 183), libxxhash0 (>= 0.8), libzstd1 (>= 1.5.5), zlib1g (>= 1:1.2.2.3)
+Conflicts: libnettle8 (<< 3.9.1-2.2~)
+Breaks: appstream (<< 0.9.0-3~), apt (<< 1.6~), aptitude (<< 0.8.9), dpkg (<< 1.20.8), libapt-inst1.5 (<< 0.9.9~)
+Filename: pool/main/a/apt/libapt-pkg7.0_3.2.0_amd64.deb
+Size: 1138300
+MD5sum: e3340dfca164e38b64c40253dac36b16
+SHA1: bf4cd53799ed4712ac07f3c70320381d1649d077
+SHA256: b9bfedd23dd14572934122d88266ae0ee398f952d1a0268c47e9ba2b4d54d3e0
+SHA512: 253a51fd0549c04bf2370f26a8954edfbf6e1e327d6db91dedf7c567f6b5f89bbaaf75031a6dc6c811de898c3856c498f652cb0adc5cfb4cfe73852b39cc9729
+Description: package management runtime library
+Description-md5: 02a98524f05172e7e426f021972ccc48
+Original-Maintainer: APT Development Team <deity@lists.debian.org>
+Multi-Arch: same
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+Build-Essential: yes
+
+Package: libattr1
+Source: attr
+Priority: required
+Section: libs
+Installed-Size: 61
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 1:2.5.2-4
+Depends: libc6 (>= 2.4)
+Filename: pool/main/a/attr/libattr1_2.5.2-4_amd64.deb
+Size: 11606
+MD5sum: 7dd5da80d793c09dd857b01ef617048e
+SHA1: 513174a2057b9b66fea99417118211e9026383f2
+SHA256: 195ca7b0ca6c91c4b4b9e17baf98b98143e3a14a0571f1613f04b318b9799510
+SHA512: bc5111f9c3963fa10b63575b50ac35f3c0b9128837c299a832ee5db3cffb4f0d30c6fc4df9c429846f8c0aafd5eb4bf6a7cc291d907cb18556cad51b89cef481
+Homepage: https://savannah.nongnu.org/projects/attr/
+Description: extended attribute handling - shared library
+Description-md5: d4aef101ff5430158eae72e808000f6c
+Original-Maintainer: Guillem Jover <guillem@debian.org>
+Multi-Arch: same
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: minimal
+
+Package: libaudit-common
+Source: audit
+Priority: required
+Section: libs
+Installed-Size: 17
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: all
+Version: 1:4.1.2-1build1
+Filename: pool/main/a/audit/libaudit-common_4.1.2-1build1_all.deb
+Size: 4804
+MD5sum: 251fc3eba2a61b33e633ac1d93316602
+SHA1: c8e8acb9c6df2d5c5ba6564ae8ae057a7ec0cb6b
+SHA256: 763a89b5c40942860f4d000499579763a2123c1226b3d2a66677846aa304a85d
+SHA512: 3859018885bf23783a36cd78e3ae7d4386e016a0a7b4674816767738b6fa8d3b976d1e15203808c74d41ab1a309a221c3d691a72a48370be5f722e46d9a3efb7
+Homepage: https://people.redhat.com/sgrubb/audit/
+Description: Dynamic library for security auditing - common files
+Description-md5: d0c75ba62e711281171e79bae3ad477b
+Original-Maintainer: Laurent Bigonville <bigon@debian.org>
+Multi-Arch: foreign
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libaudit1
+Source: audit
+Priority: required
+Section: libs
+Installed-Size: 195
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 1:4.1.2-1build1
+Depends: libaudit-common (>= 1:4.1.2-1build1), libc6 (>= 2.38), libcap-ng0 (>= 0.7.9)
+Filename: pool/main/a/audit/libaudit1_4.1.2-1build1_amd64.deb
+Size: 54958
+MD5sum: 19f4f124a0aae791133c69577b7fbab0
+SHA1: def84778a384903cf92007f0f34650199fdeb7c6
+SHA256: d3b8aa4efc9851ad9641ef2b1cc13d125c7c45d167e53527c694255d0c47b68f
+SHA512: 22da784ec94024db9446e9379292cb95b3305aeb3fd9dd6b109ae7436ae6595f6d15c9324350448c7c92541cbf8b2500483896f6bab661d93b891ef959fe9ed2
+Homepage: https://people.redhat.com/sgrubb/audit/
+Description: Dynamic library for security auditing
+Description-md5: 1cae77ec0351d1559b401192514d9e75
+Original-Maintainer: Laurent Bigonville <bigon@debian.org>
+Multi-Arch: same
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libblkid1
+Source: util-linux
+Priority: required
+Section: libs
+Installed-Size: 298
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 2.41.3-3ubuntu2
+Depends: libc6 (>= 2.38)
+Filename: pool/main/u/util-linux/libblkid1_2.41.3-3ubuntu2_amd64.deb
+Size: 125042
+MD5sum: eb093efd46833cfe6165e543cc318125
+SHA1: 33d6f41457f16c03040abaea53ec0ad84cea78a6
+SHA256: f2caf1f807c0b203e5f4545c3010ac34b2dd5f546704e5b1b9c62a41d483771e
+SHA512: ad0731abd7faeb6ab208a08705dba3eee3125291b3eeca6422440d23fe5954c0a61d5d9264e8bab7e7c7f90962fd2597cc964c308a06268c5f2529c55414faaa
+Homepage: https://github.com/util-linux/util-linux
+Description: block device ID library
+Description-md5: a511054d3223ae05280eebc8f3e2c80e
+Multi-Arch: same
+Original-Maintainer: Chris Hofstaedtler <zeha@debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libbsd0
+Source: libbsd
+Priority: required
+Section: libs
+Installed-Size: 129
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 0.12.2-2build2
+Depends: libc6 (>= 2.38), libmd0 (>= 1.0.3-2)
+Filename: pool/main/libb/libbsd/libbsd0_0.12.2-2build2_amd64.deb
+Size: 42312
+MD5sum: c8a1a53fdb2cf14e4e279f4a7cf811f0
+SHA1: 4126593b162b40b10c7043701286f130217107a0
+SHA256: 62019928a6baeaba8d12d2d4cb7c1e4c9a9550a1eb4541b8de0cacfeae1d09e3
+SHA512: 3fa2a99a31241fe580b490bc611a122927a77b58943f2d51e1d806ce13899cbaa592e37c8b47995e31d4ba37d1ed3c8e4ac9b144f8cf79381089a5285a572196
+Homepage: https://libbsd.freedesktop.org/
+Description: utility functions from BSD systems - shared library
+Description-md5: 85853962ecf54d2af43ee57974a0c0ed
+Original-Maintainer: Guillem Jover <guillem@debian.org>
+Multi-Arch: same
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libbz2-1.0
+Source: bzip2
+Priority: required
+Section: libs
+Installed-Size: 99
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 1.0.8-6build2
+Depends: libc6 (>= 2.4)
+Filename: pool/main/b/bzip2/libbz2-1.0_1.0.8-6build2_amd64.deb
+Size: 37024
+MD5sum: 898aed3cbbae5ae601be577b85b80d6d
+SHA1: 964a95780347a55b18b194f5fbf12f4e65c2297b
+SHA256: 387910c6d79c39c47d83ca729b84c0d30c674a340e3b290ec7b6df3288c19f9a
+SHA512: 2324da69d76976ee06c61c5eafb37754be569acce21c8a8c5588709c96610613db5bae1580ae9bd4108e5438e487b2dc9694a99bcc70eab60cb52500fdd532c8
+Homepage: https://sourceware.org/bzip2/
+Description: high-quality block-sorting file compressor library - runtime
+Description-md5: 88cb63f2e4d8cedcf07307314fc3c3d3
+Original-Maintainer: Anibal Monsalve Salazar <anibal@debian.org>
+Multi-Arch: same
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libc-bin
+Source: glibc
+Priority: required
+Section: libs
+Installed-Size: 2252
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 2.43-2ubuntu2
+Suggests: manpages
+Depends: libc6 (>> 2.43), libc6 (<< 2.44)
+Essential: yes
+Filename: pool/main/g/glibc/libc-bin_2.43-2ubuntu2_amd64.deb
+Size: 700930
+MD5sum: 3e5d16c5ee05b26ad8cedeaa307afedb
+SHA1: abcd3dc6ac5f9c3fc8be025fa2b157cedaf8b71c
+SHA256: c34230e6892fa95e498e51640f7131946120b83eb672f586e341fa53bf504359
+SHA512: a00d7b7ae75ef4a784d9215c9a4954c67151141e6a7c2a61759ac1c3165bf1675ee1692881758fc7ff382a215c9f748189571f50fc7252511acba840f944fd8c
+Homepage: https://www.gnu.org/software/libc/libc.html
+Description: GNU C Library: Binaries
+Description-md5: fb78a11068cdb8bebf26161c48d1afad
+Original-Maintainer: GNU Libc Maintainers <debian-glibc@lists.debian.org>
+Multi-Arch: foreign
+Original-Vcs-Browser: https://salsa.debian.org/glibc-team/glibc
+Original-Vcs-Git: https://salsa.debian.org/glibc-team/glibc.git
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: minimal
+
+Package: libc-gconv-modules-extra
+Source: glibc
+Priority: required
+Section: libs
+Installed-Size: 8078
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 2.43-2ubuntu2
+Replaces: libc6 (<< 2.42-1)
+Breaks: libc6 (<< 2.42-1)
+Filename: pool/main/g/glibc/libc-gconv-modules-extra_2.43-2ubuntu2_amd64.deb
+Size: 1360770
+MD5sum: c5465dbc5bfcfe0fdb8ef3588a2e68e0
+SHA1: b2499cd1ae6c66e727632aa689f2d8a1103d9ec1
+SHA256: eb5ba6fd4ec1a68801e757f4492c6c6b30119ff277ac9d99629a011559c963f0
+SHA512: 5626f71c3d6857b54076b8c99efdec5f567b9951648b7077cb63e58dc912e45aaf9768c24b3bc9b95ce24d5b4417a0798bca5cdb6ac189f6b18a60fe21367e3d
+Homepage: https://www.gnu.org/software/libc/libc.html
+Description: GNU C Library: Non-essential gconv modules
+Description-md5: cfa0fa446d18da644e8d5fcfa81a0a48
+Original-Maintainer: GNU Libc Maintainers <debian-glibc@lists.debian.org>
+Multi-Arch: same
+Original-Vcs-Browser: https://salsa.debian.org/glibc-team/glibc
+Original-Vcs-Git: https://salsa.debian.org/glibc-team/glibc.git
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libc6
+Source: glibc
+Priority: required
+Section: libs
+Installed-Size: 5793
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 2.43-2ubuntu2
+Recommends: libidn2-0 (>= 2.0.5~)
+Replaces: libc6-amd64
+Suggests: glibc-doc, debconf | debconf-2.0, locales, libnss-nis, libnss-nisplus
+Depends: libgcc-s1, libc-gconv-modules-extra (= 2.43-2ubuntu2)
+Breaks: base-files (<< 13.3~), dhcpcd (<< 1:10.1.0-7~), libamdhip64-5 (<< 5.7.1-5+b1), libhiprtc-builtins5 (<< 5.7.1-5+b1), librccl1 (<< 5.4.3-3build1), libswupdate0.1 (<< 2024.12.1+dfsg-1+b3), locales (<< 2.43), locales-all (<< 2.43), lua-swupdate (<< 2024.12.1+dfsg-1+b3), nscd (<< 2.43), pd-scaf (<< 1:0.14.1+darcs20180201-6build5), postgresql-15-pllua (<< 1:2.0.12-4), postgresql-17-pllua (<< 1:2.0.12-3+b2), python3-mrgingham (<< 1.25-1), python3-onnxruntime (<< 1.20.1+dfsg-2~), sysvinit (<< 3.09-2~), sysvinit-core (<< 3.09-2~), uwsgi-plugin-pypy3 (<< 0.0.2+b1)
+Filename: pool/main/g/glibc/libc6_2.43-2ubuntu2_amd64.deb
+Size: 2103270
+MD5sum: 1441687c9da369008574e33c416a7748
+SHA1: 259cbf97faf5dcc37c9aa18dd45eceea72a80c7c
+SHA256: c13775dc0c984403f3fcad229d14507a9f387763bd07ace1e5f93897ee6b8434
+SHA512: ed1401356c89bc62bb74bfcae8ce0de1b41e260c97b639cc44c47bb657c5a902ecd6bd3aa83c101a4cc002c39e1ed32f46319f112bf47c778b2645b2b8fee296
+Homepage: https://www.gnu.org/software/libc/libc.html
+Description: GNU C Library: Shared libraries
+Description-md5: fc3001b0b90a1c8e6690b283a619d57f
+Original-Maintainer: GNU Libc Maintainers <debian-glibc@lists.debian.org>
+Multi-Arch: same
+Original-Vcs-Browser: https://salsa.debian.org/glibc-team/glibc
+Original-Vcs-Git: https://salsa.debian.org/glibc-team/glibc.git
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libcap-ng0
+Source: libcap-ng
+Priority: required
+Section: libs
+Installed-Size: 59
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 0.8.5-4build5
+Depends: libc6 (>= 2.38)
+Filename: pool/main/libc/libcap-ng/libcap-ng0_0.8.5-4build5_amd64.deb
+Size: 14366
+MD5sum: b39f12b629d4170fb76fbebc1dbd602c
+SHA1: 30c0ff27d465b93bfea66df0eeab09e90aff79cf
+SHA256: ef20434fbf03076d238155e937870cf389884ae81bd8c3569ff6043aef6da398
+SHA512: 03c954cbe1d9f8cf590664fb8dfc0d39ca3fa5219f23697272034e96b483eccec0fb91248ecba0a047cc5077755e01df86a07f2cf044059c7e816793b48b3fab
+Homepage: https://people.redhat.com/sgrubb/libcap-ng
+Description: alternate POSIX capabilities library
+Description-md5: 43e332337e845c9ae5422001e67a1209
+Original-Maintainer: Håvard F. Aasen <havard.f.aasen@pfft.no>
+Multi-Arch: same
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libcom-err2
+Source: e2fsprogs
+Priority: required
+Section: libs
+Installed-Size: 66
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 1.47.2-3ubuntu4
+Replaces: libcom-err2t64, libcomerr2 (<< 1.43.9-1~)
+Provides: libcom-err2t64 (= 1.47.2-3ubuntu4), libcomerr2 (= 1.47.2-3ubuntu4)
+Depends: libc6 (>= 2.38)
+Breaks: libcom-err2t64 (<< 1.47.0-2.4~exp1~), libcomerr2 (<< 1.43.9-1~)
+Filename: pool/main/e/e2fsprogs/libcom-err2_1.47.2-3ubuntu4_amd64.deb
+Size: 27824
+MD5sum: 3b2353aa77c02bd19b28b207264c4c8f
+SHA1: 4e06ee2c6c737fcd3def00a83e83caa636454322
+SHA256: 180b6ea0b9c07d4fd2ede79e29ee8eca830cd9384f856507e28dc24d1d3ae514
+SHA512: 61cbbd6a071d80dfe223c4a5c7c0d4dcd735610a61fa73fba3b1aa6e5217ef121205446f935f287afa888c6716825c7afa42250117aa4add3c6d45016dd66f0c
+Homepage: http://e2fsprogs.sourceforge.net
+Description: common error description library
+Description-md5: 5611f795c9947cfb9a2980a01506a1b9
+Original-Maintainer: Theodore Y. Ts'o <tytso@mit.edu>
+Multi-Arch: same
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libcrypt1
+Source: libxcrypt
+Priority: required
+Section: libs
+Installed-Size: 244
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 1:4.5.1-1
+Replaces: libc6 (<< 2.29-4)
+Depends: libc6 (>= 2.38)
+Conflicts: libpam0g (<< 1.4.0-10)
+Filename: pool/main/libx/libxcrypt/libcrypt1_4.5.1-1_amd64.deb
+Size: 90730
+MD5sum: 7fc187856e834d48de1be07179438e22
+SHA1: 7dc6e7e255ba3de44b39607d79300689e854b7d3
+SHA256: 57ab343c3dd28ce7101dc4e23de4e9d5bd3e58c6cb0ecd5ba0c42a877fc8868a
+SHA512: 9ba239cab32386ed2a642303e0d9355c8ea19e5e81c7a83ab0b3279cf25a87213fcdb42fc744100ce9c1c5bd23da4ad7d3d515ca136b5a1885ec406723d185a0
+Description: libcrypt shared library
+Description-md5: deac8c9adc422e925bdaf6bffdd3e875
+Original-Maintainer: Marco d'Itri <md@linux.it>
+Multi-Arch: same
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libdb5.3t64
+Source: db5.3
+Priority: required
+Section: libs
+Installed-Size: 1817
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 5.3.28+dfsg2-10ubuntu1
+Replaces: libdb5.3
+Provides: libdb5.3 (= 5.3.28+dfsg2-10ubuntu1)
+Depends: libc6 (>= 2.38)
+Breaks: libdb5.3 (<< 5.3.28+dfsg2-10ubuntu1)
+Filename: pool/main/d/db5.3/libdb5.3t64_5.3.28+dfsg2-10ubuntu1_amd64.deb
+Size: 762574
+MD5sum: 848b5d2721c617655a90055941d4fa9c
+SHA1: c9ee77a329ca650d5b497d72204afd8433dc36e9
+SHA256: 823df284bbc343ae6e22d69dc14a39c31b6c81fc2bccdd9ed720b88af92fcfa4
+SHA512: c4581caac710f5beb14d3667c29b3c717f16367226be3ae8ca1662bddc3a2ae060e1a7ef8e2da2b588f46ed3748691a3cc76b9e7a9dd0b8d643fcc31e6e11fd1
+Homepage: http://www.oracle.com/technetwork/database/database-technologies/berkeleydb/overview/index.html
+Description: Berkeley v5.3 Database Libraries [runtime]
+Description-md5: 6cef0d1fc062f09a5c2c1209dc807be1
+Multi-Arch: same
+Original-Maintainer: Debian QA Group <packages@qa.debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libdebconfclient0
+Source: cdebconf
+Priority: required
+Section: libs
+Installed-Size: 39
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 0.280ubuntu1
+Depends: libc6 (>= 2.38)
+Filename: pool/main/c/cdebconf/libdebconfclient0_0.280ubuntu1_amd64.deb
+Size: 12384
+MD5sum: 034037ca33d6406c526a1fc2be43b89a
+SHA1: 071fc4e351a0dad8ac7698caf26d0892428ce1cc
+SHA256: 21f699abaaa7624b0206573f69bf4f7a902d92863f2c9dfba497662c5713456b
+SHA512: 0c2c3f8609a36bde704693c492d8b4e89728edbefab0cab2fc14976a4d21b9bf953dd664a72bbf301999254558a7ed2f3fc8bc350c869be225ca280835d83d4e
+Description: Debian Configuration Management System (C-implementation library)
+Description-md5: b6846d950dc3d5d61a275932cc66b18d
+Multi-Arch: same
+Original-Maintainer: Debian Install System Team <debian-boot@lists.debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libext2fs2t64
+Source: e2fsprogs
+Priority: required
+Section: libs
+Installed-Size: 551
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 1.47.2-3ubuntu4
+Replaces: e2fslibs (<< 1.43.9-1~), libext2fs2
+Provides: e2fslibs (= 1.47.2-3ubuntu4), libext2fs2 (= 1.47.2-3ubuntu4)
+Depends: libc6 (>= 2.38)
+Breaks: e2fslibs (<< 1.43.9-1~), libext2fs2 (<< 1.47.2-3ubuntu4)
+Filename: pool/main/e/e2fsprogs/libext2fs2t64_1.47.2-3ubuntu4_amd64.deb
+Size: 229694
+MD5sum: 15b4d882d2ca09a24327e25ea4214b01
+SHA1: e489500ff5cef7267043a6855049df516c367e0c
+SHA256: 0c58fa90fcb38c1bcc0dbce47b105c60c990128e0220b087f4513d82499d404e
+SHA512: bbc89b8b0b7b874cd1a304c7eedb0a3d81efb4e4f478e554a35e41036c4c6a86e52192d0b8ff3fdddf23a8937cda262b879870c0423d9281f58ce34af6a29fea
+Homepage: http://e2fsprogs.sourceforge.net
+Description: ext2/ext3/ext4 file system libraries
+Description-md5: ba4f61a3e0b238831f03143cbdce696e
+Original-Maintainer: Theodore Y. Ts'o <tytso@mit.edu>
+Multi-Arch: same
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libgcc-s1
+Source: gcc-16
+Priority: required
+Section: libs
+Installed-Size: 201
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 16-20260322-1ubuntu1
+Replaces: libgcc1 (<< 1:10)
+Provides: libgcc1 (= 1:16-20260322-1ubuntu1)
+Depends: gcc-16-base (= 16-20260322-1ubuntu1), libc6 (>= 2.35)
+Filename: pool/main/g/gcc-16/libgcc-s1_16-20260322-1ubuntu1_amd64.deb
+Size: 80312
+MD5sum: 281197aa199062adde85228bd8106ff5
+SHA1: aee4d5157489a6028a261dd695c4a5598c375246
+SHA256: 2fb4d81c14fdf34251639ae82f5181f9f98480ea16125d535571ac1be9db3065
+SHA512: a34e93f253ca90bd331c5eee563be6ebcc14dbf08147e82b9479f972fe566c83263b644e348757af1853f8663cb8ca2349e2c013e4a0ca0e3ea3d631297576b2
+Homepage: http://gcc.gnu.org/
+Description: GCC support library
+Description-md5: bbd60d723e97d8e06c04228ee4c76f10
+Protected: yes
+Multi-Arch: same
+Important: yes
+Original-Maintainer: Debian GCC Maintainers <debian-gcc@lists.debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libgcrypt20
+Priority: important
+Section: libs
+Installed-Size: 1842
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 1.12.0-2
+Suggests: rng-tools
+Depends: libc6 (>= 2.38), libgpg-error0 (>= 1.56)
+Filename: pool/main/libg/libgcrypt20/libgcrypt20_1.12.0-2_amd64.deb
+Size: 673656
+MD5sum: 9ef0ae949c213fc5dc8667cc17bb2b04
+SHA1: 79639039a20530506152c9c89b085ddab78a1482
+SHA256: e063b7f814fe20453a8d8f7954aed902e539b36b3ba7e6c00074829f1ce1a174
+SHA512: 011a7468c36f0858f849d99872ddd422624b4f67a64b33ebce836e429882c60e6eadec528f0255ce0f2c860a79780a3a964346b4fbaf34eb7fd9aae501cf0511
+Homepage: https://gnupg.org/software/libgcrypt/
+Description: LGPL Crypto library - runtime library
+Description-md5: 0c8c804b870e3fe346324596e4fbe980
+Original-Maintainer: Debian GnuTLS Maintainers <pkg-gnutls-maint@lists.alioth.debian.org>
+Multi-Arch: same
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+Build-Essential: yes
+
+Package: libgmp10
+Source: gmp
+Priority: required
+Section: libs
+Installed-Size: 552
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 2:6.3.0+dfsg-5ubuntu2
+Depends: libc6 (>= 2.38)
+Breaks: postgresql-pgmp (<< 1.0.3-1)
+Filename: pool/main/g/gmp/libgmp10_6.3.0+dfsg-5ubuntu2_amd64.deb
+Size: 256686
+MD5sum: 52cba7cee8288eb716412660f370d1da
+SHA1: 70c766f67e0bfefb215151f7a3a57615b7e4ca6a
+SHA256: a9bbe9d4a4bcd5875bbd0f53e67c379bc881d1c1a80522d51dfb4b107cc31819
+SHA512: 56a8540513ceb067295b626157d6b1cdf657f1563caff0f5ae1bade8f8791a73cb73820daa4f7b3abbc4035cd8c2f7e4de96ec920bc87bfd94bff02260dab7a4
+Homepage: https://gmplib.org/
+Description: Multiprecision arithmetic library
+Description-md5: cf6b3a218331a8f680398794acac47a0
+Multi-Arch: same
+Original-Maintainer: Debian Science Maintainers <debian-science-maintainers@lists.alioth.debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libgpg-error0
+Source: libgpg-error
+Priority: important
+Section: libs
+Installed-Size: 219
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 1.58-2
+Recommends: libgpg-error-l10n
+Depends: libc6 (>= 2.42)
+Filename: pool/main/libg/libgpg-error/libgpg-error0_1.58-2_amd64.deb
+Size: 83308
+MD5sum: 89c7a1ee39002129104df5425f64ade3
+SHA1: 1c5d959bc01735724af59af9d0809e802912be3e
+SHA256: 02d02854c5f9cc2cc47b8c4bb6a468c16df1bc2c4627cf83bd1dab0bff6d0263
+SHA512: c3b622ada4c695ebcbe2741f94c99b4913c59abb2ccd72259e6e48d140dec18eb27479195937e725b8828ad47e4597a309b62e7fd3544ed052297c51f5f457ec
+Homepage: https://www.gnupg.org/related_software/libgpg-error/
+Description: GnuPG development runtime library
+Description-md5: 25a68a249e16424360132bea187a6d2b
+Original-Maintainer: Debian GnuPG Maintainers <pkg-gnupg-maint@lists.alioth.debian.org>
+Multi-Arch: same
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+Build-Essential: yes
+
+Package: liblz4-1
+Source: lz4
+Priority: important
+Section: libs
+Installed-Size: 185
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 1.10.0-8
+Replaces: liblz4-1a
+Depends: libc6 (>= 2.14), libxxhash0 (>= 0.6.5)
+Breaks: liblz4-1a
+Filename: pool/main/l/lz4/liblz4-1_1.10.0-8_amd64.deb
+Size: 73784
+MD5sum: b82c6919209837be17dd161ce61ab024
+SHA1: fa059200f74b84ec38922369fa2d25fa8877332c
+SHA256: 28fe729f69be0fa950618f0ee02e479218fd60b11e86c1aa6026c87632ed2aa4
+SHA512: 210e09400ead8b53f3e78c6734d011620fa7a1d0ae10e5629bfa25e33d4d8a11b9e7f7fd03d2a2500739b5fb6c48711b106a62ea327289b79960ed566a10766e
+Homepage: https://github.com/lz4/lz4
+Description: Fast LZ compression algorithm library - runtime
+Description-md5: c21cacb9494ced3b87993140a583422c
+Original-Maintainer: Nobuhiro Iwamatsu <iwamatsu@debian.org>
+Multi-Arch: same
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+Build-Essential: yes
+
+Package: liblzma5
+Source: xz-utils
+Priority: required
+Section: libs
+Installed-Size: 473
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 5.8.3-1
+Depends: libc6 (>= 2.34)
+Breaks: liblzma2 (<< 5.1.1alpha+20110809-3~)
+Filename: pool/main/x/xz-utils/liblzma5_5.8.3-1_amd64.deb
+Size: 145410
+MD5sum: 2819d48fef7d504a9f6b35a81e1c99fc
+SHA1: 9be746224c65eb5496ecea17c29c93847b8ccdc6
+SHA256: 38ad8500817a9159db210fecfb8c50fa82d7a8829730fcdf8ae60e3523676d41
+SHA512: 2993910d069b7a94427c7aa961e135fe468058ae701d20c2d8ce74561155d03d76aa0f41c42f84b0868de736a8e2bf08c983f41f766a4b30197e635180c1cf96
+Homepage: https://tukaani.org/xz/
+Description: XZ-format compression library
+Description-md5: 0ceca09eb4ab99863be3578fa55e7d2b
+Original-Maintainer: Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
+Multi-Arch: same
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libmd0
+Source: libmd
+Priority: required
+Section: libs
+Installed-Size: 79
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 1.1.0-2build4
+Depends: libc6 (>= 2.33)
+Filename: pool/main/libm/libmd/libmd0_1.1.0-2build4_amd64.deb
+Size: 27252
+MD5sum: 1150beea30031ee2acd11bb14c632dca
+SHA1: 5d218d5c0e68b9c231268088d2d6def2acb0fac9
+SHA256: da684bb562e167721ae38366586aaee0b4cc580b9ee6d0220128b15ef9c5be75
+SHA512: 668312e1787ed1d392c90a80c48308056e37d0abe8023388ca4394d3301935d9d676215e2612df99f582c00835857cded73b9d71d39fdcb1c617f82ed1db23a1
+Homepage: https://www.hadrons.org/software/libmd/
+Description: message digest functions from BSD systems - shared library
+Description-md5: 9f178d99a8400fec0a8ae1aa28518f9b
+Multi-Arch: same
+Original-Maintainer: Guillem Jover <guillem@debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libmount1
+Source: util-linux
+Priority: required
+Section: libs
+Installed-Size: 401
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 2.41.3-3ubuntu2
+Suggests: cryptsetup-bin
+Depends: libblkid1 (= 2.41.3-3ubuntu2), libc6 (>= 2.38), libselinux1 (>= 3.1~)
+Filename: pool/main/u/util-linux/libmount1_2.41.3-3ubuntu2_amd64.deb
+Size: 158044
+MD5sum: ed3c312156d7368b03cdb02b616c4df0
+SHA1: 5726d55fce08157edf1ffb94bf7de11aae032779
+SHA256: c0bd8dbe186941f2aaf2b1536d1b48084a7ceda68369afb7f66391b9bcacba36
+SHA512: c01df9c499cbeda983ff430214be518d85367d2838ced38f4e6deba0e90c69ec250177e75da072e49ad6e45c9e0d913fef3c0fb16736b4804dbe356c0f04fc48
+Homepage: https://github.com/util-linux/util-linux
+Description: device mounting library
+Description-md5: 7e446c44302ff94779f1434f2e05d553
+Multi-Arch: same
+Original-Maintainer: Chris Hofstaedtler <zeha@debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libncursesw6
+Source: ncurses
+Priority: required
+Section: libs
+Installed-Size: 426
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 6.6+20251231-1
+Recommends: libgpm2
+Depends: libtinfo6 (= 6.6+20251231-1), libc6 (>= 2.38)
+Filename: pool/main/n/ncurses/libncursesw6_6.6+20251231-1_amd64.deb
+Size: 150390
+MD5sum: a1ee3bc18bd3c8ed43478ae274199065
+SHA1: 6d58b98ae99178d2e57903dcb6bf52e44284efe5
+SHA256: f41108de5823fee85bd355a06b2939b2c8fe2f6df267c4fa45435544990ec6ff
+SHA512: f4cbae9da6807707298dc32470d0b4eb8ece19961beaff3c7ca10beea522b501a8e6cbf04d976a63b672b83385b91cec6ae32f21e3c5913ec9df2e1a8090ae84
+Homepage: https://invisible-island.net/ncurses/
+Description: shared libraries for terminal handling (wide character support)
+Description-md5: 1a69a793355bf1fff9186f00b71dd14a
+Original-Maintainer: Ncurses Maintainers <ncurses@packages.debian.org>
+Multi-Arch: same
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libpam-modules
+Source: pam
+Priority: required
+Section: admin
+Installed-Size: 1054
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 1.7.0-5ubuntu3
+Replaces: libpam-umask, libpam0g-util
+Provides: libpam-mkhomedir, libpam-motd, libpam-umask
+Conflicts: libpam-mkhomedir, libpam-motd, libpam-umask
+Pre-Depends: libaudit1 (>= 1:2.2.1), libc6 (>= 2.38), libcrypt1 (>= 1:4.3.0), libdb5.3t64, libpam0g (>= 1.4.1), libselinux1 (>= 3.1~), libsystemd0 (>= 254), debconf (>= 0.5) | debconf-2.0, libpam-modules-bin (= 1.7.0-5ubuntu3)
+Filename: pool/main/p/pam/libpam-modules_1.7.0-5ubuntu3_amd64.deb
+Size: 192834
+MD5sum: 1de3b282f1a7d67c36eca4b2a8d05690
+SHA1: 56521e679ed0bc6b5cf26c1d5d07c335208e19eb
+SHA256: 13bb794692dbf0f7f5cdaf5df65ef822d22c8499bf1d031dd7eb9c6b0746378e
+SHA512: 2fa2c543d54bedd17fdf07be77702c73e41958267ca23d2677d0982ab0030d91ac2ee783fe90f6f7623288dc6c851e0faae7e95b5bf5580406b0feaadca6b665
+Homepage: http://www.linux-pam.org/
+Description: Pluggable Authentication Modules for PAM
+Description-md5: ae68cd047dd83d2bfa182bc6628e0206
+Multi-Arch: same
+Original-Maintainer: Sam Hartman <hartmans@debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libpam-modules-bin
+Source: pam
+Priority: required
+Section: admin
+Installed-Size: 251
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 1.7.0-5ubuntu3
+Replaces: libpam-modules (<< 1.5.2-5~)
+Depends: libaudit1 (>= 1:2.2.1), libc6 (>= 2.38), libcrypt1 (>= 1:4.3.0), libpam0g (>= 0.99.7.1), libselinux1 (>= 3.1~), libsystemd0 (>= 254)
+Filename: pool/main/p/pam/libpam-modules-bin_1.7.0-5ubuntu3_amd64.deb
+Size: 45626
+MD5sum: 46bfd12ed27433c987efe6d2cabbb648
+SHA1: 48f8d39922cd570065c04adf854daacf0ae4064b
+SHA256: 18cfdce1831fb38878a9987cacd02b1a69ea7bda545f6e8eb737742defcd24b5
+SHA512: f4ab4e76719cffaabfa77980fa7bf7ae22dd7dca17a1b04ce86c60f7d66454bb9f26c8c0464a1d73117f3feec41486a07c0e2cdaec5cde53106decf505220a2d
+Homepage: http://www.linux-pam.org/
+Description: Pluggable Authentication Modules for PAM - helper binaries
+Description-md5: 25d278fc7450d5202a9a137f71302e58
+Multi-Arch: foreign
+Original-Maintainer: Sam Hartman <hartmans@debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libpam-runtime
+Source: pam
+Priority: required
+Section: admin
+Installed-Size: 528
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: all
+Version: 1.7.0-5ubuntu3
+Replaces: libpam-modules (<< 1.7.0), libpam-modules-bin (<< 1.7.0)
+Depends: debconf (>= 0.5) | debconf-2.0, debconf (>= 1.5.19) | cdebconf, libpam-modules (>= 1.0.1-6)
+Breaks: libpam-modules (<< 1.7.0), libpam-modules-bin (<< 1.7.0)
+Filename: pool/main/p/pam/libpam-runtime_1.7.0-5ubuntu3_all.deb
+Size: 148548
+MD5sum: af0eb8c3f771b869affcbfca5f8961ec
+SHA1: 12831d71a802e723d56fa0a61dc05770866ca024
+SHA256: 9f921930903e1dfa626593a411dba2146c91cdacce724f541a079b181452ef41
+SHA512: 796cd13574492082aafb4a4f929a3710bfbbd14aa7b82b76182a544d157f9d625db521aa3f26de19c6beddef1dbbcbe1018b6f6fe5d1a6c7a37101ea2b9fe4c2
+Homepage: http://www.linux-pam.org/
+Description: Runtime support for the PAM library
+Description-md5: bc15ddbf92ee7965a8588141c54bb5a1
+Multi-Arch: foreign
+Original-Maintainer: Sam Hartman <hartmans@debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libpam0g
+Source: pam
+Priority: required
+Section: libs
+Installed-Size: 211
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 1.7.0-5ubuntu3
+Replaces: libpam0g-util, libpam0t64 (<< 1.5.3-5)
+Suggests: libpam-doc
+Depends: libaudit1 (>= 1:2.2.1), libc6 (>= 2.34), debconf (>= 0.5) | debconf-2.0
+Breaks: libpam0t64 (<< 1.5.3-5)
+Filename: pool/main/p/pam/libpam0g_1.7.0-5ubuntu3_amd64.deb
+Size: 69908
+MD5sum: 0b1fc0e67fb911bf0ba1fb02eacb2cdd
+SHA1: a1872c03c35b333e1ed05e5bf98dc0f3241f3684
+SHA256: acf0babd7e2da02a1f03981398624f7ad4660eb1ff188b4c9e93a350f98d02cd
+SHA512: 924ab8aba7c07e8e4df89e5b77bf49ca8897bd476a0512d446e46e82a7391087680dc59fdaf1c25dc8df04da5d1a0fc78439f34b7ed685b0aa17f213a8f626e2
+Homepage: http://www.linux-pam.org/
+Description: Pluggable Authentication Modules library
+Description-md5: af00a40029e1e1d2ad04c042c3b18095
+Multi-Arch: same
+Original-Maintainer: Sam Hartman <hartmans@debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libpcre2-8-0
+Source: pcre2
+Priority: required
+Section: libs
+Installed-Size: 708
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 10.46-1build1
+Depends: libc6 (>= 2.34)
+Filename: pool/main/p/pcre2/libpcre2-8-0_10.46-1build1_amd64.deb
+Size: 256534
+MD5sum: 5aa2d59a224bbdc744ca1afbaa541bbd
+SHA1: 33f30fb3459a3892c713fd56576d37a860a46c7b
+SHA256: 3e116766f1a7b149994d4745556023d993d26401223d1595520a991d4ba737fb
+SHA512: 1abb5ac6596a4d9fed20e8348c85771a0d4f048a11f28a0439ba779a618ce92fec27d9170c2fb93bc6b2537e4dd17cddeda719e3a658d32670b483b131aa1693
+Homepage: https://github.com/PCRE2Project/pcre2
+Description: New Perl Compatible Regular Expression Library- 8 bit runtime files
+Description-md5: c7a3d45ed09bfb032aada6998b70c4e1
+Original-Maintainer: Matthew Vernon <matthew@debian.org>
+Multi-Arch: same
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libproc2-0
+Source: procps
+Priority: required
+Section: libs
+Installed-Size: 241
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 2:4.0.4-9ubuntu1
+Replaces: procps (<< 1:3.3.2-1)
+Depends: libc6 (>= 2.38), libsystemd0
+Filename: pool/main/p/procps/libproc2-0_4.0.4-9ubuntu1_amd64.deb
+Size: 59412
+MD5sum: b6ee8d142c3a1724d689c2baaddb4cbe
+SHA1: 69db824c48bc57b5c32d0d5b4c82bf3c278a1c81
+SHA256: 47d00e206617cc92aa319b6b0430f77460826bd7f15c1b3d5171e1646545f9f2
+SHA512: d643050194aec12a1d6d29fe110565c9c64fd17c2b9090125458f3a37f7e23ba6e239ff734b798dfddfdbb39904ffd956eef669126ce0f8719716009b08139ce
+Homepage: https://gitlab.com/procps-ng/procps
+Description: library for accessing process information from /proc
+Description-md5: ec32c9801e27f2d28cc3c9ffc3567539
+Multi-Arch: same
+Original-Maintainer: Craig Small <csmall@debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libseccomp2
+Source: libseccomp
+Priority: important
+Section: libs
+Installed-Size: 200
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 2.6.0-2ubuntu5
+Depends: libc6 (>= 2.14)
+Filename: pool/main/libs/libseccomp/libseccomp2_2.6.0-2ubuntu5_amd64.deb
+Size: 53010
+MD5sum: 405fa1fb61b2586059fedeb92f915061
+SHA1: 5b6e6488c501fa0fbc1d695d75e00bf9677d89dc
+SHA256: c5e4b198f251da0ede226fd179830bd8767482821a1773f835358f726795cb16
+SHA512: 22faf7e8becb2eaffef8ba3c4a09ac3c9927581ef6dce99e6c7019191d1018703876b6e62af7f9f277bdea65b170fecf069cc92321566b36019d332495d8e0a8
+Homepage: https://github.com/seccomp/libseccomp
+Description: high level interface to Linux seccomp filter
+Description-md5: 7ee97a8161e83bfebc75870eb92bde51
+Multi-Arch: same
+Original-Maintainer: Kees Cook <kees@debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+Build-Essential: yes
+
+Package: libselinux1
+Source: libselinux
+Priority: required
+Section: libs
+Installed-Size: 228
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 3.9-4build1
+Depends: libc6 (>= 2.38), libpcre2-8-0 (>= 10.22)
+Filename: pool/main/libs/libselinux/libselinux1_3.9-4build1_amd64.deb
+Size: 90316
+MD5sum: 2165a643b5085cf26d0f3c8541d4c8ff
+SHA1: 5ab1d804c4c11f6f5d43d4a1329bb5bab0c4a9ee
+SHA256: 3ce3aea44b2ec00780c48b1b8e1f7e672166ec3ccac14b0eae8890e55983061e
+SHA512: 438ca440a9ba68787e6e747d5c5d7adbac7baf6a4203f99620cf0f92c0c4750b879c4d851f8dfc6c2aa54050f4f49a2c7aafefe67e1d0d8b5ebba2659f5d25df
+Homepage: https://github.com/SELinuxProject
+Description: SELinux runtime shared libraries
+Description-md5: 90f6e1cb06c527bc3fc11ec6f969c59c
+Original-Maintainer: Debian SELinux maintainers <selinux-devel@lists.alioth.debian.org>
+Multi-Arch: same
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libsemanage-common
+Source: libsemanage
+Priority: required
+Section: libs
+Installed-Size: 20
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: all
+Version: 3.9-1build1
+Filename: pool/main/libs/libsemanage/libsemanage-common_3.9-1build1_all.deb
+Size: 6828
+MD5sum: 7a4fdc79031c4980a4a43c5f5cbd2088
+SHA1: 2ec85ae502f32f3c424a56973891b52cdf3495cb
+SHA256: 09668f05e1a860672d94f31a5ae025d2b41269ff6cc5479554825758ee9dcf3a
+SHA512: fec53432cae9bcb51b38aa1daf63ac9168ab1a7d0469ee42d2625d33aed34f87adc60d6d870ed5c6c1faca7d798f994b8d69b90a506f101d18371c8f4956c2ff
+Homepage: https://selinuxproject.org
+Description: Common files for SELinux policy management libraries
+Description-md5: c7a0a093650c85e838f42492add9b46b
+Original-Maintainer: Debian SELinux maintainers <selinux-devel@lists.alioth.debian.org>
+Multi-Arch: foreign
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libsemanage2
+Source: libsemanage
+Priority: required
+Section: libs
+Installed-Size: 305
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 3.9-1build1
+Depends: libsemanage-common (>= 3.9-1build1), libaudit1 (>= 1:2.2.1), libbz2-1.0, libc6 (>= 2.38), libselinux1 (>= 3.1~), libsepol2 (>= 3.9)
+Filename: pool/main/libs/libsemanage/libsemanage2_3.9-1build1_amd64.deb
+Size: 99124
+MD5sum: befab1528ae403a4e7b085fccc0edebf
+SHA1: 18f314c1be31324dc2971f775c40c9a329d2c780
+SHA256: accd0695703203d9b50cc6325e7f7e849875789cc1f55ba975651e83e3045a76
+SHA512: 02f6e72a080419892fc613f8a35f15f0f4814ce877288ac0726c137ef1099065a04a89c2a92816bdad2288971fde5e18d191b2c07f5f941faceb7b8391b3ac0f
+Homepage: https://selinuxproject.org
+Description: SELinux policy management library
+Description-md5: 8998b538051f37f69c5f1bf9a005fa56
+Original-Maintainer: Debian SELinux maintainers <selinux-devel@lists.alioth.debian.org>
+Multi-Arch: same
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libsepol2
+Source: libsepol
+Priority: required
+Section: libs
+Installed-Size: 823
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 3.9-2
+Depends: libc6 (>= 2.38)
+Filename: pool/main/libs/libsepol/libsepol2_3.9-2_amd64.deb
+Size: 327664
+MD5sum: dcd18267e892b67a40f2093ad866c680
+SHA1: efa0b8c745787aa68b0157162e43eec6552b149a
+SHA256: fbad1d0e81e2b18602bce921697fa14c6dc54c09e790f917e1d512f1fb4c320d
+SHA512: c34a644a24354eb2533566ffb4928d901a4711ce63488f45570c86125192e070bcc72fd36efeb1c385508e7452dc7a580452ad6a6b563ac6e8ba115464eeade5
+Homepage: https://selinuxproject.org
+Description: SELinux library for manipulating binary security policies
+Description-md5: d569fae7efa3328b3d40879b104d9a63
+Original-Maintainer: Debian SELinux maintainers <selinux-devel@lists.alioth.debian.org>
+Multi-Arch: same
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libsmartcols1
+Source: util-linux
+Priority: required
+Section: libs
+Installed-Size: 217
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 2.41.3-3ubuntu2
+Depends: libc6 (>= 2.38)
+Filename: pool/main/u/util-linux/libsmartcols1_2.41.3-3ubuntu2_amd64.deb
+Size: 84264
+MD5sum: d5d2f535db17ade54e021405c4f171bd
+SHA1: 6e22dd8cd85d10ddd440811abc4322c143f46f72
+SHA256: a30fdde4eff9088eb91050856b58b7a87abc668a1d88895a9ee670c76f091cb0
+SHA512: 89f68fef314a1f963a1a9aa59ce46c19abc9ee58374b9f7177eff6136020a58aefb13e44d5091c1d15d21e0a1fc8890b35cf4c39294b584a3a114b9a80b51b51
+Homepage: https://github.com/util-linux/util-linux
+Description: smart column output alignment library
+Description-md5: d5382f0223188fc45ed69f879488c198
+Multi-Arch: same
+Original-Maintainer: Chris Hofstaedtler <zeha@debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libss2
+Source: e2fsprogs
+Priority: required
+Section: libs
+Installed-Size: 78
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 1.47.2-3ubuntu4
+Replaces: e2fsprogs (<< 1.34-1), libss2t64
+Provides: libss2t64 (= 1.47.2-3ubuntu4)
+Depends: libcom-err2, libc6 (>= 2.34)
+Breaks: libss2t64 (<< 1.47.0-2.4~exp1~)
+Filename: pool/main/e/e2fsprogs/libss2_1.47.2-3ubuntu4_amd64.deb
+Size: 17910
+MD5sum: 26f144aa446465fea05789828adb06b6
+SHA1: 88d46af4d3aca29fede9f16e6e74397041a23d5b
+SHA256: 08d28bd0e1402f45c1e7c9b28cc65ec55442876217c9f553e8836c0622a71509
+SHA512: 61459423a8ba35614f86859ece4d70c60f1ee194cbdcf632907c5565ebee31792bd55f0639915844ef5c59c4bc1a5f281de37526b1fdf1eec5038a0a1dd5afb1
+Homepage: http://e2fsprogs.sourceforge.net
+Description: command-line interface parsing library
+Description-md5: d3d9f89af5755a413e24d2dc0cb7df81
+Original-Maintainer: Theodore Y. Ts'o <tytso@mit.edu>
+Multi-Arch: same
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libssl3t64
+Source: openssl
+Priority: required
+Section: libs
+Installed-Size: 7975
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 3.5.5-1ubuntu3
+Replaces: libssl3
+Provides: libssl3 (= 3.5.5-1ubuntu3)
+Depends: libc6 (>= 2.38), libzstd1 (>= 1.5.5), zlib1g (>= 1:1.1.4), openssl-provider-legacy
+Breaks: libssl3 (<< 3.5.5-1ubuntu3), openssh-client (<< 1:9.4p1), openssh-server (<< 1:9.4p1), python3-m2crypto (<< 0.38.0-4)
+Filename: pool/main/o/openssl/libssl3t64_3.5.5-1ubuntu3_amd64.deb
+Size: 2359122
+MD5sum: b054a3c13f83a2c3ca88df96fd008ff4
+SHA1: 29d83b4c46ffd2699ab93d29aa589addb8bfa3df
+SHA256: fe78b8124fb6c8c0d7efc8f2bd8d5e0d3f217351f520a3b4652ee0afe24143c2
+SHA512: 3f870c46fdfd2f27deb86a7f5038fe2b23065792ecc04f84fafca5f36cd317389cc422ff07c9d539673f757eafcd1d4cf53d79a73cc300d315a64e327128f273
+Homepage: https://openssl-library.org
+Description: Secure Sockets Layer toolkit - shared libraries
+Description-md5: 88547c6206c7fbc4fcc7d09ce100d210
+Multi-Arch: same
+Original-Maintainer: Debian OpenSSL Team <pkg-openssl-devel@alioth-lists.debian.net>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libstdc++6
+Source: gcc-16
+Priority: important
+Section: libs
+Installed-Size: 3256
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 16-20260322-1ubuntu1
+Replaces: libstdc++6-16-dbg (<< 4.9.0-3)
+Depends: gcc-16-base (= 16-20260322-1ubuntu1), libc6 (>= 2.38), libgcc-s1 (>= 4.3)
+Conflicts: scim (<< 1.4.2-1)
+Breaks: gcc-4.3 (<< 4.3.6-1), gcc-4.4 (<< 4.4.6-4), gcc-4.5 (<< 4.5.3-2)
+Filename: pool/main/g/gcc-16/libstdc++6_16-20260322-1ubuntu1_amd64.deb
+Size: 842676
+MD5sum: 01e95fd454efdcfa54c80b654b1dc533
+SHA1: 1950212bd4d23fbf24c7817087314fb3c9b28fc5
+SHA256: a32b9ad585e39bdc7bd15d1eae6293461e6d466859a1dd2f7862d1e40f89b9d8
+SHA512: 84d72a88706b7897289c44a134ed4d27018f54bb289814b0a30e824182d0261b4a07e5e6fcff36a68b1870d751d03f6ff53d345eefe177231f69769c5bad607d
+Homepage: http://gcc.gnu.org/
+Description: GNU Standard C++ Library v3
+Description-md5: 724ab84919e0e220afb960e36463914d
+Multi-Arch: same
+Original-Maintainer: Debian GCC Maintainers <debian-gcc@lists.debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+Build-Essential: yes
+
+Package: libsystemd0
+Source: systemd
+Priority: required
+Section: libs
+Installed-Size: 1208
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 259.5-0ubuntu3
+Recommends: libzstd1
+Suggests: libgcrypt20, liblz4-1, liblzma5
+Depends: libc6 (>= 2.39)
+Filename: pool/main/s/systemd/libsystemd0_259.5-0ubuntu3_amd64.deb
+Size: 479750
+MD5sum: 8b53cfbb854fd5c0ccc7e19221f00cf0
+SHA1: 20c9c898b9572bd10697f92c2a62bd75f07456ba
+SHA256: a93b416fd58067a14061763bfc9a23d18b0d4e0914b9a678ff7795e02f71d532
+SHA512: 34d78a520edae15613ce701e03616db527e8c1ec9c41c6206bf89e3dd0117771dd599ac5e14f2f02fb560d0c1a28fe4ada35569d53be4204b19a963ae18ad8d6
+Homepage: https://systemd.io
+Description: systemd utility library
+Description-md5: 9afc42993cf4bce87281097b6b9586c9
+Multi-Arch: same
+Original-Maintainer: Debian systemd Maintainers <pkg-systemd-maintainers@lists.alioth.debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libtinfo6
+Source: ncurses
+Priority: required
+Section: libs
+Installed-Size: 569
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 6.6+20251231-1
+Depends: libc6 (>= 2.42)
+Breaks: tmux (<< 3.3a-4)
+Filename: pool/main/n/ncurses/libtinfo6_6.6+20251231-1_amd64.deb
+Size: 110530
+MD5sum: e25c393b2594fd3049e7365e66521107
+SHA1: a674fd0c94d38170b973878c43894bbbd5cc34f5
+SHA256: 42705a701a98d84c203c6f96f08c6fd6a29a1ef978683e1ffbf0e27535b20ddb
+SHA512: 4fcdc6722da5c56a640a0c29aa48f29e5c5aa28dd1e43a3a30b27e249c5a1a0aaae2eb576b486276260e0579ebb6323a5a18852eef310ba4eed7360a99166d38
+Homepage: https://invisible-island.net/ncurses/
+Description: shared low-level terminfo library for terminal handling
+Description-md5: f681846d99e5156a0882bb53c35d3244
+Original-Maintainer: Ncurses Maintainers <ncurses@packages.debian.org>
+Multi-Arch: same
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libudev1
+Source: systemd
+Priority: required
+Section: libs
+Installed-Size: 353
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 259.5-0ubuntu3
+Depends: libc6 (>= 2.38)
+Filename: pool/main/s/systemd/libudev1_259.5-0ubuntu3_amd64.deb
+Size: 149822
+MD5sum: 0a0c29216ad182b4306cec6f246d3fc7
+SHA1: 44401997f89259170c5a6a63f15a08f012d37d71
+SHA256: c8acd1fcb6b4041be7697692f47289d3e147462fcb5c1df722848a3096e1cbd3
+SHA512: 121564d9a87ebc6fe34c883fb7ef0b8dee0117840eacf181e407ff14db516ff5001fa547bb8f1a2d1974bd25d2863d681eb375b8ec07226b968b666eb9b0a310
+Homepage: https://systemd.io
+Description: libudev shared library
+Description-md5: ee41de00cbb160aaa4ae2b193df34f91
+Multi-Arch: same
+Original-Maintainer: Debian systemd Maintainers <pkg-systemd-maintainers@lists.alioth.debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libuuid1
+Source: util-linux
+Priority: required
+Section: libs
+Installed-Size: 90
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 2.41.3-3ubuntu2
+Replaces: libuuid1t64
+Suggests: uuid-runtime
+Provides: libuuid1t64 (= 2.41.3-3ubuntu2)
+Depends: libc6 (>= 2.38)
+Breaks: libuuid1t64 (<< 2.41.3-3ubuntu2)
+Filename: pool/main/u/util-linux/libuuid1_2.41.3-3ubuntu2_amd64.deb
+Size: 35992
+MD5sum: 656bbe2262d0aeb01322596f1683cf79
+SHA1: 877ac0ab2dfee1f1b52e057ca4da2772256506f3
+SHA256: ea9d94da2fb6564391145f3a9630c140c8dd771a38ae753983e8dc55cc22e102
+SHA512: 8a849ccdb96829ab6e9330a547a8c853a990238aeeeb7003230d8151629aee204c849b2722279f7691c4948e278adb340fcfccb914386cff674430f320803065
+Homepage: https://github.com/util-linux/util-linux
+Description: Universally Unique ID library
+Description-md5: f31dd3d34d42a99fedd60c9fb7d79469
+Multi-Arch: same
+Original-Maintainer: Chris Hofstaedtler <zeha@debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: libxxhash0
+Source: xxhash
+Priority: important
+Section: libs
+Installed-Size: 90
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 0.8.3-2build1
+Depends: libc6 (>= 2.14)
+Filename: pool/main/x/xxhash/libxxhash0_0.8.3-2build1_amd64.deb
+Size: 25802
+MD5sum: 1d9926899d5bfdecc3484446c44e1508
+SHA1: 81af00cbba1a53a7cfc0668b025685cac2c803fa
+SHA256: 4fff119ba9018fbe2eddfa7759bb4c7b6132ed38dcfa7fc58750c586d1d155a1
+SHA512: e7a0515a1851b1b56e716ec88dca346278a8193bcba4029e2328b8241b8d294b90d19d3fdfc0906c17e3acd24a1c359937e5bc91cdf1ea2125c6c8250f780885
+Homepage: https://cyan4973.github.io/xxHash
+Description: shared library for xxhash
+Description-md5: 6bd5146e7d8c018b3155cacf897b1233
+Original-Maintainer: Josue Ortega <josue@debian.org>
+Multi-Arch: same
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+Build-Essential: yes
+
+Package: libzstd1
+Source: libzstd
+Priority: required
+Section: libs
+Installed-Size: 802
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 1.5.7+dfsg-3
+Depends: libc6 (>= 2.34)
+Filename: pool/main/libz/libzstd/libzstd1_1.5.7+dfsg-3_amd64.deb
+Size: 308174
+MD5sum: 34f122b3ca44b170b2640a521ed897df
+SHA1: a7f361bfed6d79f8a1a622473d8e2a00c9046ba6
+SHA256: 34365d611ccf1f717f90a92fbe52ed96ae1829ab9be363c68a83563322797f8f
+SHA512: 284a44950a9caae10a6b7a06baead5db2d6dd2989fc01107c78c76ef5468cb489fc1a8e92d6cb84d44b5a371f8b1156bd2f5c232e79f1631dcf000a601e52183
+Homepage: https://github.com/facebook/zstd
+Description: fast lossless compression algorithm
+Description-md5: 5529781042229a3d4fc1e69daa94d736
+Original-Maintainer: RPM packaging team <team+pkg-rpm@tracker.debian.org>
+Multi-Arch: same
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: login
+Source: util-linux (2.41.3-3ubuntu2)
+Priority: required
+Section: admin
+Installed-Size: 196
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 1:4.16.0-2+really2.41.3-3ubuntu2
+Recommends: util-linux-extra
+Depends: libpam-modules, libpam-runtime, libaudit1 (>= 1:2.2.1), libc6 (>= 2.38), libpam0g (>= 0.99.7.1)
+Pre-Depends: login.defs (>= 1:4.16.0-1~)
+Filename: pool/main/u/util-linux/login_4.16.0-2+really2.41.3-3ubuntu2_amd64.deb
+Size: 85172
+MD5sum: 730fdccaa5423693dc5957b1c23024a2
+SHA1: 1bf717c029322465a224f1a7b14770f9d7f9dd89
+SHA256: 839c57d360ebb65fbddbf4268a4594ef85a0ea8d982d92a309f7d25f17714d39
+SHA512: 9101a89ee849e829132e95a2d3ac4048b658033075245e37d3b69e2c2602bfa3ea4f31fb91f30ba43eea408a3fcae08a1257100a91dc08fc0a0ddad0881cac09
+Homepage: https://github.com/util-linux/util-linux
+Description: system login tools
+Description-md5: 3ea3021905283659aa143e4357137245
+Multi-Arch: foreign
+Original-Maintainer: Chris Hofstaedtler <zeha@debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: minimal
+
+Package: login.defs
+Source: shadow
+Priority: required
+Section: admin
+Installed-Size: 103
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: all
+Version: 1:4.17.4-2ubuntu3
+Replaces: login (<< 1:4.16.0-2~)
+Filename: pool/main/s/shadow/login.defs_4.17.4-2ubuntu3_all.deb
+Size: 65080
+MD5sum: 7ecd66346d83554739ce47faa3dda5ed
+SHA1: ec4da14cfce69303050b811d2cbdcc2c073e40d8
+SHA256: 3331efa0bfbf0caeed828beddb179e32719f744891359bd28beb489f8f7a9fbd
+SHA512: 153158e01336a9a7f7cfb4395000ae251f2048a54ad4324948a129661e8a29ded4b03bdbf2234ccc1251202a3d481f3356e7ee95d7b8e5285a3ab7c30a92561f
+Homepage: https://github.com/shadow-maint/shadow
+Description: system user management configuration
+Description-md5: 4085dc032cb3ecfa269c4c2c2b85249c
+Multi-Arch: foreign
+Original-Maintainer: Shadow package maintainers <pkg-shadow-devel@lists.alioth.debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: logsave
+Source: e2fsprogs
+Priority: required
+Section: admin
+Installed-Size: 60
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 1.47.2-3ubuntu4
+Replaces: e2fsprogs (<< 1.45.3-1)
+Depends: libc6 (>= 2.34)
+Breaks: e2fsprogs (<< 1.45.3-1)
+Filename: pool/main/e/e2fsprogs/logsave_1.47.2-3ubuntu4_amd64.deb
+Size: 27632
+MD5sum: 126321e1f8f474810671a1d0966d214c
+SHA1: db59df5e090b84b2d513020cf2e98266a03b5191
+SHA256: 465cb25b468c5f6e883f3ae46c044506e14cdd1aed539a9cc19ce1be8a31d517
+SHA512: a3145102644bb152af9bc1c99d29325bcc1de4684446e4f1b54ce09a25bfa66440a2c6cfe0bd7813debc6e14b815eb69842a5f73275f6c9bf2a90780cc67a100
+Homepage: http://e2fsprogs.sourceforge.net
+Description: save the output of a command in a log file
+Description-md5: 423ff285c4e5f41ac959b0fda6f812fe
+Original-Maintainer: Theodore Y. Ts'o <tytso@mit.edu>
+Multi-Arch: foreign
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: mawk
+Priority: required
+Section: utils
+Installed-Size: 286
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 1.3.4.20260129-1
+Provides: awk
+Depends: libc6 (>= 2.38)
+Filename: pool/main/m/mawk/mawk_1.3.4.20260129-1_amd64.deb
+Size: 133256
+MD5sum: 393dff61ce6b922d11e2074a2c813a41
+SHA1: 3c2d90f33e2ad2eab6a8bbf2d85a060fd8cbfc34
+SHA256: 9b071ec8637a7d87e152eee7952df8f3374e432bafecd3bcc30948feb3acb3e9
+SHA512: becca969b46cfe24526fef8df63314d3e651d252ba032e56be6bfae714ca3348d7aa55ff5f1c0ac416a9eccd39191702413517c38cc4fb442145b3bbe78dc80e
+Homepage: https://invisible-island.net/mawk/
+Description: Pattern scanning and text processing language
+Description-md5: 05965bfcd1a2333e963d9f1945d161fc
+Original-Maintainer: Boyuan Yang <byang@debian.org>
+Multi-Arch: foreign
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: minimal
+
+Package: mount
+Source: util-linux
+Priority: required
+Section: admin
+Installed-Size: 356
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 2.41.3-3ubuntu2
+Suggests: nfs-common
+Pre-Depends: libblkid1 (= 2.41.3-3ubuntu2), libc6 (>= 2.38), libmount1 (= 2.41.3-3ubuntu2), libselinux1 (>= 3.1~), libsmartcols1 (= 2.41.3-3ubuntu2)
+Filename: pool/main/u/util-linux/mount_2.41.3-3ubuntu2_amd64.deb
+Size: 134746
+MD5sum: 203dc85b28057d03c9e45c6fbd7769ff
+SHA1: b450c2f5fb064d9c3c1b021f58ded7fa3c2cf735
+SHA256: 64e76233a9f5f346f6f4ed90adf98937670b107e08a37ef208adcd28d93b5fd9
+SHA512: cc8ef91cc83644aac3902647734fbe289e7f2d5bbdb0daa09b9d71f329543c937a23cf18ce0602df37d419827678b3bc3dc63bcc9dcc0c33d4760fa9769fc8e3
+Homepage: https://github.com/util-linux/util-linux
+Description: tools for mounting and manipulating filesystems
+Description-md5: 90e187380786a435bb9c85b37afa2c5f
+Multi-Arch: foreign
+Original-Maintainer: Chris Hofstaedtler <zeha@debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: ncurses-base
+Source: ncurses
+Priority: required
+Section: utils
+Installed-Size: 393
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: all
+Version: 6.6+20251231-1
+Replaces: ncurses-term (<< 6.4+20230603)
+Provides: ncurses-runtime
+Breaks: cryptsetup-initramfs (<< 2:2.6.1), ncurses-term (<< 6.4+20230625), neovim (<< 0.6.0), vim-common (<< 2:9.0.1000-2)
+Essential: yes
+Filename: pool/main/n/ncurses/ncurses-base_6.6+20251231-1_all.deb
+Size: 26272
+MD5sum: eea5fde4ed932c5c58cfa8a8826a5f81
+SHA1: cb0def5fb8a6a6144b437dffef9cffb5fdb7c2b4
+SHA256: c36efa1e8456f40595f910047d2ebae8f51dcb918ca91c2da94ff733a00630a7
+SHA512: c53931ad60117c9d287553b978cbbb7f7155aa39d9c9420a3f4a58aa8517bb2c4af0959c15b082dcd6a50873e5a02368e7d5bf10ba75addb920f10ed7e5760f2
+Homepage: https://invisible-island.net/ncurses/
+Description: basic terminal type definitions
+Description-md5: 2cbef17322c0de7f007682de54ca0d4a
+Original-Maintainer: Ncurses Maintainers <ncurses@packages.debian.org>
+Multi-Arch: foreign
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: minimal
+
+Package: ncurses-bin
+Source: ncurses
+Priority: required
+Section: utils
+Installed-Size: 663
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 6.6+20251231-1
+Pre-Depends: libc6 (>= 2.42), libtinfo6 (>= 6.6)
+Essential: yes
+Filename: pool/main/n/ncurses/ncurses-bin_6.6+20251231-1_amd64.deb
+Size: 192018
+MD5sum: e887f61b52254098092c02baebb25aea
+SHA1: bd5c1ab5afed0563156646184d34ecb2e53534eb
+SHA256: 5da5d7e3c6fae2956f3e92cc82883dbfc6f3126ec08047895b6537dedb741522
+SHA512: ebd7f7860db48f8dfe9c5b3f910fa5584ad944675e8a57e1c851bcbc7dfd98baa290ca456ca1aa99bfaaeb419b80ac2ef6d9127e876bf8caf160e1fcea544c9d
+Homepage: https://invisible-island.net/ncurses/
+Description: terminal-related programs and man pages
+Description-md5: 682ee2624c08c54a53ecaefd778a4d86
+Original-Maintainer: Ncurses Maintainers <ncurses@packages.debian.org>
+Multi-Arch: foreign
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: minimal
+
+Package: openssl-provider-legacy
+Source: openssl
+Priority: required
+Section: utils
+Installed-Size: 420
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 3.5.5-1ubuntu3
+Replaces: libssl3 (<< 3.3.1-5), libssl3t64 (<< 3.3.1-5)
+Depends: libc6 (>= 2.14), libssl3t64 (>= 3.0.3)
+Breaks: libssl3 (<< 3.3.1-5), libssl3t64 (<< 3.3.1-5)
+Filename: pool/main/o/openssl/openssl-provider-legacy_3.5.5-1ubuntu3_amd64.deb
+Size: 39664
+MD5sum: 997ba5f79dd28739fe12155ad2d1a057
+SHA1: 6f3846db4f7f86fe11c82a145290ff051b2e872f
+SHA256: 05c9ab6be49c5177b366b21fc1b96e042d69e2c119de898d539e55a3a778f8f7
+SHA512: 6522bb4380e471acab4ff94d387b2877696f3b3c626479525a37cb7a97fc334910ac75d7a993f9701b2fa76091b6a33b0f47c347064629343883b98314e96f89
+Homepage: https://openssl-library.org
+Description: Secure Sockets Layer toolkit - cryptographic utility
+Description-md5: 6ae6f8ddd6448e07b5d86dc9b813dddd
+Multi-Arch: foreign
+Original-Maintainer: Debian OpenSSL Team <pkg-openssl-devel@alioth-lists.debian.net>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: passwd
+Source: shadow
+Priority: required
+Section: admin
+Installed-Size: 4348
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 1:4.17.4-2ubuntu3
+Recommends: sensible-utils
+Replaces: login (<< 1:4.16.0-2~)
+Depends: base-passwd (>= 3.6.4), libpam-modules, login.defs, libacl1 (>= 2.2.23), libaudit1 (>= 1:2.2.1), libbsd0 (>= 0.11.0), libc6 (>= 2.38), libcrypt1 (>= 1:4.1.0), libpam0g (>= 0.99.7.1), libselinux1 (>= 3.1~), libsemanage2 (>= 2.0.32)
+Filename: pool/main/s/shadow/passwd_4.17.4-2ubuntu3_amd64.deb
+Size: 1138148
+MD5sum: bef127dc5c9b01d3d49879d96f93307f
+SHA1: 4cb4404da7e7b3bbf77d1f12476a8271a16abb0d
+SHA256: 229301edd46bf07c142eaa87aae3a9d69e6e1f4b57f1d78a7cdbd267fa032182
+SHA512: 82dc097560a133573a86eeb75197cd198581f1a0e92d002187423dd38de6dd5b8a2e4e18668e86524d401eff1bed37d3608ace3d5164cf4ca722586d39028091
+Homepage: https://github.com/shadow-maint/shadow
+Description: change and administer password and group data
+Description-md5: 5bbd70e421ed3367a8299e53bd7afed4
+Multi-Arch: foreign
+Original-Maintainer: Shadow package maintainers <pkg-shadow-devel@lists.alioth.debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: perl-base
+Source: perl
+Priority: required
+Section: perl
+Installed-Size: 7954
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 5.40.1-7build1
+Replaces: libfile-path-perl (<< 2.18), libfile-temp-perl (<< 0.2311), libio-socket-ip-perl (<< 0.42), libscalar-list-utils-perl (<< 1:1.63), libsocket-perl (<< 2.038), libxsloader-perl (<< 0.32), perl (<< 5.10.1-12), perl-modules (<< 5.20.1-3)
+Suggests: perl, sensible-utils
+Provides: libfile-path-perl (= 2.18), libfile-temp-perl (= 0.2311), libio-socket-ip-perl (= 0.42), libscalar-list-utils-perl (= 1:1.63), libsocket-perl (= 2.038), libxsloader-perl (= 0.32), perlapi-5.40.0, perlapi-5.40.1
+Conflicts: defoma (<< 0.11.12), doc-base (<< 0.10.3), mono-gac (<< 2.10.8.1-3), safe-rm (<< 0.8), update-inetd (<< 4.41)
+Pre-Depends: libc6 (>= 2.43), libcrypt1 (>= 1:4.1.0)
+Breaks: amanda-common (<< 1:3.3.9-2), backuppc (<< 4.4.0-7~), bucardo (<< 5.5.0-1.1), debconf (<< 1.5.61), dh-haskell (<< 0.3), duck (<< 0.14.1), intltool (<< 0.51.0-4), kio-perldoc (<< 20.04.1-1), latexml (<< 0.8.4-2), libdevel-mat-dumper-perl (<< 0.42-3), libencode-arabic-perl (<< 14.2-2), libexception-class-perl (<< 1.42), libfile-path-perl (<< 2.18), libfile-spec-perl (<< 3.9100), libfile-temp-perl (<< 0.2311), libgnupg-interface-perl (<< 1.02-4), libio-socket-ip-perl (<< 0.42), liblexical-failure-perl (<< 0.001000), libmp3-tag-perl (<< 1.13-1.2), libnumber-format-perl (<< 1.76), libsbuild-perl (<< 0.67.0-1), libscalar-list-utils-perl (<< 1:1.63), libsocket-perl (<< 2.038), libur-perl (<< 0.470+ds-3), libxsloader-perl (<< 0.32), mailagent (<< 1:3.1-81-2), perl (<< 5.40.1~), perl-modules (<< 5.40.1~), pod2pdf (<< 0.42-5.1), slic3r (<< 1.2.9+dfsg-6.1), slic3r-prusa (<< 1.37.0+dfsg-1.1), texinfo (<< 6.1.0.dfsg.1-8)
+Essential: yes
+Filename: pool/main/p/perl/perl-base_5.40.1-7build1_amd64.deb
+Size: 1848640
+MD5sum: 8bdf4518ffb29aedeee265c501a3cc11
+SHA1: d08d7f00ca9484c53d24f5c2f46bf629bf485079
+SHA256: 3f8edc884ebb8c55120cb0535fb4e1029651d97fd380936ec5211bb4c926d809
+SHA512: 7c83cfda020c26ba6def0830b9d156dd6dee27ce280e9a8310f0a38aa561a70d18d98ac9acfa40f4b497e876b9732840ba2f80e9e0efa27eb4654dfd943f93f4
+Homepage: https://dev.perl.org/perl5/
+Description: minimal Perl system
+Description-md5: 71551f199284cd26b0352827389f8b4b
+Original-Maintainer: Niko Tyni <ntyni@debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: procps
+Priority: required
+Section: admin
+Installed-Size: 1800
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 2:4.0.4-9ubuntu1
+Recommends: psmisc, linux-sysctl-defaults
+Replaces: manpages-de (<< 4.9.1-2), manpages-fr (<< 4.9.1-2), manpages-fr-extra (<< 20151231+nmu1), manpages-pl (<< 1:4.9.1-2)
+Provides: watch
+Depends: libc6 (>= 2.42), libncursesw6 (>= 6), libproc2-0 (>= 2:4.0.4), libsystemd0 (>= 254), libtinfo6 (>= 6), init-system-helpers (>= 1.29~)
+Breaks: manpages-de (<< 4.9.1-2), manpages-fr (<< 4.9.1-2), manpages-fr-extra (<< 20151231+nmu1), manpages-pl (<< 1:4.9.1-2)
+Filename: pool/main/p/procps/procps_4.0.4-9ubuntu1_amd64.deb
+Size: 710224
+MD5sum: 65b59b9b077861bc02bb33d086033408
+SHA1: bdb5d53eabae8d3bce43f6ec07658b7615b1006d
+SHA256: 471b02803d2ff240a28d03059ac9bd676b1f9e25bfd84b8feef95171bbf1da90
+SHA512: 09fc456161f965166a3c87dc6bc021cee539ac3729026250b161f24f552eb0a49bdd1029e3dfa13c18bec444a3a0bd1ce2dbb230a4a97e5c0ade92f1e3223542
+Homepage: https://gitlab.com/procps-ng/procps
+Description: /proc file system utilities
+Description-md5: 943f3288c1aaa379fca73a3ff1a35278
+Multi-Arch: foreign
+Original-Maintainer: Craig Small <csmall@debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: rust-coreutils
+Priority: required
+Section: utils
+Installed-Size: 15617
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 0.8.0-0ubuntu3
+Depends: libc6 (>= 2.43), libgcc-s1 (>= 4.2), libselinux1 (>= 3.1~)
+Conflicts: coreutils-from-uutils (<< 0.0.0~ubuntu22~)
+Filename: pool/main/r/rust-coreutils/rust-coreutils_0.8.0-0ubuntu3_amd64.deb
+Size: 4234916
+MD5sum: ffe7b4bd64acd8da897311bfd7fc8a19
+SHA1: d5be42a05ab619d7067ecb72eec11acaca540f82
+SHA256: c5c87994f543e3a771803e8cffce87a7e4e133dda59318bd874f58aaf40ac91f
+SHA512: c5515774c8cd76a5ff61aa24a2abd7c9ed84bdb54e819193d42f533f417d8f50481885e609a18413704cde07547b692794693030624ae7e8338c26b7a430772c
+Homepage: https://github.com/uutils/coreutils
+Description: Universal coreutils utils, written in Rust
+Description-md5: 532bcfdb2314413386c04d782875e8cd
+Multi-Arch: allowed
+Original-Maintainer: Debian Rust Maintainers <pkg-rust-maintainers@alioth-lists.debian.net>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: minimal
+
+Package: sed
+Priority: required
+Section: utils
+Installed-Size: 344
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 4.9-2build3
+Pre-Depends: libacl1 (>= 2.2.23), libc6 (>= 2.38), libselinux1 (>= 3.1~)
+Essential: yes
+Filename: pool/main/s/sed/sed_4.9-2build3_amd64.deb
+Size: 195190
+MD5sum: cc32be78eaa2eed1d94dccc1e9f8aef7
+SHA1: 95dfaf4de2594b0ae830315b25c1d136283f31eb
+SHA256: 9277da0b7f23a1611270a8e10b3132553aa20fc80202e1bd7e0ab30d2c3aafb7
+SHA512: aa97c2d669af02c94ad7a74879067405c658701099e9ec9567f35d7de17144cb5c3726aa008398d37ac62256510bb5210035064cd65e1082a820db0e351f7123
+Homepage: https://www.gnu.org/software/sed/
+Description: GNU stream editor for filtering/transforming text
+Description-md5: 2ed71305ee7a49ce4438c58140980d2f
+Multi-Arch: foreign
+Original-Maintainer: Clint Adams <clint@debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: sensible-utils
+Priority: required
+Section: utils
+Installed-Size: 66
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: all
+Version: 0.0.26build1
+Filename: pool/main/s/sensible-utils/sensible-utils_0.0.26build1_all.deb
+Size: 27060
+MD5sum: c6ac7886e3f291201337bf389ac1fab4
+SHA1: c228509d833e9506b3ea17b1f221e1e25754715c
+SHA256: ee67d2df8ac299b20668d93c4817e9db88626b0636cc4cda76b1948e140e364b
+SHA512: 20ed1ce41aee42332f82790f8a8f467ee5b4ade1a4a5f75ab9c6fb4db28a15233f957b78ab8e4cec0f94099017d8ecd42024eb72fba9157aad722862cc95dce1
+Description: Utilities for sensible alternative selection
+Description-md5: 0cae32d4822230d3085b3b32b05a416c
+Original-Maintainer: Anibal Monsalve Salazar <anibal@debian.org>
+Multi-Arch: foreign
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: sysvinit-utils
+Source: sysvinit
+Priority: required
+Section: admin
+Installed-Size: 112
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 3.15-5ubuntu1
+Replaces: lsb-base
+Provides: lsb-base (= 11.1.0)
+Depends: libc6 (>= 2.38)
+Conflicts: lsb-base (<< 11.3~)
+Essential: yes
+Filename: pool/main/s/sysvinit/sysvinit-utils_3.15-5ubuntu1_amd64.deb
+Size: 37266
+MD5sum: 968568a0fa4066de760342e79058e0d7
+SHA1: bbaabd44667b458bcc3544ae94bdffa053b5852e
+SHA256: 2439c70d04fa6148b1bf3ae2b77d999d8c0906fbd540c60a2bc0463a43b7a9b3
+SHA512: cb0f159738bf7490966b0dc27364024f2ca562adbbeb1e1fc1a1eb4cce25dd08c7c5e3be03eefd3a3c69fc503859ac43639878838076575cdf2e0c80be2dc123
+Homepage: https://codeberg.org/thejessesmith/sysvinit
+Description: System-V-like utilities
+Description-md5: 41b1f0e27f14a0c053a574e35d1d7bd0
+Multi-Arch: foreign
+Original-Maintainer: Debian sysvinit maintainers <debian-init-diversity@chiark.greenend.org.uk>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+
+Package: tar
+Priority: required
+Section: utils
+Installed-Size: 724
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 1.35+dfsg-4
+Replaces: cpio (<< 2.4.2-39)
+Suggests: bzip2, ncompress, xz-utils, tar-scripts, tar-doc
+Conflicts: cpio (<= 2.4.2-38)
+Pre-Depends: libacl1 (>= 2.2.23), libc6 (>= 2.38), libselinux1 (>= 3.1~)
+Breaks: dpkg-dev (<< 1.14.26)
+Essential: yes
+Filename: pool/main/t/tar/tar_1.35+dfsg-4_amd64.deb
+Size: 256634
+MD5sum: 834aa7fa8fae6dd6188432abfd56c96a
+SHA1: c463e88d032254af94b7f024e02f41efd6d8ffd7
+SHA256: 4e066f8382f775d6600eee715add8fdc8da5ea8f0cf7b0f715aba38c8d57d64f
+SHA512: 4e25aff9240ec243bad49cfb06143c40fe3cf59262c1914edf3e60cdd7c60ffca4c497cce776509526438573497b8ebf8ab3d0d82d945f2c2398558537f0c3c9
+Homepage: https://www.gnu.org/software/tar/
+Description: GNU version of the tar archiving utility
+Description-md5: 48033bf96442788d1f697785773ad9bb
+Original-Maintainer: Janos Lenart <ocsi@debian.org>
+Multi-Arch: foreign
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: minimal, server-minimal
+
+Package: ubuntu-keyring
+Priority: important
+Section: misc
+Installed-Size: 29
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: all
+Version: 2023.11.28.1build1
+Replaces: ubuntu-cloudimage-keyring (<< 2018.02.05)
+Breaks: ubuntu-cloudimage-keyring (<< 2018.02.05)
+Filename: pool/main/u/ubuntu-keyring/ubuntu-keyring_2023.11.28.1build1_all.deb
+Size: 11228
+MD5sum: 073fe9e1181e95b17490b9b65c5824fb
+SHA1: 9382548f77ed0d109eeeb2cacaed06271a26f900
+SHA256: c377ccf26964f4c206c05c0bc7adb708e031beb919bb9a0ff63af983d064cd66
+SHA512: 80446b4521a3cc100d797a7ed03532f4358c028f1c0c110e00cfc6e1db3b2795e2f98f92a4077baea0cee3c82b292f9eeb20f7f1dc06ce28b6b46e661b1fad35
+Description: GnuPG keys of the Ubuntu archive
+Description-md5: 50b1d2c58bfd75a47173455de2fe5cfe
+Multi-Arch: foreign
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+Build-Essential: yes
+
+Package: util-linux
+Priority: required
+Section: utils
+Installed-Size: 2887
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 2.41.3-3ubuntu2
+Recommends: sensible-utils
+Replaces: bsdutils (<< 1:2.41.1-4~), hardlink
+Suggests: dosfstools, kbd, util-linux-extra, util-linux-locales, wtmpdb
+Provides: hardlink
+Conflicts: hardlink
+Pre-Depends: libpam-modules, libpam-runtime, libblkid1 (= 2.41.3-3ubuntu2), libc6 (>= 2.42), libcap-ng0 (>= 0.7.9), libcrypt1 (>= 1:4.1.0), libmount1 (= 2.41.3-3ubuntu2), libpam0g (>= 0.99.7.1), libselinux1 (>= 3.1~), libsmartcols1 (= 2.41.3-3ubuntu2), libsystemd0, libtinfo6 (>= 6), libudev1 (>= 183), libuuid1 (= 2.41.3-3ubuntu2)
+Breaks: bsdutils (<< 1:2.41.1-4~), dracut (<< 108-6~)
+Essential: yes
+Filename: pool/main/u/util-linux/util-linux_2.41.3-3ubuntu2_amd64.deb
+Size: 1069500
+MD5sum: 3e271e92f93963a8f2a33d973e28a965
+SHA1: 0486bc8163ed6ea06dbbd58e6542d4fd99c643e0
+SHA256: 41f3cecf36e5e82fc7d86f93611306b49c5ff4ab947cd574b0a8787faedf4fed
+SHA512: 4eaf57ecba59a3497f69e87e2622a82f1f4495d8b6c215ecc6509a57eb4015e864215c7d1ea92c09e09b8c3e864f60d18b1f984d04525189f076cd7d034cb3b9
+Homepage: https://github.com/util-linux/util-linux
+Description: miscellaneous system utilities
+Description-md5: 33d0291a69ffd307cfba295915df602a
+Multi-Arch: foreign
+Original-Maintainer: Chris Hofstaedtler <zeha@debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal
+
+Package: zlib1g
+Source: zlib
+Priority: required
+Section: libs
+Installed-Size: 171
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: amd64
+Version: 1:1.3.dfsg+really1.3.1-1ubuntu3
+Provides: libz1
+Depends: libc6 (>= 2.14)
+Conflicts: zlib1 (<= 1:1.0.4-7)
+Breaks: libxml2 (<< 2.7.6.dfsg-2), texlive-binaries (<< 2023.20230311.66589-8)
+Filename: pool/main/z/zlib/zlib1g_1.3.dfsg+really1.3.1-1ubuntu3_amd64.deb
+Size: 63922
+MD5sum: 325c87d5c7eaa739921a3e0a86287760
+SHA1: 149218f4d21de325c377ae77700babb5630140ea
+SHA256: c45bbbf9c87457d90b8ba38720c5f01b9388c380d40f303c26f5c4953932da26
+SHA512: ccf89f6a3bf55da45fbac4f99e022adf7ce20bc256dd4b1dadf61583dc6a9050a79cac4c020731a45153834f0be9f28b41425cbc273798b1a2b88702a9f12114
+Homepage: http://zlib.net/
+Description: compression library - runtime
+Description-md5: 567f396aeeb2b2b63295099aed237057
+Multi-Arch: same
+Original-Maintainer: Mark Brown <broonie@debian.org>
+Origin: Ubuntu
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Task: cloud-minimal, minimal, server-minimal
+

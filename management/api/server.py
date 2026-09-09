@@ -4,6 +4,7 @@ from typing import Dict, List, Optional
 import yaml
 import management.env  # Ensure .env is loaded
 from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
@@ -43,10 +44,10 @@ FirewallEngine = firewall_engine_module.FirewallEngine
 FirewallRule = firewall_engine_module.FirewallRule
 PolicyConfig = firewall_engine_module.PolicyConfig
 
-from network.network_manager import NetworkManager, InterfaceConfig, RouteConfig
+from network.network_manager import NetworkManager, LinuxNetworkAdapter, InterfaceConfig, RouteConfig
 from management.device.device import Device, DeviceRegistry
 from management.audit.audit import AuditLogger
-
+from management.adapter.os_adapter import os_adapter
 # Determine base path of the project
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -66,20 +67,88 @@ def _get_username(user) -> str:
     return getattr(user, "username", "system")
 
 # Initialize Firewall
+# Initialize Firewall
 firewall_policy_path = BASE_DIR / "firewall" / "policy" / "default-policy.yaml"
 firewall_rules_path = BASE_DIR / "firewall" / "rules" / "rules.yaml"
 firewall_engine = FirewallEngine(backend_type=config.firewall.backend)
+
 try:
     firewall_engine.load_policy(firewall_policy_path)
     firewall_engine.load_rules(firewall_rules_path)
-    # Apply initial rules
-    firewall_engine.apply()
+
+    # Build the boot-time OS configuration payload.
+    # FirewallEngine remains the management/API object,
+    # while OSAdapter performs the privileged firewall/NAT/forwarding apply.
+    startup_policy = {
+        "input": firewall_engine.policy.input,
+        "output": firewall_engine.policy.output,
+        "forward": firewall_engine.policy.forward,
+    }
+
+    startup_rules = [
+        rule.model_dump() for rule in firewall_engine.rules
+    ]
+
+    startup_nat = (
+        config.firewall.nat.model_dump()
+        if config.firewall.nat is not None
+        else None
+    )
+
+    startup_payload = {
+        "firewall": {
+            "policy": startup_policy,
+            "rules": startup_rules,
+            "nat": startup_nat,
+        }
+    }
+
+    # Apply firewall + NAT first, then IPv4 forwarding.
+    os_ok, os_msg = os_adapter.apply_config(startup_payload)
+    if not os_ok:
+        raise RuntimeError(f"Boot firewall/NAT apply failed: {os_msg}")
+
+    # Verify the resulting firewall state.
+    health_ok, health_msg = os_adapter.verify_health()
+    if not health_ok:
+        raise RuntimeError(f"Boot firewall/NAT health check failed: {health_msg}")
+
+    print(f"CyberTrack firewall/NAT startup: {health_msg}")
+
 except Exception as e:
-    # If nftables or loading fails, fallback/log
-    print(f"Error loading firewall engine: {e}")
+    print(f"Error initializing firewall/NAT: {e}")
+
+
+def _apply_firewall_config() -> tuple[bool, str]:
+    """Apply the complete active firewall configuration, including NAT."""
+    if firewall_engine.policy is None:
+        return False, "Firewall policy is not loaded"
+
+    payload = {
+        "firewall": {
+            "policy": {
+                "input": firewall_engine.policy.input,
+                "output": firewall_engine.policy.output,
+                "forward": firewall_engine.policy.forward,
+            },
+            "rules": [
+                rule.model_dump()
+                for rule in firewall_engine.rules
+            ],
+            "nat": (
+                config.firewall.nat.model_dump()
+                if config.firewall.nat is not None
+                else None
+            ),
+        }
+    }
+
+    return os_adapter.apply_config(payload)
+
+
 
 # Initialize Network Manager
-network_manager = NetworkManager()
+network_manager = NetworkManager(adapter=LinuxNetworkAdapter())
 try:
     network_manager.load_interfaces(BASE_DIR / "network" / "interfaces" / "interfaces.yaml")
     network_manager.load_routes(BASE_DIR / "network" / "routing" / "routes.yaml")
@@ -88,6 +157,8 @@ try:
     network_manager.apply_all()
 except Exception as e:
     print(f"Error loading network manager: {e}")
+
+
 
 # Initialize Device Registry
 device_registry = DeviceRegistry()
@@ -256,7 +327,9 @@ def create_firewall_rule(rule: FirewallRule, current_user: UserDB = Depends(requ
     firewall_engine.rules.append(rule)
     try:
         _save_firewall_rules()
-        firewall_engine.apply()
+        apply_ok, apply_msg = _apply_firewall_config()
+        if not apply_ok:
+            raise RuntimeError(apply_msg)
     except Exception as e:
         # Revert memory representation in case of failure
         firewall_engine.rules.pop()
@@ -299,7 +372,9 @@ def update_firewall_rule(rule_id: str, updated_rule: FirewallRule, current_user:
     firewall_engine.rules[found_idx] = updated_rule
     try:
         _save_firewall_rules()
-        firewall_engine.apply()
+        apply_ok, apply_msg = _apply_firewall_config()
+        if not apply_ok:
+            raise RuntimeError(apply_msg)
     except Exception as e:
         firewall_engine.rules[found_idx] = original_rule
         raise HTTPException(
@@ -334,7 +409,9 @@ def delete_firewall_rule(rule_id: str, current_user: UserDB = Depends(require_pe
     removed_rule = firewall_engine.rules.pop(found_idx)
     try:
         _save_firewall_rules()
-        firewall_engine.apply()
+        apply_ok, apply_msg = _apply_firewall_config()
+        if not apply_ok:
+            raise RuntimeError(apply_msg)
     except Exception as e:
         firewall_engine.rules.insert(found_idx, removed_rule)
         raise HTTPException(
@@ -373,7 +450,12 @@ def get_firewall_backend_status():
 def get_firewall_diff():
     policy_dict = firewall_engine.policy.model_dump() if firewall_engine.policy else {"input": "drop", "output": "accept", "forward": "drop"}
     rules_dict = [r.model_dump() for r in firewall_engine.rules]
-    compiled = nftables_backend.compile(policy_dict, rules_dict)
+    nat_dict = (
+        config.firewall.nat.model_dump()
+        if config.firewall.nat is not None
+        else None
+    )
+    compiled = nftables_backend.compile(policy_dict, rules_dict, nat=nat_dict)
     current_status = nftables_backend.discover()
 
     return {
@@ -387,7 +469,12 @@ def get_firewall_diff():
 def validate_firewall_ruleset(current_user: UserDB = Depends(require_permission("firewall.write"))):
     policy_dict = firewall_engine.policy.model_dump() if firewall_engine.policy else {"input": "drop", "output": "accept", "forward": "drop"}
     rules_dict = [r.model_dump() for r in firewall_engine.rules]
-    v_ok, v_msg = nftables_backend.validate(policy_dict, rules_dict)
+    nat_dict = (
+        config.firewall.nat.model_dump()
+        if config.firewall.nat is not None
+        else None
+    )
+    v_ok, v_msg = nftables_backend.validate(policy_dict, rules_dict, nat=nat_dict)
 
     audit_logger.log(
         user=current_user.username,
@@ -415,7 +502,7 @@ def apply_firewall_ruleset(current_user: UserDB = Depends(require_permission("fi
         details={"rule_count": len(rules_dict)}
     )
 
-    applied_ok, apply_msg = nftables_backend.apply(policy_dict, rules_dict)
+    applied_ok, apply_msg = _apply_firewall_config()
     if not applied_ok:
         audit_logger.log(
             user=current_user.username,
@@ -708,4 +795,25 @@ def get_top_sources():
 @app.get("/api/v1/analytics/top-destinations", response_model=List[TopTalkerModel], dependencies=[Depends(require_permission("analytics.read"))])
 def get_top_destinations():
     return telemetry_service.get_top_destinations()
+# --- React Web Admin GUI ---
+GUI_DIST = BASE_DIR / "gui" / "dist"
 
+@app.get("/{full_path:path}", include_in_schema=False)
+async def serve_web_admin(full_path: str):
+    if full_path.startswith("api/"):
+        raise HTTPException(status_code=404, detail="API endpoint not found")
+
+    if not GUI_DIST.is_dir():
+        raise HTTPException(status_code=503, detail="Web Admin GUI is not installed")
+
+    root = GUI_DIST.resolve()
+    requested = (root / full_path).resolve()
+
+    if requested.is_relative_to(root) and requested.is_file():
+        return FileResponse(str(requested))
+
+    index_file = root / "index.html"
+    if index_file.is_file():
+        return FileResponse(str(index_file))
+
+    raise HTTPException(status_code=503, detail="Web Admin GUI index not found")

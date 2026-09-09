@@ -1,0 +1,86 @@
+import datetime
+import uuid
+from typing import List, Literal, Optional
+from pydantic import BaseModel, Field, field_validator
+
+class Device(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    hostname: str = Field(..., min_length=1, max_length=255)
+    ip_address: str
+    mac_address: str
+    device_type: Literal["router", "switch", "firewall", "ap", "server", "client", "iot"]
+    operating_system: Optional[str] = None
+    status: Literal["online", "offline", "degraded"] = "online"
+    last_seen: datetime.datetime = Field(default_factory=lambda: datetime.datetime.now(datetime.timezone.utc))
+    tags: List[str] = Field(default_factory=list)
+
+    @field_validator("ip_address")
+    @classmethod
+    def check_ip(cls, v: str) -> str:
+        import ipaddress
+        try:
+            ipaddress.ip_address(v)
+        except ValueError:
+            raise ValueError(f"Invalid IP address: {v}")
+        return v
+
+    @field_validator("mac_address")
+    @classmethod
+    def check_mac(cls, v: str) -> str:
+        import re
+        if not re.match(r"^([0-9a-fA-F]{2}[:-]){5}([0-9a-fA-F]{2})$", v):
+            raise ValueError(f"Invalid MAC address format: {v}")
+        return v
+
+# --- Device Inventory System ---
+
+class DeviceRegistry:
+    def __init__(self):
+        # Seed registry with some default appliance and host devices
+        self.devices: dict[str, Device] = {
+            "dev-01": Device(
+                id="dev-01",
+                hostname="core-switch-01",
+                ip_address="192.168.1.2",
+                mac_address="00:11:22:33:44:55",
+                device_type="switch",
+                operating_system="RCS-SwitchOS 2.1",
+                status="online",
+                tags=["infrastructure", "backbone"]
+            ),
+            "dev-02": Device(
+                id="dev-02",
+                hostname="admin-workstation",
+                ip_address="192.168.2.50",
+                mac_address="52:54:00:12:34:56",
+                device_type="client",
+                operating_system="Ubuntu 24.04 LTS",
+                status="online",
+                tags=["management", "desktop"]
+            )
+        }
+
+    def list_devices(self) -> List[Device]:
+        return list(self.devices.values())
+
+    def get_device(self, device_id: str) -> Optional[Device]:
+        return self.devices.get(device_id)
+
+    def register_device(self, device: Device) -> Device:
+        self.devices[device.id] = device
+        return device
+
+    def update_status(self, device_id: str, status: Literal["online", "offline", "degraded"]) -> Optional[Device]:
+        if device_id in self.devices:
+            self.devices[device_id].status = status
+            self.devices[device_id].last_seen = datetime.datetime.now(datetime.timezone.utc)
+            return self.devices[device_id]
+        return None
+
+    def discover_devices(self) -> List[Device]:
+        """Blueprint for device discovery.
+        
+        Currently unimplemented to avoid executing unsafe network operations.
+        Future plans involve scanning local ARP tables and parsing dhcp leases.
+        """
+        return []

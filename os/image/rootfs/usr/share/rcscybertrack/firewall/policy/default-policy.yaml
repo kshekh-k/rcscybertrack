@@ -1,0 +1,4 @@
+default_policy:
+  input: drop
+  output: accept
+  forward: drop

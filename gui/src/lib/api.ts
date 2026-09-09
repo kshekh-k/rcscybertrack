@@ -262,6 +262,12 @@ export const api = {
     }
   },
 
+  async getFirewallStatus(): Promise<any> { return await apiFetch<any>("/api/v1/firewall/status") },
+
+  async validateFirewall(): Promise<{ valid: boolean; message: string }> { return await apiFetch<{ valid: boolean; message: string }>("/api/v1/firewall/validate", { method: "POST" }) },
+
+  async applyFirewall(): Promise<any> { return await apiFetch<any>("/api/v1/firewall/apply", { method: "POST" }) },
+
   async getNetworkInterfaces(): Promise<InterfaceConfig[]> {
     return await apiFetch<InterfaceConfig[]>('/api/v1/network/interfaces')
   },

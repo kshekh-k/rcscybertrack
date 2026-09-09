@@ -1,10 +1,13 @@
 import React from 'react'
+import { CheckCircle2, AlertTriangle, XCircle, Info, ShieldAlert } from 'lucide-react'
+import { cn } from '../../lib/utils'
 
 export type StatusVariant = 'success' | 'warning' | 'danger' | 'info' | 'neutral'
 
-interface StatusBadgeProps {
+export interface StatusBadgeProps {
   status: string
   variant?: StatusVariant
+  showIcon?: boolean
   showDot?: boolean
   className?: string
 }
@@ -12,49 +15,57 @@ interface StatusBadgeProps {
 export const StatusBadge: React.FC<StatusBadgeProps> = ({
   status,
   variant = 'neutral',
+  showIcon = true,
   showDot = true,
   className = '',
 }) => {
-  const styles: Record<StatusVariant, { bg: string; text: string; border: string; dot: string }> = {
+  const config = {
     success: {
-      bg: 'bg-emerald-500/10',
-      text: 'text-emerald-400',
-      border: 'border-emerald-500/20',
-      dot: 'bg-emerald-400 animate-pulse',
+      bg: 'bg-emerald-100 dark:bg-emerald-500/10',
+      text: 'text-emerald-800 dark:text-emerald-400',
+      border: 'border-emerald-300 dark:border-emerald-500/25',
+      icon: CheckCircle2,
     },
     warning: {
-      bg: 'bg-amber-500/10',
-      text: 'text-amber-400',
-      border: 'border-amber-500/20',
-      dot: 'bg-amber-400 animate-pulse',
+      bg: 'bg-amber-100 dark:bg-amber-500/10',
+      text: 'text-amber-800 dark:text-amber-400',
+      border: 'border-amber-300 dark:border-amber-500/25',
+      icon: AlertTriangle,
     },
     danger: {
-      bg: 'bg-rose-500/10',
-      text: 'text-rose-400',
-      border: 'border-rose-500/20',
-      dot: 'bg-rose-400 animate-pulse',
+      bg: 'bg-red-100 dark:bg-red-500/10',
+      text: 'text-red-800 dark:text-red-400',
+      border: 'border-red-300 dark:border-red-500/25',
+      icon: XCircle,
     },
     info: {
-      bg: 'bg-cyan-500/10',
-      text: 'text-cyan-400',
-      border: 'border-cyan-500/20',
-      dot: 'bg-cyan-400 animate-pulse',
+      bg: 'bg-cyan-100 dark:bg-cyan-500/10',
+      text: 'text-cyan-800 dark:text-cyan-400',
+      border: 'border-cyan-300 dark:border-cyan-500/25',
+      icon: Info,
     },
     neutral: {
-      bg: 'bg-slate-500/10',
-      text: 'text-slate-400',
-      border: 'border-slate-500/20',
-      dot: 'bg-slate-400',
+      bg: 'bg-slate-100 dark:bg-slate-800',
+      text: 'text-slate-700 dark:text-slate-400',
+      border: 'border-slate-300 dark:border-slate-700',
+      icon: ShieldAlert,
     },
   }
 
-  const current = styles[variant]
+  const current = config[variant] || config.neutral
+  const IconComponent = current.icon
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-medium rounded-full border ${current.bg} ${current.text} ${current.border} ${className}`}
+      className={cn(
+        'inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-semibold rounded-md border select-none',
+        current.bg,
+        current.text,
+        current.border,
+        className
+      )}
     >
-      {showDot && <span className={`w-1.5 h-1.5 rounded-full ${current.dot}`} />}
+      {showIcon && showDot && <IconComponent className="w-3.5 h-3.5 shrink-0" />}
       <span className="capitalize">{status}</span>
     </span>
   )

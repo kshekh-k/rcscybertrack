@@ -1,0 +1,32 @@
+rules:
+- action: allow
+  id: allow-loopback
+  interface: lo
+  state:
+  - new
+  - established
+  - related
+- action: allow
+  id: allow-established-related
+  state:
+  - established
+  - related
+- action: allow
+  destination:
+    port: 22
+  id: allow-ssh
+  protocol: tcp
+  state:
+  - new
+  - established
+- action: allow
+  id: allow-icmp
+  protocol: icmp
+  state:
+  - new
+  - established
+  - related
+- action: allow
+  id: rule-test
+  source:
+    address: 192.168.1.5

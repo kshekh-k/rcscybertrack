@@ -1,0 +1,14 @@
+=== PILOT DATABASE & BACKUP AUDIT ===
+Backup Archive File: deployment-evidence/pilot-v0.6.0/pilot-backup-20260818_002255.tar.gz
+Archive Size: 464K
+Archive Contents:
+drwxrwxrwx kamran-shekh/kamran-shekh 0 2026-08-10 00:13 os/config/
+-rwxrwxrwx kamran-shekh/kamran-shekh 876703 2026-08-18 00:21 os/config/audit.log
+-rwxrwxrwx kamran-shekh/kamran-shekh    535 2026-08-10 00:13 os/config/rcscybertrack.yaml
+drwxrwxrwx kamran-shekh/kamran-shekh      0 2026-08-18 00:21 data/
+-rwxrwxrwx kamran-shekh/kamran-shekh 1784809 2026-08-18 00:21 data/audit.log
+-rwxrwxrwx kamran-shekh/kamran-shekh  241664 2026-08-18 00:21 data/cybertrack.db
+-rwxrwxrwx kamran-shekh/kamran-shekh   45056 2026-08-18 00:05 data/staging_cybertrack.db
+drwxrwxrwx kamran-shekh/kamran-shekh       0 2026-08-09 22:35 firewall/rules/
+-rwxrwxrwx kamran-shekh/kamran-shekh     461 2026-08-10 02:10 firewall/rules/rules.yaml
+DATABASE BACKUP STATUS: PASS

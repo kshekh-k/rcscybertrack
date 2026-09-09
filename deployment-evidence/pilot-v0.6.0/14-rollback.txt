@@ -1,0 +1,5 @@
+=== ROLLBACK DRY RUN AUDIT ===
+v0.5.1 Tag Check: v0.5.1
+v0.6.0 Tag Check: v0.6.0
+Rollback Procedure: Documented in docs/PRODUCTION_DEPLOYMENT.md
+ROLLBACK DRY RUN STATUS: PASS

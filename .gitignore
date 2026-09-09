@@ -32,3 +32,5 @@ dist-ssr/
 .idea/
 .DS_Store
 *.swp
+
+.step19-backup/
