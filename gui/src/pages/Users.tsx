@@ -12,6 +12,7 @@ import {
 import { UserTable } from '../components/cyber/UserTable'
 import { PermissionMatrix } from '../components/cyber/PermissionMatrix'
 import { User } from '../types/apiContracts'
+import { Button } from '../components/ui/button'
 
 export default function Users() {
   const queryClient = useQueryClient()
@@ -384,14 +385,15 @@ export default function Users() {
                 >
                   Cancel
                 </button>
-                <button
+                <Button
                   type="submit"
-                  disabled={createUserMutation.isPending}
-                  className="px-4 py-2 bg-primary hover:bg-cyan-600 text-white text-xs font-semibold rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50"
+                  variant="primary"
+                  isLoading={createUserMutation.isPending}
+                  className="gap-2"
                 >
-                  {createUserMutation.isPending ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Lock className="w-3.5 h-3.5" />}
+                  {!createUserMutation.isPending && <Lock className="w-3.5 h-3.5" />}
                   <span>Provision Account</span>
-                </button>
+                </Button>
               </div>
             </form>
           </div>
@@ -495,14 +497,15 @@ export default function Users() {
                 >
                   Cancel
                 </button>
-                <button
+                <Button
                   type="submit"
-                  disabled={editUserMutation.isPending}
-                  className="px-4 py-2 bg-primary hover:bg-cyan-600 text-white text-xs font-semibold rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50"
+                  variant="primary"
+                  isLoading={editUserMutation.isPending}
+                  className="gap-2"
                 >
-                  {editUserMutation.isPending ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Lock className="w-3.5 h-3.5" />}
+                  {!editUserMutation.isPending && <Lock className="w-3.5 h-3.5" />}
                   <span>Save Changes</span>
-                </button>
+                </Button>
               </div>
             </form>
           </div>

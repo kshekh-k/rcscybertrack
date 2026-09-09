@@ -1,0 +1,14 @@
+dhcp:
+  pools:
+    - interface: eth1
+      range_start: 192.168.2.100
+      range_end: 192.168.2.200
+      gateway: 192.168.2.1
+      dns_servers:
+        - 8.8.8.8
+        - 1.1.1.1
+      lease_time: 86400
+  static_reservations:
+    - mac: "52:54:00:12:34:56"
+      ip: 192.168.2.50
+      hostname: admin-pc

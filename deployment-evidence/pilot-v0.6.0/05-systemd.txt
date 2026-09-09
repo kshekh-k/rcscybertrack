@@ -1,0 +1,68 @@
+=== SYSTEMD PILOT SERVICE INSPECTION ===
+[Unit]
+Description=RCS CyberTrack Core Management Service
+After=network.target
+
+[Service]
+Type=simple
+User=rcscybertrack
+Group=rcscybertrack
+WorkingDirectory=/usr/share/rcscybertrack
+Environment=PYTHONPATH=.
+ExecStart=/usr/share/rcscybertrack/.venv/bin/uvicorn management.api.server:app --host 127.0.0.1 --port 8000 --workers 2
+
+# Restart Policy
+Restart=on-failure
+RestartSec=5s
+
+# Hardening / Sandboxing
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/usr/share/rcscybertrack/os/config /usr/share/rcscybertrack/firewall/rules /usr/share/rcscybertrack/network /usr/share/rcscybertrack/data
+ReadOnlyPaths=/usr/share/rcscybertrack/management /usr/share/rcscybertrack/firewall/engine
+PrivateDevices=false
+ProtectControlGroups=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX AF_NETLINK
+
+# Resource Limits
+LimitNOFILE=65535
+CPUWeight=100
+StartupCPUWeight=100
+
+[Install]
+WantedBy=multi-user.target
+
+=== SYSTEMCTL STATUS ===
+● rcscybertrack-core.service - RCS CyberTrack Core Management Service
+     Loaded: loaded (/etc/systemd/system/rcscybertrack-core.service; enabled; preset: enabled)
+    Drop-In: /etc/systemd/system/rcscybertrack-core.service.d
+             └─override.conf
+     Active: active (running) since Mon 2026-08-17 20:22:24 IST; 3h 59min ago
+ Invocation: f4e70e5f23b54ef3983800353ac0495a
+   Main PID: 2121 (uvicorn)
+      Tasks: 8 (limit: 18133)
+     Memory: 73.4M (peak: 170.3M, swap: 88.7M, swap peak: 136.3M)
+        CPU: 1min 18.443s
+     CGroup: /system.slice/rcscybertrack-core.service
+             ├─2121 /media/kamran-shekh/WorkData/Projects/Rahul/rcscybertrack/.venv/bin/python /media/kamran-shekh/WorkData/Projects/Rahul/rcscybertrack/.venv/bin/uvicorn management.api.server:app --host 127.0.0.1 --port 8000 --workers 2
+             ├─2244 /media/kamran-shekh/WorkData/Projects/Rahul/rcscybertrack/.venv/bin/python -c "from multiprocessing.resource_tracker import main;main(6)"
+             ├─2247 /media/kamran-shekh/WorkData/Projects/Rahul/rcscybertrack/.venv/bin/python -c "from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=7, pipe_handle=9)" --multiprocessing-fork
+             └─2249 /media/kamran-shekh/WorkData/Projects/Rahul/rcscybertrack/.venv/bin/python -c "from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=7, pipe_handle=13)" --multiprocessing-fork
+
+Aug 18 00:08:24 kamran uvicorn[2247]: INFO:     127.0.0.1:45354 - "GET /api/v1/health HTTP/1.1" 200 OK
+Aug 18 00:08:24 kamran uvicorn[2247]: INFO:     127.0.0.1:45368 - "GET /api/v1/health HTTP/1.1" 200 OK
+Aug 18 00:08:24 kamran uvicorn[2249]: INFO:     127.0.0.1:45370 - "GET /api/v1/health HTTP/1.1" 200 OK
+Aug 18 00:08:24 kamran uvicorn[2247]: INFO:     127.0.0.1:45372 - "GET /api/v1/health HTTP/1.1" 200 OK
+Aug 18 00:08:24 kamran uvicorn[2249]: INFO:     127.0.0.1:45382 - "GET /api/v1/health HTTP/1.1" 200 OK
+Aug 18 00:08:24 kamran uvicorn[2247]: INFO:     127.0.0.1:45392 - "GET /api/v1/health HTTP/1.1" 200 OK
+Aug 18 00:08:24 kamran uvicorn[2249]: INFO:     127.0.0.1:45400 - "GET /api/v1/health HTTP/1.1" 200 OK
+Aug 18 00:08:24 kamran uvicorn[2249]: INFO:     127.0.0.1:45412 - "GET /api/v1/health HTTP/1.1" 200 OK
+Aug 18 00:08:24 kamran uvicorn[2249]: INFO:     127.0.0.1:45414 - "GET /api/v1/health HTTP/1.1" 200 OK
+Aug 18 00:08:24 kamran uvicorn[2247]: INFO:     127.0.0.1:45430 - "GET /api/v1/health HTTP/1.1" 200 OK
+
+=== SYSTEMCTL IS-ACTIVE ===
+active

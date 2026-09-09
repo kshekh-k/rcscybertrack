@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Login from '../pages/Login'
+import Register from '../pages/Register'
 import Dashboard from '../pages/Dashboard'
 import Firewall from '../pages/Firewall'
 import Network from '../pages/Network'
@@ -12,6 +13,7 @@ import Alerts from '../pages/Alerts'
 import Vpn from '../pages/Vpn'
 import Sdwan from '../pages/Sdwan'
 import Analytics from '../pages/Analytics'
+import DesignSystem from '../pages/DesignSystem'
 import { api } from '../lib/api'
 
 // Simple Route Protection wrapper
@@ -25,7 +27,11 @@ function ProtectedRoute() {
 export const router = createBrowserRouter([
   {
     path: '/login',
-    element: <Login />
+    element: <Login />,
+  },
+  {
+    path: '/register',
+    element: <Register />,
   },
   {
     path: '/',
@@ -37,59 +43,62 @@ export const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <Navigate to="/dashboard" replace />
+            element: <Navigate to="/dashboard" replace />,
           },
           {
             path: 'dashboard',
-            element: <Dashboard />
+            element: <Dashboard />,
           },
           {
             path: 'firewall',
-            element: <Firewall />
+            element: <Firewall />,
           },
           {
             path: 'network',
-            element: <Network />
+            element: <Network />,
           },
           {
             path: 'devices',
-            element: <Devices />
+            element: <Devices />,
           },
           {
             path: 'audit',
-            element: <Audit />
+            element: <Audit />,
           },
           {
             path: 'users',
-            element: <Users />
+            element: <Users />,
           },
           {
             path: 'alerts',
-            element: <Alerts />
+            element: <Alerts />,
           },
           {
             path: 'vpn',
-            element: <Vpn />
+            element: <Vpn />,
           },
           {
             path: 'sdwan',
-            element: <Sdwan />
+            element: <Sdwan />,
           },
           {
             path: 'analytics',
-            element: <Analytics />
+            element: <Analytics />,
           },
           {
             path: 'settings',
-            element: <Settings />
+            element: <Settings />,
+          },
+          {
+            path: 'design-system',
+            element: <DesignSystem />,
           },
           {
             path: '*',
-            element: <Navigate to="/dashboard" replace />
-          }
-        ]
-      }
-    ]
-  }
+            element: <Navigate to="/dashboard" replace />,
+          },
+        ],
+      },
+    ],
+  },
 ])
-

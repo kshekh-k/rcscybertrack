@@ -28,10 +28,15 @@ RCS CyberTrack Core uses a centralized Permission-Based Authorization framework 
 
 ---
 
-## 2. Backend Enforcement Syntax
+## 2. Backend Enforcement & Hardened Protection Rules
 
-All authorization checks are enforced server-side via FastAPI dependency injections:
+All authorization checks are enforced server-side via FastAPI dependency injections using exact permission strings:
 ```python
 @app.get("/api/v1/users", dependencies=[Depends(require_permission("users.read"))])
 @app.post("/api/v1/users", dependencies=[Depends(require_permission("users.write"))])
 ```
+
+### Production Hardening Controls:
+1. **User Self-Protection**: Active users are strictly blocked from disabling their own account or modifying/demoting their own role level (`update_user` / `disable_user`).
+2. **Last-Admin Safeguards**: System enforces that the final active administrator account cannot be disabled, deleted, or demoted to a non-admin role.
+3. **Audit Log Credential Redaction**: All sensitive data fields (`password`, `secret`, `token`, `api_key`, `private_key`, `credentials`) passed in details payloads are automatically redacted to `[REDACTED]` prior to hash-chaining and disk persistence.

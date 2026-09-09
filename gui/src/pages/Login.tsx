@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { ShieldCheck, LockKeyhole, Loader2 } from 'lucide-react'
+import { useNavigate, Link, useLocation } from 'react-router-dom'
+import { ShieldCheck, LockKeyhole, UserPlus } from 'lucide-react'
 import { api } from '../lib/api'
+import { Button } from '../components/ui/button'
 
 export default function Login() {
   const [username, setUsername] = useState('')
@@ -9,6 +10,8 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const navigate = useNavigate()
+  const location = useLocation()
+  const infoMessage = (location.state as { message?: string })?.message
 
   useEffect(() => {
     // If already logged in, skip login
@@ -49,6 +52,12 @@ export default function Login() {
           <p className="text-xs text-[#94A3B8] uppercase tracking-wider mt-1">Security Platform</p>
         </div>
 
+        {infoMessage && (
+          <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs rounded-lg p-3 mb-6 font-semibold">
+            {infoMessage}
+          </div>
+        )}
+
         {error && (
           <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-lg p-3 mb-6 font-semibold">
             {error}
@@ -80,19 +89,26 @@ export default function Login() {
             />
           </div>
 
-          <button 
+          <Button 
             type="submit" 
-            disabled={loading}
-            className="w-full bg-[#2563EB] hover:bg-[#3B82F6] disabled:bg-[#2563EB]/50 transition-colors text-white font-semibold py-2.5 px-4 rounded-lg text-sm flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-blue-900/25 disabled:cursor-not-allowed"
+            variant="primary"
+            size="lg"
+            isLoading={loading}
+            className="w-full text-sm font-semibold py-2.5 gap-2 rounded-lg"
           >
-            {loading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <LockKeyhole className="w-4 h-4" />
-            )}
+            {!loading && <LockKeyhole className="w-4 h-4" />}
             {loading ? 'Authenticating...' : 'Authenticate'}
-          </button>
+          </Button>
         </form>
+
+        <div className="mt-6 pt-4 border-t border-[#1E293B] text-center">
+          <p className="text-xs text-[#94A3B8]">
+            Don't have an account?{' '}
+            <Link to="/register" className="text-blue-400 hover:text-blue-300 font-semibold inline-flex items-center gap-1">
+              Create Account <UserPlus className="w-3.5 h-3.5 ml-0.5" />
+            </Link>
+          </p>
+        </div>
       </div>
       
       <p className="text-xs text-[#64748B] mt-8">RCS CyberTrack v0.1.0 • Network Security. Under Control.</p>

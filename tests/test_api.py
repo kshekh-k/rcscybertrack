@@ -8,11 +8,21 @@ client = TestClient(app)
 
 @pytest.fixture(autouse=True)
 def mock_system_operations():
-    """Fixture to mock filesystem writes and firewall application to keep tests isolated."""
+    """Mock privileged system operations to keep API tests isolated."""
     with patch("management.api.server._save_firewall_rules") as mock_save, \
-         patch("management.api.server.firewall_engine.apply") as mock_apply:
-        mock_apply.return_value = True
-        yield mock_save, mock_apply
+         patch("management.api.server.os_adapter.apply_config") as mock_apply_config, \
+         patch("management.api.server.os_adapter.verify_health") as mock_verify_health:
+
+        mock_apply_config.return_value = (
+            True,
+            "Firewall/NAT configuration applied successfully"
+        )
+        mock_verify_health.return_value = (
+            True,
+            "Firewall/NAT health check passed"
+        )
+
+        yield mock_save, mock_apply_config, mock_verify_health
 
 def get_auth_headers(username: str, role: str) -> dict:
     """Helper to obtain access token and build Authorization header."""

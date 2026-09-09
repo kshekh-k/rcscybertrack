@@ -1,0 +1,14 @@
+dns:
+  servers:
+    - 8.8.8.8
+    - 8.8.4.4
+  local_records:
+    - hostname: router.local
+      ip: 192.168.1.1
+    - hostname: rcscybertrack.local
+      ip: 192.168.1.100
+  forwarders:
+    - 1.1.1.1
+  cache:
+    enabled: true
+    size: 4096

@@ -4,7 +4,9 @@ from typing import Dict, List, Optional
 import yaml
 import management.env  # Ensure .env is loaded
 from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -22,10 +24,13 @@ from management.auth.rbac import (
 )
 from management.auth.auth import (
     create_access_token,
+    decode_access_token,
     get_current_user,
     verify_password,
     authenticate_user,
-    bootstrap_default_users
+    bootstrap_default_users,
+    revoke_token,
+    oauth2_scheme
 )
 
 # Initialize database schemas and bootstrap default administrative users
@@ -39,10 +44,10 @@ FirewallEngine = firewall_engine_module.FirewallEngine
 FirewallRule = firewall_engine_module.FirewallRule
 PolicyConfig = firewall_engine_module.PolicyConfig
 
-from network.network_manager import NetworkManager, InterfaceConfig, RouteConfig
+from network.network_manager import NetworkManager, LinuxNetworkAdapter, InterfaceConfig, RouteConfig
 from management.device.device import Device, DeviceRegistry
 from management.audit.audit import AuditLogger
-
+from management.adapter.os_adapter import os_adapter
 # Determine base path of the project
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -62,20 +67,88 @@ def _get_username(user) -> str:
     return getattr(user, "username", "system")
 
 # Initialize Firewall
+# Initialize Firewall
 firewall_policy_path = BASE_DIR / "firewall" / "policy" / "default-policy.yaml"
 firewall_rules_path = BASE_DIR / "firewall" / "rules" / "rules.yaml"
 firewall_engine = FirewallEngine(backend_type=config.firewall.backend)
+
 try:
     firewall_engine.load_policy(firewall_policy_path)
     firewall_engine.load_rules(firewall_rules_path)
-    # Apply initial rules
-    firewall_engine.apply()
+
+    # Build the boot-time OS configuration payload.
+    # FirewallEngine remains the management/API object,
+    # while OSAdapter performs the privileged firewall/NAT/forwarding apply.
+    startup_policy = {
+        "input": firewall_engine.policy.input,
+        "output": firewall_engine.policy.output,
+        "forward": firewall_engine.policy.forward,
+    }
+
+    startup_rules = [
+        rule.model_dump() for rule in firewall_engine.rules
+    ]
+
+    startup_nat = (
+        config.firewall.nat.model_dump()
+        if config.firewall.nat is not None
+        else None
+    )
+
+    startup_payload = {
+        "firewall": {
+            "policy": startup_policy,
+            "rules": startup_rules,
+            "nat": startup_nat,
+        }
+    }
+
+    # Apply firewall + NAT first, then IPv4 forwarding.
+    os_ok, os_msg = os_adapter.apply_config(startup_payload)
+    if not os_ok:
+        raise RuntimeError(f"Boot firewall/NAT apply failed: {os_msg}")
+
+    # Verify the resulting firewall state.
+    health_ok, health_msg = os_adapter.verify_health()
+    if not health_ok:
+        raise RuntimeError(f"Boot firewall/NAT health check failed: {health_msg}")
+
+    print(f"CyberTrack firewall/NAT startup: {health_msg}")
+
 except Exception as e:
-    # If nftables or loading fails, fallback/log
-    print(f"Error loading firewall engine: {e}")
+    print(f"Error initializing firewall/NAT: {e}")
+
+
+def _apply_firewall_config() -> tuple[bool, str]:
+    """Apply the complete active firewall configuration, including NAT."""
+    if firewall_engine.policy is None:
+        return False, "Firewall policy is not loaded"
+
+    payload = {
+        "firewall": {
+            "policy": {
+                "input": firewall_engine.policy.input,
+                "output": firewall_engine.policy.output,
+                "forward": firewall_engine.policy.forward,
+            },
+            "rules": [
+                rule.model_dump()
+                for rule in firewall_engine.rules
+            ],
+            "nat": (
+                config.firewall.nat.model_dump()
+                if config.firewall.nat is not None
+                else None
+            ),
+        }
+    }
+
+    return os_adapter.apply_config(payload)
+
+
 
 # Initialize Network Manager
-network_manager = NetworkManager()
+network_manager = NetworkManager(adapter=LinuxNetworkAdapter())
 try:
     network_manager.load_interfaces(BASE_DIR / "network" / "interfaces" / "interfaces.yaml")
     network_manager.load_routes(BASE_DIR / "network" / "routing" / "routes.yaml")
@@ -85,6 +158,8 @@ try:
 except Exception as e:
     print(f"Error loading network manager: {e}")
 
+
+
 # Initialize Device Registry
 device_registry = DeviceRegistry()
 
@@ -92,18 +167,84 @@ device_registry = DeviceRegistry()
 app = FastAPI(
     title="RCS CyberTrack Core Management API",
     description="High-Assurance Backend Management Platform for Security Appliances",
-    version="0.5.1"
+    version="0.6.0"
 )
 
-cors_origins_raw = os.getenv("CYBERTRACK_CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173")
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        response = await call_next(request)
+
+        response.headers.setdefault("X-Content-Type-Options", "nosniff")
+        response.headers.setdefault("X-Frame-Options", "DENY")
+        response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+        response.headers.setdefault(
+            "Permissions-Policy",
+            "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
+        )
+        response.headers.setdefault(
+            "Cross-Origin-Opener-Policy",
+            "same-origin",
+        )
+        response.headers.setdefault(
+            "Cross-Origin-Resource-Policy",
+            "same-origin",
+        )
+
+        is_production = os.getenv("CYBERTRACK_ENV", "development").strip().lower() == "production"
+        is_https = (
+            request.url.scheme == "https" or
+            request.headers.get("x-forwarded-proto", "").lower() == "https" or
+            os.getenv("CYBERTRACK_HSTS_ENABLED", "false").strip().lower() in ("true", "1", "yes")
+        )
+        if is_production and is_https:
+            response.headers.setdefault("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+
+        return response
+
+
+cors_origins_raw = os.getenv("CYBERTRACK_CORS_ORIGINS")
+
+if not cors_origins_raw:
+    if os.getenv("CYBERTRACK_ENV", "development").strip().lower() == "production":
+        raise RuntimeError(
+            "Production CORS configuration error: "
+            "CYBERTRACK_CORS_ORIGINS environment variable is required."
+        )
+    cors_origins_raw = "http://localhost:5173,http://127.0.0.1:5173"
+
 cors_origins = [origin.strip() for origin in cors_origins_raw.split(",") if origin.strip()]
+
+if not cors_origins:
+    raise RuntimeError(
+        "CORS configuration error: at least one allowed origin is required."
+    )
+
+if "*" in cors_origins:
+    if os.getenv("CYBERTRACK_ENV", "development").strip().lower() == "production":
+        raise RuntimeError(
+            "Production CORS configuration error: wildcard origin '*' is not allowed."
+        )
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=cors_origins if cors_origins else ["*"],
+    allow_origins=cors_origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=[
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE",
+        "OPTIONS",
+    ],
+    allow_headers=[
+        "Authorization",
+        "Content-Type",
+        "Accept",
+    ],
+)
+
+app.add_middleware(
+    SecurityHeadersMiddleware,
 )
 
 # --- Authentication Token Route ---
@@ -124,6 +265,31 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
     access_token = create_access_token(data={"sub": user.username})
     return {"access_token": access_token, "token_type": "bearer"}
 
+@app.post("/api/v1/auth/logout")
+def logout(
+    token: str = Depends(oauth2_scheme),
+    db: Session = Depends(get_db)
+):
+    try:
+        payload = decode_access_token(token)
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    username = payload.get("sub")
+    user = db.query(UserDB).filter(UserDB.username == username).first()
+    if not user or not user.enabled:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    return revoke_token(db, token, reason="logout")
+
 # --- System & Health Endpoints ---
 
 @app.get("/api/v1/health")
@@ -131,7 +297,7 @@ def get_health():
     # Public endpoint
     return {"status": "healthy", "service": "rcs-cybertrack-core"}
 
-@app.get("/api/v1/system", dependencies=[Depends(require_viewer)])
+@app.get("/api/v1/system", dependencies=[Depends(require_permission("system.read"))])
 def get_system():
     return {
         "hostname": config.system.hostname,
@@ -143,12 +309,12 @@ def get_system():
 
 # --- Firewall Endpoints ---
 
-@app.get("/api/v1/firewall/rules", response_model=List[FirewallRule], dependencies=[Depends(require_viewer)])
+@app.get("/api/v1/firewall/rules", response_model=List[FirewallRule], dependencies=[Depends(require_permission("firewall.read"))])
 def get_firewall_rules():
     return firewall_engine.rules
 
 @app.post("/api/v1/firewall/rules", response_model=FirewallRule, status_code=status.HTTP_201_CREATED)
-def create_firewall_rule(rule: FirewallRule, current_user: Dict = Depends(require_operator)):
+def create_firewall_rule(rule: FirewallRule, current_user: UserDB = Depends(require_permission("firewall.write"))):
     # Check if ID already exists
     for r in firewall_engine.rules:
         if r.id == rule.id:
@@ -161,7 +327,9 @@ def create_firewall_rule(rule: FirewallRule, current_user: Dict = Depends(requir
     firewall_engine.rules.append(rule)
     try:
         _save_firewall_rules()
-        firewall_engine.apply()
+        apply_ok, apply_msg = _apply_firewall_config()
+        if not apply_ok:
+            raise RuntimeError(apply_msg)
     except Exception as e:
         # Revert memory representation in case of failure
         firewall_engine.rules.pop()
@@ -181,7 +349,7 @@ def create_firewall_rule(rule: FirewallRule, current_user: Dict = Depends(requir
     return rule
 
 @app.put("/api/v1/firewall/rules/{rule_id}", response_model=FirewallRule)
-def update_firewall_rule(rule_id: str, updated_rule: FirewallRule, current_user: Dict = Depends(require_operator)):
+def update_firewall_rule(rule_id: str, updated_rule: FirewallRule, current_user: UserDB = Depends(require_permission("firewall.write"))):
     if rule_id != updated_rule.id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -204,7 +372,9 @@ def update_firewall_rule(rule_id: str, updated_rule: FirewallRule, current_user:
     firewall_engine.rules[found_idx] = updated_rule
     try:
         _save_firewall_rules()
-        firewall_engine.apply()
+        apply_ok, apply_msg = _apply_firewall_config()
+        if not apply_ok:
+            raise RuntimeError(apply_msg)
     except Exception as e:
         firewall_engine.rules[found_idx] = original_rule
         raise HTTPException(
@@ -223,7 +393,7 @@ def update_firewall_rule(rule_id: str, updated_rule: FirewallRule, current_user:
     return updated_rule
 
 @app.delete("/api/v1/firewall/rules/{rule_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_firewall_rule(rule_id: str, current_user: Dict = Depends(require_operator)):
+def delete_firewall_rule(rule_id: str, current_user: UserDB = Depends(require_permission("firewall.write"))):
     found_idx = -1
     for idx, r in enumerate(firewall_engine.rules):
         if r.id == rule_id:
@@ -239,7 +409,9 @@ def delete_firewall_rule(rule_id: str, current_user: Dict = Depends(require_oper
     removed_rule = firewall_engine.rules.pop(found_idx)
     try:
         _save_firewall_rules()
-        firewall_engine.apply()
+        apply_ok, apply_msg = _apply_firewall_config()
+        if not apply_ok:
+            raise RuntimeError(apply_msg)
     except Exception as e:
         firewall_engine.rules.insert(found_idx, removed_rule)
         raise HTTPException(
@@ -278,7 +450,12 @@ def get_firewall_backend_status():
 def get_firewall_diff():
     policy_dict = firewall_engine.policy.model_dump() if firewall_engine.policy else {"input": "drop", "output": "accept", "forward": "drop"}
     rules_dict = [r.model_dump() for r in firewall_engine.rules]
-    compiled = nftables_backend.compile(policy_dict, rules_dict)
+    nat_dict = (
+        config.firewall.nat.model_dump()
+        if config.firewall.nat is not None
+        else None
+    )
+    compiled = nftables_backend.compile(policy_dict, rules_dict, nat=nat_dict)
     current_status = nftables_backend.discover()
 
     return {
@@ -292,7 +469,12 @@ def get_firewall_diff():
 def validate_firewall_ruleset(current_user: UserDB = Depends(require_permission("firewall.write"))):
     policy_dict = firewall_engine.policy.model_dump() if firewall_engine.policy else {"input": "drop", "output": "accept", "forward": "drop"}
     rules_dict = [r.model_dump() for r in firewall_engine.rules]
-    v_ok, v_msg = nftables_backend.validate(policy_dict, rules_dict)
+    nat_dict = (
+        config.firewall.nat.model_dump()
+        if config.firewall.nat is not None
+        else None
+    )
+    v_ok, v_msg = nftables_backend.validate(policy_dict, rules_dict, nat=nat_dict)
 
     audit_logger.log(
         user=current_user.username,
@@ -320,7 +502,7 @@ def apply_firewall_ruleset(current_user: UserDB = Depends(require_permission("fi
         details={"rule_count": len(rules_dict)}
     )
 
-    applied_ok, apply_msg = nftables_backend.apply(policy_dict, rules_dict)
+    applied_ok, apply_msg = _apply_firewall_config()
     if not applied_ok:
         audit_logger.log(
             user=current_user.username,
@@ -364,17 +546,17 @@ def _save_firewall_rules():
 
 # --- Network Endpoints ---
 
-@app.get("/api/v1/network/interfaces", response_model=List[InterfaceConfig], dependencies=[Depends(require_viewer)])
+@app.get("/api/v1/network/interfaces", response_model=List[InterfaceConfig], dependencies=[Depends(require_permission("network.read"))])
 def get_network_interfaces():
     return network_manager.interfaces
 
-@app.get("/api/v1/network/routes", response_model=List[RouteConfig], dependencies=[Depends(require_viewer)])
+@app.get("/api/v1/network/routes", response_model=List[RouteConfig], dependencies=[Depends(require_permission("network.read"))])
 def get_network_routes():
     return network_manager.routes
 
 # --- Device Endpoints ---
 
-@app.get("/api/v1/devices", response_model=List[Device], dependencies=[Depends(require_viewer)])
+@app.get("/api/v1/devices", response_model=List[Device], dependencies=[Depends(require_permission("devices.read"))])
 def get_devices():
     # Refresh the read-only kernel-neighbor inventory before returning devices.
     device_registry.discover_devices()
@@ -453,11 +635,11 @@ def disable_user(user_id: str, current_user: UserDB = Depends(require_permission
 
 # --- Security Alert Endpoints ---
 
-@app.get("/api/v1/alerts", response_model=List[AlertModel], dependencies=[Depends(require_viewer)])
+@app.get("/api/v1/alerts", response_model=List[AlertModel], dependencies=[Depends(require_permission("alerts.read"))])
 def get_alerts(severity: Optional[str] = None, status: Optional[str] = None):
     return alert_service.list_alerts(severity=severity, status=status)
 
-@app.get("/api/v1/alerts/{alert_id}", response_model=AlertModel, dependencies=[Depends(require_viewer)])
+@app.get("/api/v1/alerts/{alert_id}", response_model=AlertModel, dependencies=[Depends(require_permission("alerts.read"))])
 def get_alert_by_id(alert_id: str):
     alert = alert_service.get_alert(alert_id)
     if not alert:
@@ -465,7 +647,7 @@ def get_alert_by_id(alert_id: str):
     return alert
 
 @app.post("/api/v1/alerts/{alert_id}/acknowledge", response_model=AlertModel)
-def acknowledge_alert(alert_id: str, req: AlertAcknowledgeRequest, current_user: Dict = Depends(require_operator)):
+def acknowledge_alert(alert_id: str, req: AlertAcknowledgeRequest, current_user: UserDB = Depends(require_permission("alerts.write"))):
     alert = alert_service.acknowledge_alert(alert_id, req.acknowledged_by, req.note)
     if not alert:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Alert '{alert_id}' not found")
@@ -479,7 +661,7 @@ def acknowledge_alert(alert_id: str, req: AlertAcknowledgeRequest, current_user:
     return alert
 
 @app.post("/api/v1/alerts/{alert_id}/resolve", response_model=AlertModel)
-def resolve_alert(alert_id: str, req: AlertResolveRequest, current_user: Dict = Depends(require_operator)):
+def resolve_alert(alert_id: str, req: AlertResolveRequest, current_user: UserDB = Depends(require_permission("alerts.write"))):
     alert = alert_service.resolve_alert(alert_id, req.resolved_by, req.mitigation_note)
     if not alert:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Alert '{alert_id}' not found")
@@ -495,12 +677,12 @@ def resolve_alert(alert_id: str, req: AlertResolveRequest, current_user: Dict = 
 
 # --- System Settings Endpoints ---
 
-@app.get("/api/v1/settings", response_model=SystemSettings, dependencies=[Depends(require_viewer)])
+@app.get("/api/v1/settings", response_model=SystemSettings, dependencies=[Depends(require_permission("system.read"))])
 def get_settings():
     return settings_service.get_settings()
 
 @app.put("/api/v1/settings", response_model=SystemSettings)
-def update_settings(new_settings: SystemSettings, current_user: Dict = Depends(require_admin)):
+def update_settings(new_settings: SystemSettings, current_user: UserDB = Depends(require_permission("system.write"))):
     updated = settings_service.update_settings(new_settings)
     audit_logger.log(
         user=_get_username(current_user),
@@ -569,12 +751,12 @@ def get_config_history(db: Session = Depends(get_db)):
 
 # --- VPN Endpoints ---
 
-@app.get("/api/v1/vpn/connections", response_model=List[VpnConnectionModel], dependencies=[Depends(require_viewer)])
+@app.get("/api/v1/vpn/connections", response_model=List[VpnConnectionModel], dependencies=[Depends(require_permission("vpn.read"))])
 def get_vpn_connections():
     return vpn_service.list_connections()
 
 @app.post("/api/v1/vpn/connections", response_model=VpnConnectionModel, status_code=status.HTTP_201_CREATED)
-def create_vpn_connection(req: VpnCreateRequest, current_user: Dict = Depends(require_operator)):
+def create_vpn_connection(req: VpnCreateRequest, current_user: UserDB = Depends(require_permission("vpn.write"))):
     conn = vpn_service.create_connection(req)
     audit_logger.log(
         user=_get_username(current_user),
@@ -586,31 +768,52 @@ def create_vpn_connection(req: VpnCreateRequest, current_user: Dict = Depends(re
     )
     return conn
 
-@app.get("/api/v1/vpn/peers", response_model=List[VpnPeerModel], dependencies=[Depends(require_viewer)])
+@app.get("/api/v1/vpn/peers", response_model=List[VpnPeerModel], dependencies=[Depends(require_permission("vpn.read"))])
 def get_vpn_peers():
     return vpn_service.list_peers()
 
 # --- SD-WAN Endpoints ---
 
-@app.get("/api/v1/sdwan/links", response_model=List[WanLinkModel], dependencies=[Depends(require_viewer)])
+@app.get("/api/v1/sdwan/links", response_model=List[WanLinkModel], dependencies=[Depends(require_permission("sdwan.read"))])
 def get_sdwan_links():
     return sdwan_service.list_links()
 
-@app.get("/api/v1/sdwan/policies", response_model=List[SdwanPolicyModel], dependencies=[Depends(require_viewer)])
+@app.get("/api/v1/sdwan/policies", response_model=List[SdwanPolicyModel], dependencies=[Depends(require_permission("sdwan.read"))])
 def get_sdwan_policies():
     return sdwan_service.list_policies()
 
 # --- Telemetry Analytics Endpoints ---
 
-@app.get("/api/v1/analytics/traffic", response_model=List[TrafficMetricPointModel], dependencies=[Depends(require_viewer)])
+@app.get("/api/v1/analytics/traffic", response_model=List[TrafficMetricPointModel], dependencies=[Depends(require_permission("analytics.read"))])
 def get_traffic_analytics():
     return telemetry_service.get_traffic_metrics()
 
-@app.get("/api/v1/analytics/top-sources", response_model=List[TopTalkerModel], dependencies=[Depends(require_viewer)])
+@app.get("/api/v1/analytics/top-sources", response_model=List[TopTalkerModel], dependencies=[Depends(require_permission("analytics.read"))])
 def get_top_sources():
     return telemetry_service.get_top_sources()
 
-@app.get("/api/v1/analytics/top-destinations", response_model=List[TopTalkerModel], dependencies=[Depends(require_viewer)])
+@app.get("/api/v1/analytics/top-destinations", response_model=List[TopTalkerModel], dependencies=[Depends(require_permission("analytics.read"))])
 def get_top_destinations():
     return telemetry_service.get_top_destinations()
+# --- React Web Admin GUI ---
+GUI_DIST = BASE_DIR / "gui" / "dist"
 
+@app.get("/{full_path:path}", include_in_schema=False)
+async def serve_web_admin(full_path: str):
+    if full_path.startswith("api/"):
+        raise HTTPException(status_code=404, detail="API endpoint not found")
+
+    if not GUI_DIST.is_dir():
+        raise HTTPException(status_code=503, detail="Web Admin GUI is not installed")
+
+    root = GUI_DIST.resolve()
+    requested = (root / full_path).resolve()
+
+    if requested.is_relative_to(root) and requested.is_file():
+        return FileResponse(str(requested))
+
+    index_file = root / "index.html"
+    if index_file.is_file():
+        return FileResponse(str(index_file))
+
+    raise HTTPException(status_code=503, detail="Web Admin GUI index not found")

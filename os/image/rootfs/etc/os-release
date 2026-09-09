@@ -1,0 +1,6 @@
+NAME="RCS CyberTrack Security Appliance"
+VERSION="v0.6.1"
+ID=rcscybertrack
+PRETTY_NAME="RCS CyberTrack Security Appliance v0.6.1 (x86_64)"
+VERSION_ID="0.6.1"
+HOME_URL="https://console.rcscybertrack.in"

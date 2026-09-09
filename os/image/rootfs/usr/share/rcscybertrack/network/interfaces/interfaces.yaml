@@ -1,0 +1,13 @@
+interfaces:
+  - name: eth0
+    enabled: true
+    ipv4:
+      address: 192.168.1.100
+      prefix: 24
+      dhcp: false
+  - name: eth1
+    enabled: true
+    ipv4:
+      address: 192.168.2.1
+      prefix: 24
+      dhcp: false

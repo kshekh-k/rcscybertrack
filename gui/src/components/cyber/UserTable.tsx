@@ -11,6 +11,7 @@ import {
 import { User } from '../../types/apiContracts'
 import { RoleBadge } from './RoleBadge'
 import { StatusBadge } from './StatusBadge'
+import { Button } from '../ui/button'
 
 interface UserTableProps {
   users: User[]
@@ -91,13 +92,15 @@ export const UserTable: React.FC<UserTableProps> = ({
           </div>
 
           {/* Create User Button */}
-          <button
+          <Button
+            variant="primary"
+            size="sm"
             onClick={onCreateUserClick}
-            className="px-3 py-1.5 bg-primary hover:bg-primary-hover text-white text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5 shadow-sm shrink-0"
+            className="gap-1.5 shrink-0"
           >
             <UserPlus className="w-3.5 h-3.5" />
             <span>Create User</span>
-          </button>
+          </Button>
         </div>
       </div>
 

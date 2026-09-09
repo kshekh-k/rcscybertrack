@@ -1,0 +1,15 @@
+=== HTTPS / TLS PILOT GATEWAY AUDIT ===
+Listening HTTP/HTTPS ports:
+LISTEN 0      2048       127.0.0.1:8000       0.0.0.0:*                                               
+LISTEN 0      4096       127.0.0.1:44329      0.0.0.0:*    users:(("language_server",pid=66124,fd=9)) 
+LISTEN 0      4096         0.0.0.0:8081       0.0.0.0:*                                               
+LISTEN 0      4096         0.0.0.0:8085       0.0.0.0:*                                               
+LISTEN 0      4096         0.0.0.0:8084       0.0.0.0:*                                               
+LISTEN 0      511                *:80               *:*                                               
+LISTEN 0      4096            [::]:8081          [::]:*                                               
+LISTEN 0      4096            [::]:8085          [::]:*                                               
+LISTEN 0      4096            [::]:8084          [::]:*                                               
+Reverse Proxy Status:
+active
+TLS_STATUS = ENVIRONMENT_BLOCKED
+Cause: Public TLS certificate and HTTPS reverse proxy termination are not provisioned on loopback interface.

@@ -13,6 +13,7 @@ import {
   ToggleRight
 } from 'lucide-react'
 import { api, FirewallRule } from '../lib/api'
+import { Button } from '../components/ui/button'
 
 export default function Firewall() {
   const [rules, setRules] = useState<FirewallRule[]>([])
@@ -225,14 +226,8 @@ export default function Firewall() {
 
   const loadBackendStatus = async () => {
     try {
-      const token = localStorage.getItem('cybertrack_token')
-      const res = await fetch('/api/v1/firewall/status', {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      if (res.ok) {
-        const data = await res.json()
-        setBackendStatus(data)
-      }
+      const data = await api.getFirewallStatus()
+      setBackendStatus(data)
     } catch {
       // Ignore background status failure
     }
@@ -247,14 +242,8 @@ export default function Firewall() {
     setStatusMsg(null)
     setError(null)
     try {
-      const token = localStorage.getItem('cybertrack_token')
-      const res = await fetch('/api/v1/firewall/validate', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.detail || 'Validation failed')
-      setStatusMsg('nftables Ruleset Validation PASSED!')
+      const data = await api.validateFirewall()
+      setStatusMsg(data.message || 'nftables Ruleset Validation PASSED!')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Validation failed')
     }
@@ -265,15 +254,10 @@ export default function Firewall() {
     setError(null)
     setApplying(true)
     try {
-      const token = localStorage.getItem('cybertrack_token')
-      const res = await fetch('/api/v1/firewall/apply', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.detail || 'Firewall apply failed')
+      await api.applyFirewall()
       setStatusMsg('Ruleset APPLIED & VERIFIED on nftables table inet rcs_cybertrack!')
-      loadBackendStatus()
+      await loadBackendStatus()
+      await loadRules()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Firewall apply failed')
     } finally {
@@ -308,12 +292,13 @@ export default function Firewall() {
             {applying ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
             <span>Apply to nftables</span>
           </button>
-          <button 
+          <Button 
+            variant="primary"
             onClick={() => openModal(null)}
-            className="bg-[#2563EB] hover:bg-[#3B82F6] text-white text-xs font-semibold px-4 py-2.5 rounded-lg flex items-center justify-center gap-2 cursor-pointer transition-colors shadow-lg shadow-blue-900/10"
+            className="gap-2 px-4 py-2.5"
           >
             <Plus className="w-4 h-4" /> Add Security Rule
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -693,12 +678,13 @@ export default function Firewall() {
                 >
                   Cancel
                 </button>
-                <button 
+                <Button 
                   type="submit" 
-                  className="bg-[#2563EB] hover:bg-[#3B82F6] text-xs text-white font-semibold px-4 py-2 rounded-lg cursor-pointer transition-colors shadow-lg"
+                  variant="primary"
+                  className="px-4 py-2 text-xs"
                 >
                   {editingRule ? 'Save Changes' : 'Apply Rule'}
-                </button>
+                </Button>
               </div>
 
             </form>
