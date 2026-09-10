@@ -112,9 +112,9 @@ export default function Dashboard() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-5">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">Security Overview</h1>
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <h1 className="text-lg font-semibold text-slate-900 dark:text-slate-100 tracking-tight">Security Overview</h1>
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-4xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 ">
+              <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
               Operational
             </span>
           </div>
@@ -125,7 +125,7 @@ export default function Dashboard() {
 
         <div className="flex items-center gap-3">
           <div className="text-right hidden sm:block font-mono">
-            <p className="text-[10px] text-slate-400 uppercase">Last updated</p>
+            <p className="text-3xs text-slate-400 uppercase">Last updated</p>
             <p className="text-xs text-slate-700 dark:text-slate-300 font-semibold">{lastRefetched.toLocaleTimeString()}</p>
           </div>
           <Button
@@ -135,7 +135,7 @@ export default function Dashboard() {
             disabled={isManualRefreshing}
             className="gap-2"
           >
-            <RefreshCw className={`w-3.5 h-3.5 text-blue-500 ${isManualRefreshing ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`size-3.5 text-blue-500 ${isManualRefreshing ? 'animate-spin' : ''}`} />
             <span>Refresh</span>
           </Button>
         </div>
@@ -155,7 +155,7 @@ export default function Dashboard() {
         <MetricCard
           title="System Health"
           value={isHealthLoading ? '...' : isHealthy ? 'Operational' : health?.status || 'Offline'}
-          icon={<Activity className={`w-4 h-4 ${isHealthy ? 'text-emerald-500' : 'text-rose-500'}`} />}
+          icon={<Activity className={`size-4 ${isHealthy ? 'text-emerald-500' : 'text-rose-500'}`} />}
           statusText={isHealthy ? 'Healthy' : 'Warning'}
           statusVariant={isHealthy ? 'success' : 'danger'}
           subtitle="Core engine status"
@@ -165,7 +165,7 @@ export default function Dashboard() {
         <MetricCard
           title="Firewall Policies"
           value={isRulesLoading ? '...' : activeRulesCount}
-          icon={<ShieldCheck className="w-4 h-4 text-blue-500" />}
+          icon={<ShieldCheck className="size-4 text-blue-500" />}
           statusText={`${activeRulesCount} Active`}
           statusVariant="info"
           subtitle="nftables backend"
@@ -174,7 +174,7 @@ export default function Dashboard() {
         <MetricCard
           title="Network Interfaces"
           value={isInterfacesLoading ? '...' : `${activeInterfacesCount}/${totalInterfacesCount}`}
-          icon={<NetIcon className="w-4 h-4 text-cyan-500" />}
+          icon={<NetIcon className="size-4 text-cyan-500" />}
           statusText={`${activeInterfacesCount} UP`}
           statusVariant="success"
           subtitle="eth0 WAN / eth1 LAN"
@@ -183,7 +183,7 @@ export default function Dashboard() {
         <MetricCard
           title="Online Devices"
           value={isDevicesLoading ? '...' : `${onlineDevicesCount}/${totalDevicesCount}`}
-          icon={<MonitorSmartphone className="w-4 h-4 text-indigo-500" />}
+          icon={<MonitorSmartphone className="size-4 text-indigo-500" />}
           statusText={`${onlineDevicesCount} Online`}
           statusVariant="success"
           subtitle="Discovered hosts"
@@ -192,7 +192,7 @@ export default function Dashboard() {
         <MetricCard
           title="Active Sessions"
           value="1,482"
-          icon={<Zap className="w-4 h-4 text-amber-500" />}
+          icon={<Zap className="size-4 text-amber-500" />}
           statusText="Normal"
           statusVariant="info"
           subtitle="Concurrent TCP/UDP"
@@ -202,7 +202,7 @@ export default function Dashboard() {
         <MetricCard
           title="Blocked Traffic"
           value="12,490"
-          icon={<XCircle className="w-4 h-4 text-red-500" />}
+          icon={<XCircle className="size-4 text-red-500" />}
           statusText="9.4% Rate"
           statusVariant="danger"
           subtitle="Packets 24h"
@@ -222,8 +222,8 @@ export default function Dashboard() {
 
         <div className="lg:col-span-1 space-y-3">
           <FirewallStatusCard backend="nftables" activeRules={activeRulesCount} isRunning={true} />
-          
-          <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-xl p-4 space-y-2">
+
+          <div className="bg-white dark:bg-slate-900 rounded-xl p-4 space-y-2">
             <h4 className="text-xs font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider mb-2">Default Chain Policies</h4>
             <ChainPolicyBadge chain="INPUT" policy="DROP" />
             <ChainPolicyBadge chain="OUTPUT" policy="ACCEPT" />
@@ -256,18 +256,18 @@ export default function Dashboard() {
       </div>
 
       {/* 5. Real-Time Network Traffic Chart */}
-      <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-xs space-y-4">
+      <div className="bg-white dark:bg-slate-900 rounded-xl p-5 shadow-xs space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <BarChart3 className="w-4 h-4 text-cyan-500" />
+            <BarChart3 className="size-4 text-cyan-500" />
             <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">Traffic & Session Telemetry</h3>
           </div>
           <div className="flex items-center gap-4 text-xs font-mono">
             <span className="flex items-center gap-1.5 text-blue-500">
-              <span className="w-2.5 h-2.5 rounded-xs bg-blue-500 inline-block" /> Inbound (Mbps)
+              <span className="size-2.5 rounded-xs bg-blue-500 inline-block" /> Inbound (Mbps)
             </span>
             <span className="flex items-center gap-1.5 text-cyan-500">
-              <span className="w-2.5 h-2.5 rounded-xs bg-cyan-500 inline-block" /> Outbound (Mbps)
+              <span className="size-2.5 rounded-xs bg-cyan-500 inline-block" /> Outbound (Mbps)
             </span>
           </div>
         </div>
@@ -301,30 +301,30 @@ export default function Dashboard() {
       {/* 6. Security Alerts & Audit Events Dual Column Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Security Alerts */}
-        <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-xl p-5 space-y-4 shadow-xs">
+        <div className="bg-white dark:bg-slate-900 rounded-xl p-5 space-y-4 shadow-xs">
           <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
             <div className="flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-amber-500" />
+              <AlertTriangle className="size-4 text-amber-500" />
               <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">Security Alerts Summary</h3>
             </div>
             <a href="/alerts" className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline">View All Alerts →</a>
           </div>
 
           <div className="grid grid-cols-4 gap-2 text-center font-mono text-xs">
-            <div className="p-2 rounded-lg bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400">
-              <span className="text-[10px] block font-sans">Critical</span>
+            <div className="p-2 rounded-lg bg-red-500/10 text-red-600 dark:text-red-400">
+              <span className="text-3xs block font-sans">Critical</span>
               <span className="text-sm font-bold">1</span>
             </div>
-            <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400">
-              <span className="text-[10px] block font-sans">High</span>
+            <div className="p-2 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400">
+              <span className="text-3xs block font-sans">High</span>
               <span className="text-sm font-bold">2</span>
             </div>
-            <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400">
-              <span className="text-[10px] block font-sans">Medium</span>
+            <div className="p-2 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">
+              <span className="text-3xs block font-sans">Medium</span>
               <span className="text-sm font-bold">5</span>
             </div>
-            <div className="p-2 rounded-lg bg-slate-500/10 border border-slate-500/20 text-slate-600 dark:text-slate-400">
-              <span className="text-[10px] block font-sans">Low</span>
+            <div className="p-2 rounded-lg bg-slate-500/10 text-slate-600 dark:text-slate-400">
+              <span className="text-3xs block font-sans">Low</span>
               <span className="text-sm font-bold">14</span>
             </div>
           </div>
@@ -336,25 +336,25 @@ export default function Dashboard() {
               { severity: 'warning', time: '09:15:00', event: 'SSH Repeated Authentication Failures', src: '203.0.113.15' },
               { severity: 'info', time: '08:30:22', event: 'New DHCP Host Bound on eth1', src: '192.168.2.145' },
             ].map((alt, idx) => (
-              <div key={idx} className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#070B14] border border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
+              <div key={idx} className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-950 flex items-center justify-between text-xs">
                 <div className="flex items-center gap-2.5">
                   <StatusBadge status={alt.severity} variant={alt.severity as 'danger' | 'warning' | 'info'} />
                   <div>
                     <p className="font-semibold text-slate-900 dark:text-slate-100">{alt.event}</p>
-                    <p className="text-[10px] font-mono text-slate-400">Source IP: {alt.src}</p>
+                    <p className="text-3xs font-mono text-slate-400">Source IP: {alt.src}</p>
                   </div>
                 </div>
-                <span className="font-mono text-[10px] text-slate-400">{alt.time}</span>
+                <span className="font-mono text-3xs text-slate-400">{alt.time}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Audit Events */}
-        <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-xl p-5 space-y-4 shadow-xs">
+        <div className="bg-white dark:bg-slate-900 rounded-xl p-5 space-y-4 shadow-xs">
           <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
             <div className="flex items-center gap-2">
-              <ScrollText className="w-4 h-4 text-blue-500" />
+              <ScrollText className="size-4 text-blue-500" />
               <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">Recent Audit Log Events</h3>
             </div>
             <a href="/audit" className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline">View Full Audit Chain →</a>
@@ -366,17 +366,17 @@ export default function Dashboard() {
               { user: 'Administrator', action: 'Updated Interface eth0 IP Address', res: 'network.d', result: 'Success', time: '10:14:12' },
               { user: 'Operator', action: 'Triggered Diagnostics Ping Check', res: 'diagnostics', result: 'Success', time: '08:50:00' },
             ].map((log, idx) => (
-              <div key={idx} className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#070B14] border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+              <div key={idx} className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-950 flex items-center justify-between">
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="font-bold text-blue-600 dark:text-blue-400">{log.user}</span>
-                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-sans">{log.res}</span>
+                    <span className="text-3xs px-1.5 py-0.2 rounded bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-sans">{log.res}</span>
                   </div>
-                  <p className="text-[11px] font-sans text-slate-700 dark:text-slate-300 mt-0.5">{log.action}</p>
+                  <p className="text-2xs font-sans text-slate-700 dark:text-slate-300 mt-0.5">{log.action}</p>
                 </div>
                 <div className="text-right">
-                  <span className="text-emerald-500 font-bold text-[10px] block">{log.result}</span>
-                  <span className="text-[10px] text-slate-400">{log.time}</span>
+                  <span className="text-emerald-500 font-bold text-3xs block">{log.result}</span>
+                  <span className="text-3xs text-slate-400">{log.time}</span>
                 </div>
               </div>
             ))}
@@ -385,30 +385,30 @@ export default function Dashboard() {
       </div>
 
       {/* 7. Quick Actions Bar */}
-      <div className="bg-slate-50 dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex flex-wrap items-center justify-between gap-3 shadow-xs">
+      <div className="bg-slate-50 dark:bg-slate-900 rounded-xl p-4 flex flex-wrap items-center justify-between gap-3 shadow-xs">
         <div className="flex items-center gap-2 text-xs font-bold text-slate-900 dark:text-slate-100">
-          <Flame className="w-4 h-4 text-blue-500" />
+          <Flame className="size-4 text-blue-500" />
           <span>Appliance Quick Actions</span>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
           <Button variant="default" size="sm" onClick={() => setShowAddRuleModal(true)} className="gap-1.5">
-            <Plus className="w-3.5 h-3.5" /> Add Firewall Rule
+            <Plus className="size-3.5" /> Add Firewall Rule
           </Button>
           <Button variant="outline" size="sm" onClick={() => window.location.href = '/analytics'} className="gap-1.5">
-            <BarChart3 className="w-3.5 h-3.5" /> View Traffic
+            <BarChart3 className="size-3.5" /> View Traffic
           </Button>
           <Button variant="outline" size="sm" onClick={() => window.location.href = '/network'} className="gap-1.5">
-            <Sliders className="w-3.5 h-3.5" /> Network Interfaces
+            <Sliders className="size-3.5" /> Network Interfaces
           </Button>
           <Button variant="outline" size="sm" onClick={() => window.location.href = '/audit'} className="gap-1.5">
-            <FileText className="w-3.5 h-3.5" /> View Logs
+            <FileText className="size-3.5" /> View Logs
           </Button>
           <Button variant="outline" size="sm" onClick={() => window.location.href = '/settings'} className="gap-1.5">
-            <Terminal className="w-3.5 h-3.5" /> Run Diagnostics
+            <Terminal className="size-3.5" /> Run Diagnostics
           </Button>
           <Button variant="secondary" size="sm" onClick={() => alert('Configuration Backup Initiated')} className="gap-1.5">
-            <Download className="w-3.5 h-3.5" /> Backup Config
+            <Download className="size-3.5" /> Backup Config
           </Button>
         </div>
       </div>
@@ -423,7 +423,7 @@ export default function Dashboard() {
         <form onSubmit={handleCreateRule} className="space-y-4 text-xs">
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">Rule ID</label>
+              <label className="block text-2xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Rule ID</label>
               <Input
                 value={newRule.id}
                 onChange={(e) => setNewRule({ ...newRule, id: e.target.value })}
@@ -432,7 +432,7 @@ export default function Dashboard() {
               />
             </div>
             <div>
-              <label className="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">Action</label>
+              <label className="block text-2xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Action</label>
               <Select
                 value={newRule.action}
                 onChange={(e) => setNewRule({ ...newRule, action: e.target.value as RuleAction })}
@@ -446,7 +446,7 @@ export default function Dashboard() {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">Chain Direction</label>
+              <label className="block text-2xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Chain Direction</label>
               <Select
                 value={newRule.direction}
                 onChange={(e) => setNewRule({ ...newRule, direction: e.target.value as 'input' | 'output' | 'forward' })}
@@ -457,7 +457,7 @@ export default function Dashboard() {
               </Select>
             </div>
             <div>
-              <label className="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">Protocol</label>
+              <label className="block text-2xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Protocol</label>
               <Select
                 value={newRule.protocol}
                 onChange={(e) => setNewRule({ ...newRule, protocol: e.target.value as 'tcp' | 'udp' | 'icmp' | 'any' })}
@@ -472,7 +472,7 @@ export default function Dashboard() {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">Source IP / CIDR</label>
+              <label className="block text-2xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Source IP / CIDR</label>
               <Input
                 value={newRule.source?.address || ''}
                 onChange={(e) => setNewRule({ ...newRule, source: { address: e.target.value, port: newRule.source?.port } })}
@@ -480,7 +480,7 @@ export default function Dashboard() {
               />
             </div>
             <div>
-              <label className="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">Destination Port</label>
+              <label className="block text-2xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Destination Port</label>
               <Input
                 type="number"
                 value={newRule.destination?.port || ''}

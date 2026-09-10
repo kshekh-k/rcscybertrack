@@ -38,7 +38,7 @@ export const RoleBadge: React.FC<RoleBadgeProps> = ({ role, className = '' }) =>
 
   return (
     <span
-      className={`inline-flex items-center px-2.5 py-0.5 text-[11px] font-mono font-medium rounded-full border ${current.bg} ${current.text} ${current.border} ${className}`}
+      className={`inline-flex items-center px-2.5 py-0.5 text-2xs font-mono font-medium rounded-full border ${current.bg} ${current.text} ${current.border} ${className}`}
     >
       {current.label}
     </span>

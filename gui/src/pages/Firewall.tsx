@@ -272,15 +272,15 @@ export default function Firewall() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
-            <Shield className="w-6 h-6 text-[#2563EB]" />
-            <h1 className="text-2xl font-semibold text-[#F8FAFC]">Firewall Policies</h1>
+            <Shield className="size-6 text-blue-600" />
+            <h1 className="text-2xl font-semibold text-slate-50">Firewall Policies</h1>
           </div>
-          <p className="text-sm text-[#94A3B8]">Configure stateful security rules applied to local nftables table inet rcs_cybertrack.</p>
+          <p className="text-sm text-slate-400">Configure stateful security rules applied to local nftables table inet rcs_cybertrack.</p>
         </div>
         <div className="flex items-center gap-3">
           <button 
             onClick={handleValidate}
-            className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3.5 py-2.5 rounded-lg border border-slate-700 transition-colors"
+            className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3.5 py-2.5 rounded-lg transition-colors"
           >
             Validate Ruleset
           </button>
@@ -289,7 +289,7 @@ export default function Firewall() {
             disabled={applying}
             className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-4 py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors shadow-lg shadow-emerald-950/20 disabled:opacity-50"
           >
-            {applying ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
+            {applying ? <Loader2 className="size-4 animate-spin" /> : <CheckCircle className="size-4" />}
             <span>Apply to nftables</span>
           </button>
           <Button 
@@ -297,16 +297,16 @@ export default function Firewall() {
             onClick={() => openModal(null)}
             className="gap-2 px-4 py-2.5"
           >
-            <Plus className="w-4 h-4" /> Add Security Rule
+            <Plus className="size-4" /> Add Security Rule
           </Button>
         </div>
       </div>
 
       {/* Backend Status Notification */}
       {backendStatus && (
-        <div className="p-3.5 bg-slate-900/80 border border-slate-800 rounded-xl flex items-center justify-between text-xs text-slate-300">
+        <div className="p-3.5 bg-slate-900/80 rounded-xl flex items-center justify-between text-xs text-slate-300">
           <div className="flex items-center gap-3">
-            <span className={`w-2 h-2 rounded-full ${backendStatus.available ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
+            <span className={`size-2 rounded-full ${backendStatus.available ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
             <span>Backend: <strong className="text-white font-mono">{backendStatus.backend}</strong> ({backendStatus.version || 'Detection active'})</span>
             <span className="text-slate-500">|</span>
             <span>Managed Table: <strong className="text-cyan-400 font-mono">table inet {backendStatus.table_name}</strong></span>
@@ -316,88 +316,88 @@ export default function Firewall() {
       )}
 
       {statusMsg && (
-        <div className="p-4 bg-emerald-950/40 border border-emerald-800/60 rounded-xl flex items-center gap-3 text-emerald-300 text-sm">
-          <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
+        <div className="p-4 bg-emerald-950/40 rounded-xl flex items-center gap-3 text-emerald-300 text-sm">
+          <CheckCircle className="size-5 text-emerald-400 shrink-0" />
           <span>{statusMsg}</span>
         </div>
       )}
 
       {/* Chain Policy Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-[#0F172A] border border-[#1E293B] rounded-xl p-4 flex items-center gap-4">
-          <div className="w-10 h-10 rounded-lg bg-red-500/5 border border-red-500/20 flex items-center justify-center">
-            <XCircle className="w-5 h-5 text-red-500" />
+        <div className="bg-slate-900 rounded-xl p-4 flex items-center gap-4">
+          <div className="size-10 rounded-lg bg-red-500/5 flex items-center justify-center">
+            <XCircle className="size-5 text-red-500" />
           </div>
           <div>
-            <div className="text-[10px] font-semibold text-[#64748B] uppercase tracking-wider">INPUT Chain</div>
-            <div className="text-sm font-semibold text-[#F8FAFC] mt-0.5">DEFAULT DROP</div>
+            <div className="text-3xs font-semibold text-slate-500 uppercase tracking-wider">INPUT Chain</div>
+            <div className="text-sm font-semibold text-slate-50 mt-0.5">DEFAULT DROP</div>
           </div>
         </div>
 
-        <div className="bg-[#0F172A] border border-[#1E293B] rounded-xl p-4 flex items-center gap-4">
-          <div className="w-10 h-10 rounded-lg bg-green-500/5 border border-green-500/20 flex items-center justify-center">
-            <CheckCircle className="w-5 h-5 text-green-500" />
+        <div className="bg-slate-900 rounded-xl p-4 flex items-center gap-4">
+          <div className="size-10 rounded-lg bg-green-500/5 flex items-center justify-center">
+            <CheckCircle className="size-5 text-green-500" />
           </div>
           <div>
-            <div className="text-[10px] font-semibold text-[#64748B] uppercase tracking-wider">OUTPUT Chain</div>
-            <div className="text-sm font-semibold text-[#F8FAFC] mt-0.5">DEFAULT ACCEPT</div>
+            <div className="text-3xs font-semibold text-slate-500 uppercase tracking-wider">OUTPUT Chain</div>
+            <div className="text-sm font-semibold text-slate-50 mt-0.5">DEFAULT ACCEPT</div>
           </div>
         </div>
 
-        <div className="bg-[#0F172A] border border-[#1E293B] rounded-xl p-4 flex items-center gap-4">
-          <div className="w-10 h-10 rounded-lg bg-red-500/5 border border-red-500/20 flex items-center justify-center">
-            <XCircle className="w-5 h-5 text-red-500" />
+        <div className="bg-slate-900 rounded-xl p-4 flex items-center gap-4">
+          <div className="size-10 rounded-lg bg-red-500/5 flex items-center justify-center">
+            <XCircle className="size-5 text-red-500" />
           </div>
           <div>
-            <div className="text-[10px] font-semibold text-[#64748B] uppercase tracking-wider">FORWARD Chain</div>
-            <div className="text-sm font-semibold text-[#F8FAFC] mt-0.5">DEFAULT DROP</div>
+            <div className="text-3xs font-semibold text-slate-500 uppercase tracking-wider">FORWARD Chain</div>
+            <div className="text-sm font-semibold text-slate-50 mt-0.5">DEFAULT DROP</div>
           </div>
         </div>
       </div>
 
       {/* Rules Database Panel */}
-      <div className="bg-[#0F172A] border border-[#1E293B] rounded-xl overflow-hidden shadow-lg">
-        <div className="p-5 border-b border-[#1E293B] flex items-center justify-between">
+      <div className="bg-slate-900 rounded-xl overflow-hidden shadow-lg">
+        <div className="p-5 border-b border-slate-800 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <FileCode className="w-5 h-5 text-[#2563EB]" />
-            <h2 className="text-sm font-semibold text-[#F8FAFC]">Active Ruleset</h2>
+            <FileCode className="size-5 text-blue-600" />
+            <h2 className="text-sm font-semibold text-slate-50">Active Ruleset</h2>
           </div>
           <button 
             onClick={loadRules} 
-            className="text-xs text-[#94A3B8] hover:text-[#F8FAFC] flex items-center gap-1.5 transition-colors cursor-pointer"
+            className="text-xs text-slate-400 hover:text-slate-50 flex items-center gap-1.5 transition-colors cursor-pointer"
           >
             Refresh Rules
           </button>
         </div>
 
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-16 gap-3 text-sm text-[#94A3B8]">
-            <Loader2 className="w-8 h-8 text-[#2563EB] animate-spin" />
+          <div className="flex flex-col items-center justify-center py-16 gap-3 text-sm text-slate-400">
+            <Loader2 className="size-8 text-blue-600 animate-spin" />
             <span>Retrieving nftables policies...</span>
           </div>
         ) : error ? (
           <div className="flex flex-col items-center justify-center py-16 px-4 gap-3 text-center">
-            <AlertTriangle className="w-10 h-10 text-amber-500" />
-            <span className="text-sm text-[#F8FAFC] font-semibold">Failed to load rules</span>
-            <span className="text-xs text-[#94A3B8] max-w-md">{error}</span>
+            <AlertTriangle className="size-10 text-amber-500" />
+            <span className="text-sm text-slate-50 font-semibold">Failed to load rules</span>
+            <span className="text-xs text-slate-400 max-w-md">{error}</span>
             <button 
               onClick={loadRules}
-              className="mt-2 text-xs bg-[#1E293B] hover:bg-[#334155] text-[#F8FAFC] px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+              className="mt-2 text-xs bg-slate-800 hover:bg-slate-700 text-slate-50 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
             >
               Retry Connection
             </button>
           </div>
         ) : rules.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
-            <Shield className="w-10 h-10 text-[#64748B] mb-2" />
-            <span className="text-sm text-[#F8FAFC] font-semibold">No rules configured</span>
-            <span className="text-xs text-[#94A3B8] max-w-xs mt-1">Add a security policy rule above to populate the active table.</span>
+            <Shield className="size-10 text-slate-500 mb-2" />
+            <span className="text-sm text-slate-50 font-semibold">No rules configured</span>
+            <span className="text-xs text-slate-400 max-w-xs mt-1">Add a security policy rule above to populate the active table.</span>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-[#0A0F1C] border-b border-[#1E293B] text-[10px] font-semibold text-[#64748B] uppercase tracking-wider">
+                <tr className="bg-slate-950 border-b border-slate-800 text-3xs font-semibold text-slate-500 uppercase tracking-wider">
                   <th className="px-6 py-3.5">ID / Name</th>
                   <th className="px-6 py-3.5">Action</th>
                   <th className="px-6 py-3.5">Chain</th>
@@ -410,12 +410,12 @@ export default function Firewall() {
                   <th className="px-6 py-3.5 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#1E293B] text-xs">
+              <tbody className="divide-y divide-slate-800 text-xs">
                 {rules.map((rule) => (
-                  <tr key={rule.id} className="hover:bg-[#0A0F1C]/40 transition-colors">
-                    <td className="px-6 py-4 font-mono font-medium text-[#F8FAFC]">{rule.id}</td>
+                  <tr key={rule.id} className="hover:bg-slate-950/40 transition-colors">
+                    <td className="px-6 py-4 font-mono font-medium text-slate-50">{rule.id}</td>
                     <td className="px-6 py-4">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
+                      <span className={`px-2 py-0.5 rounded text-3xs font-bold uppercase tracking-wider ${
                         rule.action === 'allow' ? 'bg-green-500/10 text-green-400' :
                         rule.action === 'deny' ? 'bg-red-500/10 text-red-400' :
                         'bg-amber-500/10 text-amber-400'
@@ -423,50 +423,50 @@ export default function Firewall() {
                         {rule.action}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-[#94A3B8] font-semibold capitalize">{rule.direction}</td>
-                    <td className="px-6 py-4 text-[#94A3B8] font-mono">{rule.interface || 'any'}</td>
-                    <td className="px-6 py-4 text-[#94A3B8] font-mono uppercase">{rule.protocol}</td>
-                    <td className="px-6 py-4 text-[#94A3B8] font-mono">
+                    <td className="px-6 py-4 text-slate-400 font-semibold capitalize">{rule.direction}</td>
+                    <td className="px-6 py-4 text-slate-400 font-mono">{rule.interface || 'any'}</td>
+                    <td className="px-6 py-4 text-slate-400 font-mono uppercase">{rule.protocol}</td>
+                    <td className="px-6 py-4 text-slate-400 font-mono">
                       {rule.source.address}
                       {rule.source.port ? `:${rule.source.port}` : ''}
                     </td>
-                    <td className="px-6 py-4 text-[#94A3B8] font-mono">
+                    <td className="px-6 py-4 text-slate-400 font-mono">
                       {rule.destination.address}
                       {rule.destination.port ? `:${rule.destination.port}` : ''}
                     </td>
-                    <td className="px-6 py-4 text-[#94A3B8]">
+                    <td className="px-6 py-4 text-slate-400">
                       {rule.state.length > 0 ? (
                         <div className="flex gap-1">
                           {rule.state.map(s => (
-                            <span key={s} className="px-1.5 py-0.5 rounded bg-[#1E293B] text-[9px] text-[#94A3B8] font-semibold uppercase">{s}</span>
+                            <span key={s} className="px-1.5 py-0.5 rounded bg-slate-800 text-4xs text-slate-400 font-semibold uppercase">{s}</span>
                           ))}
                         </div>
                       ) : (
-                        <span className="text-[#64748B]">-</span>
+                        <span className="text-slate-500">-</span>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-[#94A3B8]">
+                    <td className="px-6 py-4 text-slate-400">
                       {rule.logging ? (
-                        <span className="text-[#2563EB] font-semibold text-[10px] uppercase">Active</span>
+                        <span className="text-blue-600 font-semibold text-3xs uppercase">Active</span>
                       ) : (
-                        <span className="text-[#64748B]">Off</span>
+                        <span className="text-slate-500">Off</span>
                       )}
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2.5">
                         <button 
                           onClick={() => openModal(rule)}
-                          className="text-[#94A3B8] hover:text-[#F8FAFC] p-1 rounded hover:bg-[#1E293B] transition-colors cursor-pointer"
+                          className="text-slate-400 hover:text-slate-50 p-1 rounded hover:bg-slate-800 transition-colors cursor-pointer"
                           title="Edit Policy"
                         >
-                          <Edit2 className="w-3.5 h-3.5" />
+                          <Edit2 className="size-3.5" />
                         </button>
                         <button 
                           onClick={() => handleDelete(rule.id)}
                           className="text-red-400 hover:text-red-500 p-1 rounded hover:bg-red-500/10 transition-colors cursor-pointer"
                           title="Delete Policy"
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <Trash2 className="size-3.5" />
                         </button>
                       </div>
                     </td>
@@ -483,16 +483,16 @@ export default function Firewall() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="fixed inset-0 bg-black/75 backdrop-blur-xs" onClick={() => setModalOpen(false)}></div>
           
-          <div className="relative w-full max-w-2xl bg-[#0F172A] border border-[#1E293B] rounded-xl shadow-2xl overflow-hidden animate-slide-in">
-            <div className="p-6 border-b border-[#1E293B]">
-              <h3 className="text-base font-semibold text-[#F8FAFC]">
+          <div className="relative w-full max-w-2xl bg-slate-900 rounded-xl shadow-2xl overflow-hidden animate-slide-in">
+            <div className="p-6 border-b border-slate-800">
+              <h3 className="text-base font-semibold text-slate-50">
                 {editingRule ? 'Edit Firewall Policy Rule' : 'Create New Firewall Policy Rule'}
               </h3>
-              <p className="text-xs text-[#94A3B8] mt-1">Configure ports, addresses, and actions below. Changes apply instantly to nftables.</p>
+              <p className="text-xs text-slate-400 mt-1">Configure ports, addresses, and actions below. Changes apply instantly to nftables.</p>
             </div>
 
             {formError && (
-              <div className="mx-6 mt-4 bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-lg p-3 font-semibold">
+              <div className="mx-6 mt-4 bg-red-500/10 text-red-400 text-xs rounded-lg p-3 font-semibold">
                 {formError}
               </div>
             )}
@@ -502,25 +502,25 @@ export default function Firewall() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Rule ID */}
                 <div>
-                  <label className="block text-[10px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">Rule ID</label>
+                  <label className="block text-3xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Rule ID</label>
                   <input 
                     type="text"
                     value={ruleId}
                     onChange={(e) => setRuleId(e.target.value)}
                     disabled={!!editingRule}
-                    className="w-full bg-[#070B14] border border-[#1E293B] rounded-lg px-3 py-2 text-xs text-[#F8FAFC] placeholder-slate-600 focus:outline-none focus:border-[#2563EB] disabled:opacity-50 transition-colors font-mono"
+                    className="w-full bg-slate-950 rounded-lg px-3 py-2 text-xs text-slate-50 placeholder-slate-600 focus:outline-none focus:border-blue-600 disabled:opacity-50 transition-colors font-mono"
                     placeholder="rule-allow-dns"
                   />
                 </div>
 
                 {/* Interface */}
                 <div>
-                  <label className="block text-[10px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">Link Interface (Optional)</label>
+                  <label className="block text-3xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Link Interface (Optional)</label>
                   <input 
                     type="text"
                     value={netInterface}
                     onChange={(e) => setNetInterface(e.target.value)}
-                    className="w-full bg-[#070B14] border border-[#1E293B] rounded-lg px-3 py-2 text-xs text-[#F8FAFC] placeholder-slate-600 focus:outline-none focus:border-[#2563EB] transition-colors font-mono"
+                    className="w-full bg-slate-950 rounded-lg px-3 py-2 text-xs text-slate-50 placeholder-slate-600 focus:outline-none focus:border-blue-600 transition-colors font-mono"
                     placeholder="eth0"
                   />
                 </div>
@@ -529,11 +529,11 @@ export default function Firewall() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Action */}
                 <div>
-                  <label className="block text-[10px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">Action</label>
+                  <label className="block text-3xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Action</label>
                   <select 
                     value={action} 
                     onChange={(e) => setAction(e.target.value as any)}
-                    className="w-full bg-[#070B14] border border-[#1E293B] rounded-lg px-3 py-2 text-xs text-[#F8FAFC] focus:outline-none focus:border-[#2563EB] transition-colors"
+                    className="w-full bg-slate-950 rounded-lg px-3 py-2 text-xs text-slate-50 focus:outline-none focus:border-blue-600 transition-colors"
                   >
                     <option value="allow">Allow</option>
                     <option value="deny">Deny (Drop)</option>
@@ -543,11 +543,11 @@ export default function Firewall() {
 
                 {/* Direction / Chain */}
                 <div>
-                  <label className="block text-[10px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">Target Chain</label>
+                  <label className="block text-3xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Target Chain</label>
                   <select 
                     value={direction} 
                     onChange={(e) => setDirection(e.target.value as any)}
-                    className="w-full bg-[#070B14] border border-[#1E293B] rounded-lg px-3 py-2 text-xs text-[#F8FAFC] focus:outline-none focus:border-[#2563EB] transition-colors"
+                    className="w-full bg-slate-950 rounded-lg px-3 py-2 text-xs text-slate-50 focus:outline-none focus:border-blue-600 transition-colors"
                   >
                     <option value="input">Input (Incoming)</option>
                     <option value="output">Output (Outgoing)</option>
@@ -557,11 +557,11 @@ export default function Firewall() {
 
                 {/* Protocol */}
                 <div>
-                  <label className="block text-[10px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">Protocol</label>
+                  <label className="block text-3xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Protocol</label>
                   <select 
                     value={protocol} 
                     onChange={(e) => setProtocol(e.target.value as any)}
-                    className="w-full bg-[#070B14] border border-[#1E293B] rounded-lg px-3 py-2 text-xs text-[#F8FAFC] focus:outline-none focus:border-[#2563EB] transition-colors"
+                    className="w-full bg-slate-950 rounded-lg px-3 py-2 text-xs text-slate-50 focus:outline-none focus:border-blue-600 transition-colors"
                   >
                     <option value="any">Any Protocol</option>
                     <option value="tcp">TCP</option>
@@ -572,25 +572,25 @@ export default function Firewall() {
               </div>
 
               {/* Source address and Port */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-[#1E293B] pt-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-slate-800 pt-4">
                 <div>
-                  <label className="block text-[10px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">Source IP / CIDR</label>
+                  <label className="block text-3xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Source IP / CIDR</label>
                   <input 
                     type="text"
                     value={srcAddress}
                     onChange={(e) => setSrcAddress(e.target.value)}
-                    className="w-full bg-[#070B14] border border-[#1E293B] rounded-lg px-3 py-2 text-xs text-[#F8FAFC] focus:outline-none focus:border-[#2563EB] transition-colors font-mono"
+                    className="w-full bg-slate-950 rounded-lg px-3 py-2 text-xs text-slate-50 focus:outline-none focus:border-blue-600 transition-colors font-mono"
                     placeholder="any"
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">Source Port (Optional)</label>
+                  <label className="block text-3xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Source Port (Optional)</label>
                   <input 
                     type="text"
                     value={srcPort}
                     onChange={(e) => setSrcPort(e.target.value)}
                     disabled={protocol !== 'tcp' && protocol !== 'udp'}
-                    className="w-full bg-[#070B14] border border-[#1E293B] rounded-lg px-3 py-2 text-xs text-[#F8FAFC] focus:outline-none focus:border-[#2563EB] disabled:opacity-30 disabled:cursor-not-allowed transition-colors font-mono"
+                    className="w-full bg-slate-950 rounded-lg px-3 py-2 text-xs text-slate-50 focus:outline-none focus:border-blue-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors font-mono"
                     placeholder="e.g. 80, 80:90"
                   />
                 </div>
@@ -599,57 +599,57 @@ export default function Firewall() {
               {/* Destination address and Port */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">Destination IP / CIDR</label>
+                  <label className="block text-3xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Destination IP / CIDR</label>
                   <input 
                     type="text"
                     value={dstAddress}
                     onChange={(e) => setDstAddress(e.target.value)}
-                    className="w-full bg-[#070B14] border border-[#1E293B] rounded-lg px-3 py-2 text-xs text-[#F8FAFC] focus:outline-none focus:border-[#2563EB] transition-colors font-mono"
+                    className="w-full bg-slate-950 rounded-lg px-3 py-2 text-xs text-slate-50 focus:outline-none focus:border-blue-600 transition-colors font-mono"
                     placeholder="any"
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1.5">Destination Port (Optional)</label>
+                  <label className="block text-3xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Destination Port (Optional)</label>
                   <input 
                     type="text"
                     value={dstPort}
                     onChange={(e) => setDstPort(e.target.value)}
                     disabled={protocol !== 'tcp' && protocol !== 'udp'}
-                    className="w-full bg-[#070B14] border border-[#1E293B] rounded-lg px-3 py-2 text-xs text-[#F8FAFC] focus:outline-none focus:border-[#2563EB] disabled:opacity-30 disabled:cursor-not-allowed transition-colors font-mono"
+                    className="w-full bg-slate-950 rounded-lg px-3 py-2 text-xs text-slate-50 focus:outline-none focus:border-blue-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors font-mono"
                     placeholder="e.g. 443"
                   />
                 </div>
               </div>
 
               {/* Advanced: States & Logging */}
-              <div className="border-t border-[#1E293B] pt-4 flex flex-col md:flex-row justify-between gap-4">
+              <div className="border-t border-slate-800 pt-4 flex flex-col md:flex-row justify-between gap-4">
                 <div>
-                  <label className="block text-[10px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2">Connection Track State</label>
+                  <label className="block text-3xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Connection Track State</label>
                   <div className="flex gap-4">
-                    <label className="flex items-center gap-2 text-xs text-[#94A3B8] cursor-pointer">
+                    <label className="flex items-center gap-2 text-xs text-slate-400 cursor-pointer">
                       <input 
                         type="checkbox" 
                         checked={stateNew} 
                         onChange={(e) => setStateNew(e.target.checked)} 
-                        className="rounded border-[#1E293B] bg-[#070B14] text-[#2563EB] focus:ring-0 cursor-pointer"
+                        className="rounded border-slate-800 bg-slate-950 text-blue-600 focus:ring-0 cursor-pointer"
                       />
                       <span>New</span>
                     </label>
-                    <label className="flex items-center gap-2 text-xs text-[#94A3B8] cursor-pointer">
+                    <label className="flex items-center gap-2 text-xs text-slate-400 cursor-pointer">
                       <input 
                         type="checkbox" 
                         checked={stateEstablished} 
                         onChange={(e) => setStateEstablished(e.target.checked)} 
-                        className="rounded border-[#1E293B] bg-[#070B14] text-[#2563EB] focus:ring-0 cursor-pointer"
+                        className="rounded border-slate-800 bg-slate-950 text-blue-600 focus:ring-0 cursor-pointer"
                       />
                       <span>Established</span>
                     </label>
-                    <label className="flex items-center gap-2 text-xs text-[#94A3B8] cursor-pointer">
+                    <label className="flex items-center gap-2 text-xs text-slate-400 cursor-pointer">
                       <input 
                         type="checkbox" 
                         checked={stateRelated} 
                         onChange={(e) => setStateRelated(e.target.checked)} 
-                        className="rounded border-[#1E293B] bg-[#070B14] text-[#2563EB] focus:ring-0 cursor-pointer"
+                        className="rounded border-slate-800 bg-slate-950 text-blue-600 focus:ring-0 cursor-pointer"
                       />
                       <span>Related</span>
                     </label>
@@ -658,23 +658,23 @@ export default function Firewall() {
 
                 <div className="flex items-center md:justify-end gap-3 cursor-pointer select-none" onClick={() => setLogging(!logging)}>
                   <div>
-                    <div className="text-xs font-semibold text-[#F8FAFC]">Kernel Security Log</div>
-                    <div className="text-[10px] text-[#94A3B8]">Log triggered packet details to dmesg</div>
+                    <div className="text-xs font-semibold text-slate-50">Kernel Security Log</div>
+                    <div className="text-3xs text-slate-400">Log triggered packet details to dmesg</div>
                   </div>
                   {logging ? (
-                    <ToggleRight className="w-9 h-9 text-[#2563EB]" />
+                    <ToggleRight className="size-9 text-blue-600" />
                   ) : (
-                    <ToggleLeft className="w-9 h-9 text-[#64748B]" />
+                    <ToggleLeft className="size-9 text-slate-500" />
                   )}
                 </div>
               </div>
 
               {/* Buttons */}
-              <div className="flex justify-end gap-3 border-t border-[#1E293B] pt-4">
+              <div className="flex justify-end gap-3 border-t border-slate-800 pt-4">
                 <button 
                   type="button" 
                   onClick={() => setModalOpen(false)}
-                  className="bg-[#1E293B] hover:bg-[#334155] text-xs text-[#F8FAFC] font-semibold px-4 py-2 rounded-lg cursor-pointer transition-colors"
+                  className="bg-slate-800 hover:bg-slate-700 text-xs text-slate-50 font-semibold px-4 py-2 rounded-lg cursor-pointer transition-colors"
                 >
                   Cancel
                 </button>

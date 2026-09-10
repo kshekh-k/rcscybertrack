@@ -39,17 +39,17 @@ export default function Devices() {
     switch (type) {
       case 'router':
       case 'switch':
-        return <HardDrive className="w-4 h-4 text-cyan-400" />
+        return <HardDrive className="size-4 text-cyan-400" />
       case 'firewall':
-        return <Shield className="w-4 h-4 text-primary" />
+        return <Shield className="size-4 text-primary" />
       case 'ap':
-        return <Wifi className="w-4 h-4 text-emerald-400" />
+        return <Wifi className="size-4 text-emerald-400" />
       case 'server':
-        return <ServerIcon className="w-4 h-4 text-indigo-400" />
+        return <ServerIcon className="size-4 text-indigo-400" />
       case 'client':
-        return <Laptop className="w-4 h-4 text-amber-400" />
+        return <Laptop className="size-4 text-amber-400" />
       default:
-        return <Cpu className="w-4 h-4 text-slate-400" />
+        return <Cpu className="size-4 text-slate-400" />
     }
   }
 
@@ -88,10 +88,10 @@ export default function Devices() {
           <button
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="px-3 py-2 bg-surface hover:bg-slate-800 border border-border-subtle text-text-primary text-xs font-medium rounded-lg transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50"
+            className="px-3 py-2 bg-surface hover:bg-slate-800 text-text-primary text-xs font-medium rounded-lg transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50"
             title="Refresh device inventory"
           >
-            <RefreshCw className={`w-3.5 h-3.5 text-primary ${isRefreshing ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`size-3.5 text-primary ${isRefreshing ? 'animate-spin' : ''}`} />
             <span>Refresh</span>
           </button>
         </div>
@@ -108,58 +108,58 @@ export default function Devices() {
 
       {/* Overview Stat Badges */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="bg-surface border border-border-subtle rounded-xl p-4 shadow-lg flex items-center justify-between">
+        <div className="bg-surface rounded-xl p-4 shadow-lg flex items-center justify-between">
           <div>
             <p className="text-xs text-text-muted font-medium uppercase tracking-wider">Total Discovered</p>
             <p className="text-xl font-bold font-mono text-text-primary mt-1">{totalCount}</p>
           </div>
-          <div className="p-2.5 rounded-lg bg-slate-800 text-slate-300 border border-slate-700">
-            <MonitorSmartphone className="w-5 h-5" />
+          <div className="p-2.5 rounded-lg bg-slate-800 text-slate-300 ">
+            <MonitorSmartphone className="size-5" />
           </div>
         </div>
 
-        <div className="bg-surface border border-border-subtle rounded-xl p-4 shadow-lg flex items-center justify-between">
+        <div className="bg-surface rounded-xl p-4 shadow-lg flex items-center justify-between">
           <div>
             <p className="text-xs text-emerald-400 font-medium uppercase tracking-wider">Online Hosts</p>
             <p className="text-xl font-bold font-mono text-emerald-400 mt-1">{onlineCount}</p>
           </div>
-          <div className="p-2.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 block animate-pulse" />
+          <div className="p-2.5 rounded-lg bg-emerald-500/10 text-emerald-400 ">
+            <span className="size-2.5 rounded-full bg-emerald-400 block animate-pulse" />
           </div>
         </div>
 
-        <div className="bg-surface border border-border-subtle rounded-xl p-4 shadow-lg flex items-center justify-between">
+        <div className="bg-surface rounded-xl p-4 shadow-lg flex items-center justify-between">
           <div>
             <p className="text-xs text-rose-400 font-medium uppercase tracking-wider">Offline Hosts</p>
             <p className="text-xl font-bold font-mono text-rose-400 mt-1">{offlineCount}</p>
           </div>
-          <div className="p-2.5 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/20">
-            <span className="w-2.5 h-2.5 rounded-full bg-rose-400 block" />
+          <div className="p-2.5 rounded-lg bg-rose-500/10 text-rose-400 ">
+            <span className="size-2.5 rounded-full bg-rose-400 block" />
           </div>
         </div>
 
-        <div className="bg-surface border border-border-subtle rounded-xl p-4 shadow-lg flex items-center justify-between">
+        <div className="bg-surface rounded-xl p-4 shadow-lg flex items-center justify-between">
           <div>
             <p className="text-xs text-amber-400 font-medium uppercase tracking-wider">Degraded Hosts</p>
             <p className="text-xl font-bold font-mono text-amber-400 mt-1">{degradedCount}</p>
           </div>
-          <div className="p-2.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-400 block animate-pulse" />
+          <div className="p-2.5 rounded-lg bg-amber-500/10 text-amber-400 ">
+            <span className="size-2.5 rounded-full bg-amber-400 block animate-pulse" />
           </div>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-surface border border-border-subtle rounded-xl p-4 shadow-lg flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+      <div className="bg-surface rounded-xl p-4 shadow-lg flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
         {/* Search Bar */}
         <div className="relative flex-1 max-w-md">
-          <Search className="w-4 h-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="size-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search hostnames, IP, MAC address, OS..."
-            className="w-full bg-app-bg border border-border-subtle rounded-lg pl-9 pr-4 py-2 text-xs text-text-primary placeholder-slate-500 focus:outline-none focus:border-primary transition-colors"
+            className="w-full bg-app-bg rounded-lg pl-9 pr-4 py-2 text-xs text-text-primary placeholder-slate-500 focus:outline-none focus:border-primary transition-colors"
           />
         </div>
 
@@ -167,12 +167,12 @@ export default function Devices() {
         <div className="flex flex-wrap items-center gap-3">
           {/* Status Filter */}
           <div className="flex items-center gap-1.5">
-            <Filter className="w-3.5 h-3.5 text-text-muted" />
+            <Filter className="size-3.5 text-text-muted" />
             <span className="text-xs text-text-muted font-medium">Status:</span>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as any)}
-              className="bg-app-bg border border-border-subtle text-text-primary text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-primary font-medium"
+              className="bg-app-bg text-text-primary text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-primary font-medium"
             >
               <option value="all">All Statuses</option>
               <option value="online">Online</option>
@@ -187,7 +187,7 @@ export default function Devices() {
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
-              className="bg-app-bg border border-border-subtle text-text-primary text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-primary font-medium"
+              className="bg-app-bg text-text-primary text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-primary font-medium"
             >
               <option value="all">All Types</option>
               <option value="router">Router</option>
@@ -203,11 +203,11 @@ export default function Devices() {
       </div>
 
       {/* Device Table */}
-      <div className="bg-surface border border-border-subtle rounded-xl overflow-hidden shadow-lg">
+      <div className="bg-surface rounded-xl overflow-hidden shadow-lg">
         <div className="p-5 border-b border-slate-800/80 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-primary/10 text-primary border border-primary/20">
-              <MonitorSmartphone className="w-4 h-4" />
+            <div className="p-2 rounded-lg bg-primary/10 text-primary ">
+              <MonitorSmartphone className="size-4" />
             </div>
             <div>
               <h2 className="text-base font-semibold text-text-primary">Device Inventory</h2>
@@ -232,13 +232,13 @@ export default function Devices() {
                     ? 'No devices match your selected search or filter criteria.'
                     : 'No connected devices detected on local subnets.'
                 }
-                icon={<MonitorSmartphone className="w-6 h-6 text-slate-500" />}
+                icon={<MonitorSmartphone className="size-6 text-slate-500" />}
               />
             </div>
           ) : (
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-app-bg/80 border-b border-border-subtle text-[11px] font-semibold text-text-muted uppercase tracking-wider">
+                <tr className="bg-app-bg/80 border-b border-border-subtle text-2xs font-semibold text-text-muted uppercase tracking-wider">
                   <th className="py-3.5 px-6">Hostname</th>
                   <th className="py-3.5 px-6">IP Address</th>
                   <th className="py-3.5 px-6">MAC Address</th>
@@ -275,7 +275,7 @@ export default function Devices() {
                       {/* Hostname */}
                       <td className="py-4 px-6 font-semibold text-text-primary">
                         <div className="flex items-center gap-2.5">
-                          <div className="p-1.5 bg-slate-800 rounded border border-slate-700">
+                          <div className="p-1.5 bg-slate-800 rounded ">
                             {getDeviceIcon(dev.device_type)}
                           </div>
                           <span>{dev.hostname}</span>
@@ -294,7 +294,7 @@ export default function Devices() {
 
                       {/* Type */}
                       <td className="py-4 px-6">
-                        <span className="capitalize font-mono text-[11px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded border border-slate-700">
+                        <span className="capitalize font-mono text-2xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded ">
                           {dev.device_type}
                         </span>
                       </td>
@@ -312,7 +312,7 @@ export default function Devices() {
                       {/* Last Seen */}
                       <td className="py-4 px-6 font-mono text-text-muted">
                         <div className="flex items-center gap-1.5">
-                          <Clock className="w-3 h-3 text-slate-500" />
+                          <Clock className="size-3 text-slate-500" />
                           <span>{formattedLastSeen}</span>
                         </div>
                       </td>
@@ -324,9 +324,9 @@ export default function Devices() {
                             {dev.tags.map((tag) => (
                               <span
                                 key={tag}
-                                className="inline-flex items-center gap-1 text-[10px] bg-slate-800/90 text-slate-300 border border-slate-700/80 px-1.5 py-0.2 rounded"
+                                className="inline-flex items-center gap-1 text-3xs bg-slate-800/90 text-slate-300 px-1.5 py-0.2 rounded"
                               >
-                                <Tag className="w-2.5 h-2.5 text-slate-400" />
+                                <Tag className="size-2.5 text-slate-400" />
                                 <span>{tag}</span>
                               </span>
                             ))}

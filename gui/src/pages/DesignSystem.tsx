@@ -48,7 +48,7 @@ export default function DesignSystem() {
   const columns: Column<SampleRule>[] = [
     { key: 'id', header: 'Rule ID', accessor: (r) => <span className="font-mono font-semibold">{r.id}</span>, sortable: true },
     { key: 'action', header: 'Action', accessor: (r) => <ActionBadge action={r.action} />, sortable: true },
-    { key: 'direction', header: 'Chain', accessor: (r) => <span className="font-mono uppercase text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800">{r.direction}</span> },
+    { key: 'direction', header: 'Chain', accessor: (r) => <span className="font-mono uppercase text-3xs font-bold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800">{r.direction}</span> },
     { key: 'protocol', header: 'Protocol', accessor: (r) => <span className="font-mono">{r.protocol}</span> },
     { key: 'source', header: 'Source', accessor: (r) => <span className="font-mono text-slate-500">{r.source}</span> },
     { key: 'destination', header: 'Destination', accessor: (r) => <span className="font-mono text-slate-500">{r.destination}</span> },
@@ -70,7 +70,7 @@ export default function DesignSystem() {
         </div>
 
         <Button onClick={toggleTheme} variant="outline" className="gap-2">
-          {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-blue-600" />}
+          {theme === 'dark' ? <Sun className="size-4 text-amber-400" /> : <Moon className="size-4 text-blue-600" />}
           <span>Toggle Mode ({theme.toUpperCase()})</span>
         </Button>
       </div>
@@ -79,7 +79,7 @@ export default function DesignSystem() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Palette className="w-4 h-4 text-blue-500" /> 1. Native Color Palette & Semantic System
+            <Palette className="size-4 text-blue-500" /> 1. Native Color Palette & Semantic System
           </CardTitle>
           <CardDescription>
             Tailwind native Blue, Cyan, and Slate scales combined with strict security semantic status tokens.
@@ -89,27 +89,27 @@ export default function DesignSystem() {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 font-mono text-xs text-center">
             <div className="p-3 rounded-lg bg-blue-600 text-white shadow-xs">
               <span className="block font-bold">BLUE-600</span>
-              <span className="text-[10px] opacity-80">#2563EB (Primary)</span>
+              <span className="text-3xs opacity-80">#2563EB (Primary)</span>
             </div>
             <div className="p-3 rounded-lg bg-cyan-500 text-white shadow-xs">
               <span className="block font-bold">CYAN-500</span>
-              <span className="text-[10px] opacity-80">#06B6D4 (Network)</span>
+              <span className="text-3xs opacity-80">#06B6D4 (Network)</span>
             </div>
             <div className="p-3 rounded-lg bg-slate-800 text-white shadow-xs">
               <span className="block font-bold">SLATE-800</span>
-              <span className="text-[10px] opacity-80">#1E293B (Structure)</span>
+              <span className="text-3xs opacity-80">#1E293B (Structure)</span>
             </div>
             <div className="p-3 rounded-lg bg-emerald-500 text-white shadow-xs">
               <span className="block font-bold">GREEN-500</span>
-              <span className="text-[10px] opacity-80">#22C55E (Allowed)</span>
+              <span className="text-3xs opacity-80">#22C55E (Allowed)</span>
             </div>
             <div className="p-3 rounded-lg bg-amber-500 text-white shadow-xs">
               <span className="block font-bold">AMBER-500</span>
-              <span className="text-[10px] opacity-80">#F59E0B (Warning)</span>
+              <span className="text-3xs opacity-80">#F59E0B (Warning)</span>
             </div>
             <div className="p-3 rounded-lg bg-red-600 text-white shadow-xs">
               <span className="block font-bold">RED-600</span>
-              <span className="text-[10px] opacity-80">#DC2626 (Blocked)</span>
+              <span className="text-3xs opacity-80">#DC2626 (Blocked)</span>
             </div>
           </div>
         </CardContent>
@@ -144,9 +144,9 @@ export default function DesignSystem() {
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-2 pt-2">
-              <Button size="sm" className="gap-1.5"><Plus className="w-3.5 h-3.5" /> Small Button</Button>
+              <Button size="sm" className="gap-1.5"><Plus className="size-3.5" /> Small Button</Button>
               <Button size="default" isLoading>Processing</Button>
-              <Button size="icon" variant="outline"><Trash2 className="w-4 h-4 text-red-500" /></Button>
+              <Button size="icon" variant="outline"><Trash2 className="size-4 text-red-500" /></Button>
             </div>
           </CardContent>
         </Card>
@@ -208,7 +208,7 @@ export default function DesignSystem() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Flame className="w-4 h-4 text-blue-500" /> 5. Firewall Visual Language
+              <Flame className="size-4 text-blue-500" /> 5. Firewall Visual Language
             </CardTitle>
             <CardDescription>Chain default policies and rule action badges.</CardDescription>
           </CardHeader>
@@ -229,7 +229,7 @@ export default function DesignSystem() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Network className="w-4 h-4 text-cyan-500" /> 6. Network Visual Language
+              <Network className="size-4 text-cyan-500" /> 6. Network Visual Language
             </CardTitle>
             <CardDescription>Interface cards and technical monospace address formatting.</CardDescription>
           </CardHeader>
@@ -295,7 +295,7 @@ export default function DesignSystem() {
             description="Verify changes before applying configuration to core nftables backend."
           >
             <div className="space-y-4 text-xs">
-              <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-800 dark:text-amber-300">
+              <div className="p-3 rounded-lg bg-amber-500/10 text-amber-800 dark:text-amber-300">
                 Warning: Updating firewall chain policy will immediately disconnect existing non-established TCP sessions.
               </div>
               <div className="flex justify-end gap-2 pt-2">

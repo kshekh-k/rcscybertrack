@@ -1,106 +1,155 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   /* Default Light Theme Variables */
-  --background: #F8FAFC;         /* slate-50 */
-  --foreground: #0F172A;         /* slate-900 */
-  --card: #FFFFFF;               /* white */
-  --card-foreground: #0F172A;    /* slate-900 */
+  --background: var(--color-slate-100);
+  /* slate-50 */
+  --foreground: #0F172A;
+  /* slate-900 */
+  --card: #FFFFFF;
+  /* white */
+  --card-foreground: #0F172A;
+  /* slate-900 */
   --popover: #FFFFFF;
   --popover-foreground: #0F172A;
-  --primary: #2563EB;            /* blue-600 */
+  --primary: #2563EB;
+  /* blue-600 */
   --primary-foreground: #FFFFFF;
-  --secondary: #F1F5F9;          /* slate-100 */
-  --secondary-foreground: #1E293B;/* slate-800 */
+  --secondary: #F1F5F9;
+  /* slate-100 */
+  --secondary-foreground: #1E293B;
+  /* slate-800 */
   --muted: #F1F5F9;
-  --muted-foreground: #64748B;   /* slate-500 */
-  --accent: #E0F2FE;             /* sky-100 / cyan-100 */
-  --accent-foreground: #0369A1;  /* sky-700 / cyan-700 */
-  --destructive: #DC2626;        /* red-600 */
+  --muted-foreground: #64748B;
+  /* slate-500 */
+  --accent: #E0F2FE;
+  /* sky-100 / cyan-100 */
+  --accent-foreground: #0369A1;
+  /* sky-700 / cyan-700 */
+  --destructive: #DC2626;
+  /* red-600 */
   --destructive-foreground: #FFFFFF;
-  --border: #E2E8F0;             /* slate-200 */
+  --border: #E2E8F0;
+  /* slate-200 */
   --input: #E2E8F0;
   --ring: #2563EB;
 
   /* Sidebar Light Theme */
-  --sidebar-bg: #FFFFFF;
-  --sidebar-border: #E2E8F0;
-  --topbar-bg: #FFFFFF;
-  --topbar-border: #E2E8F0;
+  --sidebar-bg: var(--color-white);
+  --sidebar-border: var(--color-slate-200);
+  --topbar-bg: var(--color-white);
+  --topbar-border: var(--color-slate-200);
 
   /* Semantic Security Colors - Light Mode */
-  --color-success: #16A34A;       /* green-600 */
-  --color-success-bg: #DCFCE7;    /* green-100 */
+  --color-success: #16A34A;
+  /* green-600 */
+  --color-success-bg: #DCFCE7;
+  /* green-100 */
   --color-success-border: #BBF7D0;
-  --color-warning: #D97706;       /* amber-600 */
-  --color-warning-bg: #FEF3C7;    /* amber-100 */
+  --color-warning: #D97706;
+  /* amber-600 */
+  --color-warning-bg: #FEF3C7;
+  /* amber-100 */
   --color-warning-border: #FDE68A;
-  --color-danger: #DC2626;        /* red-600 */
-  --color-danger-bg: #FEE2E2;     /* red-100 */
+  --color-danger: #DC2626;
+  /* red-600 */
+  --color-danger-bg: #FEE2E2;
+  /* red-100 */
   --color-danger-border: #FCA5A5;
-  --color-info: #0284C7;          /* cyan-600 / sky-600 */
-  --color-info-bg: #E0F2FE;       /* cyan-100 */
-  --color-info-border: #BAE6FD;
+  --color-info: #0284C7;
+  /* cyan-600 / sky-600 */
+  --color-info-bg: #E0F2FE;
+  --shadow-1: 0px 8px 24px rgba(149, 157, 165, 0.2);
+  --shadow-2: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
 .dark {
   /* Primary Dark Theme Variables (Appliance Standard) */
-  --background: #0B0F19;         /* dark deep slate */
-  --foreground: #F8FAFC;         /* slate-50 */
-  --card: #111827;               /* slate-900 */
-  --card-foreground: #F8FAFC;    /* slate-50 */
+  --background: var(--color-slate-950);
+  /* dark deep slate */
+  --foreground: #F8FAFC;
+  /* slate-50 */
+  --card: #111827;
+  /* slate-900 */
+  --card-foreground: #F8FAFC;
+  /* slate-50 */
   --popover: #111827;
   --popover-foreground: #F8FAFC;
-  --primary: #2563EB;            /* blue-600 */
+  --primary: #2563EB;
+  /* blue-600 */
   --primary-foreground: #FFFFFF;
-  --secondary: #1E293B;          /* slate-800 */
+  --secondary: #1E293B;
+  /* slate-800 */
   --secondary-foreground: #F8FAFC;
   --muted: #1E293B;
-  --muted-foreground: #94A3B8;   /* slate-400 */
-  --accent: #082F49;             /* sky-950 */
-  --accent-foreground: #38BDF8;  /* sky-400 */
-  --destructive: #EF4444;        /* red-500 */
+  --muted-foreground: #94A3B8;
+  /* slate-400 */
+  --accent: #082F49;
+  /* sky-950 */
+  --accent-foreground: #38BDF8;
+  /* sky-400 */
+  --destructive: #EF4444;
+  /* red-500 */
   --destructive-foreground: #FFFFFF;
-  --border: #1E293B;             /* slate-800 */
+  --border: #1E293B;
+  /* slate-800 */
   --input: #1E293B;
   --ring: #3B82F6;
 
   /* Sidebar Dark Theme */
-  --sidebar-bg: #0A0F1C;
-  --sidebar-border: #1E293B;
-  --topbar-bg: #0F172A;
-  --topbar-border: #1E293B;
+  --sidebar-bg: var(--color-slate-900);
+  --sidebar-border: var(--color-slate-800);
+  --topbar-bg: var(--color-slate-900);
+  --topbar-border: var(--color-slate-800);
 
   /* Semantic Security Colors - Dark Mode */
-  --color-success: #22C55E;       /* green-500 */
+  --color-success: #22C55E;
+  /* green-500 */
   --color-success-bg: rgba(34, 197, 94, 0.1);
   --color-success-border: rgba(34, 197, 94, 0.25);
-  --color-warning: #F59E0B;       /* amber-500 */
+  --color-warning: #F59E0B;
+  /* amber-500 */
   --color-warning-bg: rgba(245, 158, 11, 0.1);
   --color-warning-border: rgba(245, 158, 11, 0.25);
-  --color-danger: #EF4444;        /* red-500 */
+  --color-danger: #EF4444;
+  /* red-500 */
   --color-danger-bg: rgba(239, 68, 68, 0.1);
   --color-danger-border: rgba(239, 68, 68, 0.25);
-  --color-info: #06B6D4;          /* cyan-500 */
+  --color-info: #06B6D4;
+  /* cyan-500 */
   --color-info-bg: rgba(6, 182, 212, 0.1);
   --color-info-border: rgba(6, 182, 212, 0.25);
+
+  --shadow-1: 0px 8px 24px rgba(0, 0, 0, 0.45);
+  --shadow-2: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
 @theme {
   --font-sans: "Inter", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", monospace;
-  
+
+  --text-2xs: 11px;
+  --text-3xs: 10px;
+  --text-4xs: 9px;
+  --text-5xs: 8px;
+
   --color-app-bg: var(--background);
   --color-app-fg: var(--foreground);
   --color-app-card: var(--card);
   --color-app-card-fg: var(--card-foreground);
   --color-app-border: var(--border);
   --color-app-muted: var(--muted-foreground);
+
+  --shadow-1: var(--shadow-1);
+  --shadow-2: var(--shadow-2);
 }
 
 /* Global resets for RCS CyberTrack appliance */
-html, body {
+html,
+body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
@@ -110,18 +159,33 @@ html, body {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Scrollbar customization */
+/* Universal Custom Scrollbar with Blue-to-Cyan Gradient Handle */
+/* Custom Green Gradient Scrollbar Styles */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
+
 ::-webkit-scrollbar-track {
-  background: var(--background);
+  background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 3px;
+  background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+  border-radius: 9999px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--muted-foreground);
+  background: linear-gradient(135deg, #2563eb 0%, #0891b2 100%);
+}
+
+/* Utility class for thin green gradient scrollbars */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #10b981 transparent;
 }

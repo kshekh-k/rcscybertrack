@@ -80,12 +80,12 @@ export default function Audit() {
               >
                 {integrityVerified ? (
                   <>
-                    <ShieldCheck className="w-3.5 h-3.5" />
+                    <ShieldCheck className="size-3.5" />
                     <span>Log Integrity Verified</span>
                   </>
                 ) : (
                   <>
-                    <ShieldAlert className="w-3.5 h-3.5 animate-pulse" />
+                    <ShieldAlert className="size-3.5 animate-pulse" />
                     <span>Hash Chain Tamper Alert</span>
                   </>
                 )}
@@ -101,10 +101,10 @@ export default function Audit() {
           <button
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="px-3 py-2 bg-surface hover:bg-slate-800 border border-border-subtle text-text-primary text-xs font-medium rounded-lg transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50"
+            className="px-3 py-2 bg-surface hover:bg-slate-800 text-text-primary text-xs font-medium rounded-lg transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50"
             title="Refresh audit logs"
           >
-            <RefreshCw className={`w-3.5 h-3.5 text-warning ${isRefreshing ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`size-3.5 text-warning ${isRefreshing ? 'animate-spin' : ''}`} />
             <span>Refresh</span>
           </button>
         </div>
@@ -120,16 +120,16 @@ export default function Audit() {
       )}
 
       {/* Controls Bar */}
-      <div className="bg-surface border border-border-subtle rounded-xl p-4 shadow-lg flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+      <div className="bg-surface rounded-xl p-4 shadow-lg flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
         {/* Search */}
         <div className="relative flex-1 max-w-md">
-          <Search className="w-4 h-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="size-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search user, action, resource, IP address..."
-            className="w-full bg-app-bg border border-border-subtle rounded-lg pl-9 pr-4 py-2 text-xs text-text-primary placeholder-slate-500 focus:outline-none focus:border-primary transition-colors"
+            className="w-full bg-app-bg rounded-lg pl-9 pr-4 py-2 text-xs text-text-primary placeholder-slate-500 focus:outline-none focus:border-primary transition-colors"
           />
         </div>
 
@@ -137,12 +137,12 @@ export default function Audit() {
         <div className="flex flex-wrap items-center gap-3">
           {/* Result Filter */}
           <div className="flex items-center gap-1.5">
-            <Filter className="w-3.5 h-3.5 text-text-muted" />
+            <Filter className="size-3.5 text-text-muted" />
             <span className="text-xs text-text-muted font-medium">Result:</span>
             <select
               value={resultFilter}
               onChange={(e) => setResultFilter(e.target.value as any)}
-              className="bg-app-bg border border-border-subtle text-text-primary text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-primary font-medium"
+              className="bg-app-bg text-text-primary text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-primary font-medium"
             >
               <option value="all">All Results</option>
               <option value="success">Success</option>
@@ -157,7 +157,7 @@ export default function Audit() {
               <select
                 value={actionFilter}
                 onChange={(e) => setActionFilter(e.target.value)}
-                className="bg-app-bg border border-border-subtle text-text-primary text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-primary font-medium max-w-[180px] truncate"
+                className="bg-app-bg text-text-primary text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-primary font-medium max-w-[180px] truncate"
               >
                 <option value="all">All Actions</option>
                 {uniqueActions.map((act) => (
@@ -172,11 +172,11 @@ export default function Audit() {
       </div>
 
       {/* Main Audit Console Table */}
-      <div className="bg-surface border border-border-subtle rounded-xl overflow-hidden shadow-lg">
+      <div className="bg-surface rounded-xl overflow-hidden shadow-lg">
         <div className="p-5 border-b border-slate-800/80 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
-              <ScrollText className="w-4 h-4" />
+            <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400 ">
+              <ScrollText className="size-4" />
             </div>
             <div>
               <h2 className="text-base font-semibold text-text-primary">System Audit Trail</h2>
@@ -201,13 +201,13 @@ export default function Audit() {
                     ? 'No audit log entries match your search or filter parameters.'
                     : 'No system audit logs found in the appliance log store.'
                 }
-                icon={<ScrollText className="w-6 h-6 text-slate-500" />}
+                icon={<ScrollText className="size-6 text-slate-500" />}
               />
             </div>
           ) : (
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-app-bg/80 border-b border-border-subtle text-[11px] font-semibold text-text-muted uppercase tracking-wider">
+                <tr className="bg-app-bg/80 border-b border-border-subtle text-2xs font-semibold text-text-muted uppercase tracking-wider">
                   <th className="py-3.5 px-4 w-8"></th>
                   <th className="py-3.5 px-4">Timestamp</th>
                   <th className="py-3.5 px-4">User</th>
@@ -248,9 +248,9 @@ export default function Audit() {
                         <td className="py-4 px-4 text-slate-500">
                           {hasDetails ? (
                             isExpanded ? (
-                              <ChevronDown className="w-4 h-4 text-amber-400" />
+                              <ChevronDown className="size-4 text-amber-400" />
                             ) : (
-                              <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-slate-300" />
+                              <ChevronRight className="size-4 text-slate-500 group-hover:text-slate-300" />
                             )
                           ) : null}
                         </td>
@@ -258,7 +258,7 @@ export default function Audit() {
                         {/* Timestamp */}
                         <td className="py-4 px-4 font-mono text-text-muted whitespace-nowrap">
                           <div className="flex items-center gap-1.5">
-                            <Clock className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                            <Clock className="size-3.5 text-slate-500 shrink-0" />
                             <span>{formattedTime}</span>
                           </div>
                         </td>
@@ -266,7 +266,7 @@ export default function Audit() {
                         {/* User */}
                         <td className="py-4 px-4 font-mono font-medium text-text-primary">
                           <div className="flex items-center gap-1.5">
-                            <User className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                            <User className="size-3.5 text-cyan-400 shrink-0" />
                             <span>{evt.user || '—'}</span>
                           </div>
                         </td>
@@ -274,14 +274,14 @@ export default function Audit() {
                         {/* Action */}
                         <td className="py-4 px-4 font-semibold text-text-primary">
                           <div className="flex items-center gap-1.5">
-                            <Activity className="w-3.5 h-3.5 text-primary shrink-0" />
+                            <Activity className="size-3.5 text-primary shrink-0" />
                             <span>{evt.action || '—'}</span>
                           </div>
                         </td>
 
                         {/* Resource */}
                         <td className="py-4 px-4 font-mono text-text-secondary">
-                          <span className="bg-slate-800 text-slate-300 px-2 py-0.5 rounded border border-slate-700">
+                          <span className="bg-slate-800 text-slate-300 px-2 py-0.5 rounded ">
                             {evt.resource || '—'}
                           </span>
                         </td>
@@ -297,7 +297,7 @@ export default function Audit() {
                             status={evt.result || 'unknown'}
                             variant={isSuccess ? 'success' : 'danger'}
                             showDot={false}
-                            className="text-[10px] uppercase font-mono px-2"
+                            className="text-3xs uppercase font-mono px-2"
                           />
                         </td>
 
@@ -313,18 +313,18 @@ export default function Audit() {
                           <td colSpan={8} className="p-4 pl-12 border-t border-b border-slate-800/80">
                             <div className="space-y-2">
                               <div className="flex items-center gap-2 text-xs font-semibold text-amber-400">
-                                <Database className="w-3.5 h-3.5" />
+                                <Database className="size-3.5" />
                                 <span>Event Payload Details & Hash Verification</span>
                               </div>
 
                               {evt.chain_hash && (
-                                <div className="text-[11px] font-mono text-slate-400 bg-slate-900/80 p-2 rounded border border-slate-800 overflow-x-auto">
+                                <div className="text-2xs font-mono text-slate-400 bg-slate-900/80 p-2 rounded overflow-x-auto">
                                   <span className="text-text-muted">Chain Hash: </span>
                                   <span className="text-cyan-300">{evt.chain_hash}</span>
                                 </div>
                               )}
 
-                              <pre className="text-[11px] font-mono text-emerald-400 bg-slate-950 p-3 rounded-lg border border-slate-800 overflow-x-auto">
+                              <pre className="text-2xs font-mono text-emerald-400 bg-slate-950 p-3 rounded-lg overflow-x-auto">
                                 {JSON.stringify(evt.details, null, 2)}
                               </pre>
                             </div>

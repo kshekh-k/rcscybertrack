@@ -14,7 +14,10 @@ from sqlalchemy.orm import Session
 # Import modules using relative/absolute project structures
 from management.config import load_config, RcsCyberTrackConfig
 from management.database.database import engine, Base, SessionLocal, get_db
+from management.captive_portal_models import CaptivePortalClientDB, CaptivePortalSessionDB
 from management.database.models import UserDB
+from management.services.captive_portal_service import CaptivePortalService
+from management.services.captive_portal_web import router as captive_portal_router
 from management.auth.rbac import (
     require_permission,
     require_admin,
@@ -169,6 +172,7 @@ app = FastAPI(
     description="High-Assurance Backend Management Platform for Security Appliances",
     version="0.6.0"
 )
+app.include_router(captive_portal_router)
 
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request, call_next):
@@ -795,6 +799,51 @@ def get_top_sources():
 @app.get("/api/v1/analytics/top-destinations", response_model=List[TopTalkerModel], dependencies=[Depends(require_permission("analytics.read"))])
 def get_top_destinations():
     return telemetry_service.get_top_destinations()
+
+
+# --- Captive Portal Management API ---
+
+class CaptivePortalClientRequest(BaseModel):
+    ip_address: str
+    mac_address: str
+    hostname: Optional[str] = None
+
+class CaptivePortalSessionRequest(BaseModel):
+    client_id: str
+    duration_minutes: int = 60
+
+@app.get("/api/v1/captive-portal/clients", dependencies=[Depends(require_permission("devices.read"))])
+def get_captive_portal_clients(db: Session = Depends(get_db)):
+    return db.query(CaptivePortalClientDB).order_by(CaptivePortalClientDB.last_seen_at.desc()).all()
+
+@app.post("/api/v1/captive-portal/clients", dependencies=[Depends(require_permission("devices.write"))])
+def register_captive_portal_client(req: CaptivePortalClientRequest, db: Session = Depends(get_db)):
+    service = CaptivePortalService(db)
+    return service.get_or_create_client(req.ip_address, req.mac_address, req.hostname)
+
+@app.get("/api/v1/captive-portal/sessions", dependencies=[Depends(require_permission("analytics.read"))])
+def get_captive_portal_sessions(db: Session = Depends(get_db)):
+    service = CaptivePortalService(db)
+    return service.active_sessions()
+
+@app.post("/api/v1/captive-portal/sessions", dependencies=[Depends(require_permission("devices.write"))])
+def create_captive_portal_session(req: CaptivePortalSessionRequest, db: Session = Depends(get_db)):
+    client = db.query(CaptivePortalClientDB).filter(CaptivePortalClientDB.id == req.client_id).first()
+    if client is None:
+        raise HTTPException(status_code=404, detail="Captive Portal client not found")
+    if req.duration_minutes < 5 or req.duration_minutes > 1440:
+        raise HTTPException(status_code=400, detail="Session duration must be between 5 and 1440 minutes")
+    service = CaptivePortalService(db)
+    return service.create_session(client, req.duration_minutes)
+
+@app.post("/api/v1/captive-portal/sessions/{session_token}/logout", dependencies=[Depends(require_permission("devices.write"))])
+def logout_captive_portal_session(session_token: str, db: Session = Depends(get_db)):
+    service = CaptivePortalService(db)
+    if not service.end_session(session_token):
+        raise HTTPException(status_code=404, detail="Active Captive Portal session not found")
+    return {"status": "ended", "session_token": session_token}
+
+
 # --- React Web Admin GUI ---
 GUI_DIST = BASE_DIR / "gui" / "dist"
 

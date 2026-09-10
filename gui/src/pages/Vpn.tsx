@@ -39,9 +39,9 @@ export default function Vpn() {
           <button
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="px-3 py-2 bg-surface hover:bg-slate-800 border border-border-subtle text-text-primary text-xs font-medium rounded-lg transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50"
+            className="px-3 py-2 bg-surface hover:bg-slate-800 text-text-primary text-xs font-medium rounded-lg transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50"
           >
-            <RefreshCw className={`w-3.5 h-3.5 text-primary ${isRefreshing ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`size-3.5 text-primary ${isRefreshing ? 'animate-spin' : ''}`} />
             <span>Refresh</span>
           </button>
         </div>
@@ -56,49 +56,49 @@ export default function Vpn() {
 
       {/* Summary KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <div className="bg-surface border border-border-subtle rounded-xl p-4 shadow-lg flex items-center justify-between">
+        <div className="bg-surface rounded-xl p-4 shadow-lg flex items-center justify-between">
           <div>
             <p className="text-xs text-text-muted font-medium uppercase tracking-wider">Active Tunnels</p>
             <p className="text-xl font-bold font-mono text-text-primary mt-1">0</p>
           </div>
-          <div className="p-2.5 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-            <LockKeyhole className="w-5 h-5" />
+          <div className="p-2.5 rounded-lg bg-indigo-500/10 text-indigo-400 ">
+            <LockKeyhole className="size-5" />
           </div>
         </div>
 
-        <div className="bg-surface border border-border-subtle rounded-xl p-4 shadow-lg flex items-center justify-between">
+        <div className="bg-surface rounded-xl p-4 shadow-lg flex items-center justify-between">
           <div>
             <p className="text-xs text-emerald-400 font-medium uppercase tracking-wider">Tunnels UP</p>
             <p className="text-xl font-bold font-mono text-emerald-400 mt-1">0</p>
           </div>
-          <div className="p-2.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 block" />
+          <div className="p-2.5 rounded-lg bg-emerald-500/10 text-emerald-400 ">
+            <span className="size-2.5 rounded-full bg-emerald-400 block" />
           </div>
         </div>
 
-        <div className="bg-surface border border-border-subtle rounded-xl p-4 shadow-lg flex items-center justify-between">
+        <div className="bg-surface rounded-xl p-4 shadow-lg flex items-center justify-between">
           <div>
             <p className="text-xs text-text-muted font-medium uppercase tracking-wider">Configured Peers</p>
             <p className="text-xl font-bold font-mono text-text-primary mt-1">{peers.length}</p>
           </div>
-          <div className="p-2.5 rounded-lg bg-slate-800 text-slate-300 border border-slate-700">
-            <Radio className="w-5 h-5" />
+          <div className="p-2.5 rounded-lg bg-slate-800 text-slate-300 ">
+            <Radio className="size-5" />
           </div>
         </div>
 
-        <div className="bg-surface border border-border-subtle rounded-xl p-4 shadow-lg flex items-center justify-between">
+        <div className="bg-surface rounded-xl p-4 shadow-lg flex items-center justify-between">
           <div>
             <p className="text-xs text-text-muted font-medium uppercase tracking-wider">Encryption Mode</p>
             <p className="text-sm font-bold font-mono text-cyan-400 mt-1 uppercase">AES-256-GCM / Chacha20</p>
           </div>
-          <div className="p-2.5 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-            <Shield className="w-5 h-5" />
+          <div className="p-2.5 rounded-lg bg-cyan-500/10 text-cyan-400 ">
+            <Shield className="size-5" />
           </div>
         </div>
       </div>
 
       {/* Tabs Navigation */}
-      <div className="flex items-center gap-2 p-1 bg-app-bg border border-border-subtle rounded-lg overflow-x-auto w-full md:w-fit">
+      <div className="flex items-center gap-2 p-1 bg-app-bg rounded-lg overflow-x-auto w-full md:w-fit">
         <button
           onClick={() => setActiveTab('overview')}
           className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-md transition-all whitespace-nowrap ${
@@ -107,7 +107,7 @@ export default function Vpn() {
               : 'text-text-secondary hover:text-text-primary hover:bg-slate-800/50'
           }`}
         >
-          <Activity className="w-4 h-4" />
+          <Activity className="size-4" />
           <span>Overview</span>
         </button>
 
@@ -119,7 +119,7 @@ export default function Vpn() {
               : 'text-text-secondary hover:text-text-primary hover:bg-slate-800/50'
           }`}
         >
-          <LockKeyhole className="w-4 h-4" />
+          <LockKeyhole className="size-4" />
           <span>Connections ({connections.length})</span>
         </button>
 
@@ -131,7 +131,7 @@ export default function Vpn() {
               : 'text-text-secondary hover:text-text-primary hover:bg-slate-800/50'
           }`}
         >
-          <Radio className="w-4 h-4" />
+          <Radio className="size-4" />
           <span>Peers ({peers.length})</span>
         </button>
 
@@ -143,7 +143,7 @@ export default function Vpn() {
               : 'text-text-secondary hover:text-text-primary hover:bg-slate-800/50'
           }`}
         >
-          <Layers className="w-4 h-4" />
+          <Layers className="size-4" />
           <span>Configuration</span>
         </button>
 
@@ -155,24 +155,24 @@ export default function Vpn() {
               : 'text-text-secondary hover:text-text-primary hover:bg-slate-800/50'
           }`}
         >
-          <FileText className="w-4 h-4" />
+          <FileText className="size-4" />
           <span>Daemon Logs</span>
         </button>
       </div>
 
       {/* Main Console Box */}
-      <div className="bg-surface border border-border-subtle rounded-xl overflow-hidden shadow-lg p-6">
+      <div className="bg-surface rounded-xl overflow-hidden shadow-lg p-6">
         {connections.length === 0 ? (
           <EmptyState
             title="No Active VPN Connections"
             description="The VPN daemon service (`GET /api/v1/vpn/connections`) is not currently active on this CyberTrack Core instance."
-            icon={<LockKeyhole className="w-6 h-6 text-slate-500" />}
+            icon={<LockKeyhole className="size-6 text-slate-500" />}
             action={
               <button
                 disabled
-                className="px-4 py-2 bg-slate-800 text-slate-400 text-xs font-medium rounded-lg border border-slate-700 cursor-not-allowed flex items-center gap-2"
+                className="px-4 py-2 bg-slate-800 text-slate-400 text-xs font-medium rounded-lg cursor-not-allowed flex items-center gap-2"
               >
-                <Plus className="w-3.5 h-3.5" />
+                <Plus className="size-3.5" />
                 <span>Provision VPN Tunnel (Backend Required)</span>
               </button>
             }

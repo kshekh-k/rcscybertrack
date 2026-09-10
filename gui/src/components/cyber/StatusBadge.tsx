@@ -65,7 +65,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
         className
       )}
     >
-      {showIcon && showDot && <IconComponent className="w-3.5 h-3.5 shrink-0" />}
+      {showIcon && showDot && <IconComponent className="size-3.5 shrink-0" />}
       <span className="capitalize">{status}</span>
     </span>
   )

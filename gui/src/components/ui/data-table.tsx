@@ -88,9 +88,9 @@ export function DataTable<T>({
   return (
     <div className="space-y-3">
       {/* Top Toolbar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white dark:bg-[#0F172A] p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white dark:bg-slate-900 p-3 rounded-xl ">
         <div className="relative w-full sm:w-72">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="size-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <Input
             value={searchQuery}
             onChange={(e) => {
@@ -104,7 +104,7 @@ export function DataTable<T>({
 
         {/* Bulk Action Toolbar */}
         {enableSelection && selectedIds.length > 0 && (
-          <div className="flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 px-3 py-1 rounded-lg text-xs text-blue-600 dark:text-blue-400 font-medium">
+          <div className="flex items-center gap-2 bg-blue-500/10 px-3 py-1 rounded-lg text-xs text-blue-600 dark:text-blue-400 font-medium">
             <span>{selectedIds.length} selected</span>
             {bulkActions && bulkActions(selectedIds)}
           </div>
@@ -112,11 +112,11 @@ export function DataTable<T>({
       </div>
 
       {/* Table Container */}
-      <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] overflow-hidden shadow-xs">
+      <div className="rounded-xl bg-white dark:bg-slate-900 overflow-hidden shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             {/* Table Header */}
-            <thead className="bg-slate-50 dark:bg-[#1E293B]/60 text-slate-500 dark:text-slate-400 font-semibold border-b border-slate-200 dark:border-slate-800 select-none">
+            <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 font-semibold border-b border-slate-200 dark:border-slate-800 select-none">
               <tr>
                 {enableSelection && (
                   <th className="w-10 px-4 py-3 text-center">
@@ -133,7 +133,7 @@ export function DataTable<T>({
                     key={col.key}
                     onClick={() => col.sortable && handleSort(col.key)}
                     className={cn(
-                      'px-4 py-3 tracking-wider font-semibold uppercase text-[10px]',
+                      'px-4 py-3 tracking-wider font-semibold uppercase text-3xs',
                       col.sortable && 'cursor-pointer hover:text-slate-900 dark:hover:text-slate-200',
                       col.className
                     )}
@@ -143,9 +143,9 @@ export function DataTable<T>({
                       {col.sortable && (
                         <span className="text-slate-400">
                           {sortKey === col.key ? (
-                            sortDirection === 'asc' ? <ChevronUp className="w-3 h-3 text-blue-500" /> : <ChevronDown className="w-3 h-3 text-blue-500" />
+                            sortDirection === 'asc' ? <ChevronUp className="size-3 text-blue-500" /> : <ChevronDown className="size-3 text-blue-500" />
                           ) : (
-                            <ArrowUpDown className="w-3 h-3 opacity-40" />
+                            <ArrowUpDown className="size-3 opacity-40" />
                           )}
                         </span>
                       )}
@@ -161,7 +161,7 @@ export function DataTable<T>({
                 // Loading State
                 Array.from({ length: 4 }).map((_, i) => (
                   <tr key={i} className="animate-pulse">
-                    {enableSelection && <td className="px-4 py-3"><div className="h-4 w-4 bg-slate-200 dark:bg-slate-800 rounded"></div></td>}
+                    {enableSelection && <td className="px-4 py-3"><div className="size-4 bg-slate-200 dark:bg-slate-800 rounded"></div></td>}
                     {columns.map((col) => (
                       <td key={col.key} className="px-4 py-3">
                         <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-3/4"></div>
@@ -174,11 +174,11 @@ export function DataTable<T>({
                 <tr>
                   <td colSpan={columns.length + (enableSelection ? 1 : 0)} className="px-4 py-8 text-center">
                     <div className="flex flex-col items-center justify-center space-y-2 text-rose-500">
-                      <AlertCircle className="w-6 h-6" />
+                      <AlertCircle className="size-6" />
                       <span className="font-semibold text-xs">{error}</span>
                       {onRetry && (
                         <Button variant="outline" size="sm" onClick={onRetry} className="mt-2 gap-1.5">
-                          <RefreshCw className="w-3 h-3" /> Retry Loading
+                          <RefreshCw className="size-3" /> Retry Loading
                         </Button>
                       )}
                     </div>
@@ -189,7 +189,7 @@ export function DataTable<T>({
                 <tr>
                   <td colSpan={columns.length + (enableSelection ? 1 : 0)} className="px-4 py-12 text-center">
                     <div className="flex flex-col items-center justify-center space-y-2 text-slate-400">
-                      <Inbox className="w-8 h-8 opacity-40" />
+                      <Inbox className="size-8 opacity-40" />
                       <span className="font-medium text-xs">No records matching your search filters</span>
                     </div>
                   </td>
@@ -233,7 +233,7 @@ export function DataTable<T>({
         </div>
 
         {/* Footer Pagination */}
-        <div className="flex items-center justify-between px-4 py-3 bg-slate-50/80 dark:bg-[#1E293B]/40 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400">
+        <div className="flex items-center justify-between px-4 py-3 bg-slate-50/80 dark:bg-slate-800/40 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400">
           <div>
             Showing <span className="font-semibold text-slate-800 dark:text-slate-200">{filteredData.length > 0 ? (currentPage - 1) * pageSize + 1 : 0}</span> to{' '}
             <span className="font-semibold text-slate-800 dark:text-slate-200">{Math.min(currentPage * pageSize, filteredData.length)}</span> of{' '}
@@ -247,9 +247,9 @@ export function DataTable<T>({
               disabled={currentPage === 1}
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
             >
-              <ChevronLeft className="w-3.5 h-3.5" />
+              <ChevronLeft className="size-3.5" />
             </Button>
-            <span className="px-2 font-mono text-[11px]">
+            <span className="px-2 font-mono text-2xs">
               {currentPage} / {totalPages}
             </span>
             <Button
@@ -258,7 +258,7 @@ export function DataTable<T>({
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
             >
-              <ChevronRight className="w-3.5 h-3.5" />
+              <ChevronRight className="size-3.5" />
             </Button>
           </div>
         </div>

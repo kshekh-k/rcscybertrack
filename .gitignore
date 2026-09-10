@@ -34,3 +34,4 @@ dist-ssr/
 *.swp
 
 .step19-backup/
+os/image/output/

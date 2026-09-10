@@ -13,7 +13,7 @@ NC='\033[0m'
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 ROOTFS_DIR="/tmp/rcscybertrack-build/rootfs"
 OUTPUT_DIR="${BASE_DIR}/os/image/output"
-ISO_PATH="${OUTPUT_DIR}/rcscybertrack-v0.6.1-amd64.iso"
+ISO_PATH="${OUTPUT_DIR}/rcscybertrack-v2.1.0-amd64.iso"
 
 echo -e "${BLUE}=== RCS CyberTrack Appliance ISO Builder ===${NC}"
 echo -e "[*] Base Directory: ${BASE_DIR}"
@@ -65,10 +65,10 @@ EOF_SYSCTL
 # 4. Create OS Release Metadata
 cat <<EOF > "${ROOTFS_DIR}/etc/os-release"
 NAME="RCS CyberTrack Security Appliance"
-VERSION="v0.6.1"
+VERSION="v2.1.0"
 ID=rcscybertrack
-PRETTY_NAME="RCS CyberTrack Security Appliance v0.6.1 (x86_64)"
-VERSION_ID="0.6.1"
+PRETTY_NAME="RCS CyberTrack Security Appliance v2.1.0 (x86_64)"
+VERSION_ID="2.1.0"
 HOME_URL="https://console.rcscybertrack.in"
 EOF
 
@@ -77,7 +77,7 @@ cat <<EOF > "${ROOTFS_DIR}/boot/grub/grub.cfg"
 set default=0
 set timeout=5
 
-menuentry "RCS CyberTrack Security Appliance v0.6.1" {
+menuentry "RCS CyberTrack Security Appliance v2.1.0" {
     linux /boot/vmlinuz quiet console=tty0 console=ttyS0,115200
     initrd /boot/initrd.img
 }

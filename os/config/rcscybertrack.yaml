@@ -29,6 +29,14 @@ network:
   dns:
     enabled: true
 
+captive_portal:
+  enabled: false
+  interface: eth1
+  subnet: 192.168.2.0/24
+  listen_host: 192.168.2.1
+  listen_port: 8080
+  session_timeout_minutes: 60
+
 vpn:
   enabled: false
 

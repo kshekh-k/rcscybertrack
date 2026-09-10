@@ -8,7 +8,7 @@ User=rcscybertrack
 Group=rcscybertrack
 WorkingDirectory=/usr/share/rcscybertrack
 Environment=PYTHONPATH=.
-ExecStart=/usr/share/rcscybertrack/.venv/bin/uvicorn management.api.server:app --host 127.0.0.1 --port 8000 --workers 2
+ExecStart=/usr/share/rcscybertrack/.venv/bin/uvicorn management.api.server:app --host 0.0.0.0 --port 8000 --workers 2
 
 # Restart Policy
 Restart=on-failure

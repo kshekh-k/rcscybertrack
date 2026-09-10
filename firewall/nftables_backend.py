@@ -259,6 +259,148 @@ class NftablesBackend(FirewallBackend):
         except Exception as e:
             return False, f"Apply exception: {str(e)}"
 
+    # ------------------------------------------------------------------
+    # Captive Portal dynamic authorization
+    # ------------------------------------------------------------------
+
+    PORTAL_TABLE_FAMILY = "inet"
+    PORTAL_TABLE_NAME = "rcs_cybertrack_portal"
+    PORTAL_SET_NAME = "authorized_clients"
+
+    def _run_nft(self, args: List[str]) -> Tuple[bool, str]:
+        """Run an nft command and return success/message."""
+        try:
+            cmd = self._build_cmd(args)
+            res = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=5,
+            )
+            if res.returncode != 0:
+                return False, res.stderr.strip() or "nft command failed"
+            return True, res.stdout.strip()
+        except subprocess.TimeoutExpired:
+            return False, "nft command timed out"
+        except Exception as e:
+            return False, str(e)
+
+    def ensure_captive_portal_set(self) -> Tuple[bool, str]:
+        """Ensure the persistent Captive Portal table and dynamic set exist."""
+
+        table_ok, _ = self._run_nft([
+            "list", "table",
+            self.PORTAL_TABLE_FAMILY,
+            self.PORTAL_TABLE_NAME,
+        ])
+
+        if not table_ok:
+            ok, msg = self._run_nft([
+                "add", "table",
+                self.PORTAL_TABLE_FAMILY,
+                self.PORTAL_TABLE_NAME,
+            ])
+            if not ok and "File exists" not in msg:
+                return False, f"Failed to create Captive Portal table: {msg}"
+
+        set_ok, _ = self._run_nft([
+            "list", "set",
+            self.PORTAL_TABLE_FAMILY,
+            self.PORTAL_TABLE_NAME,
+            self.PORTAL_SET_NAME,
+        ])
+
+        if set_ok:
+            return True, "Captive Portal authorization set ready"
+
+        ok, msg = self._run_nft([
+            "add", "set",
+            self.PORTAL_TABLE_FAMILY,
+            self.PORTAL_TABLE_NAME,
+            self.PORTAL_SET_NAME,
+            "{",
+            "type", "ipv4_addr", ";",
+            "flags", "timeout", ";",
+            "}",
+        ])
+
+        if not ok:
+            return False, f"Failed to create Captive Portal authorization set: {msg}"
+
+        return True, "Captive Portal authorization set created"
+
+    @staticmethod
+    def _validate_client_ip(ip_address: str) -> bool:
+        import ipaddress
+        try:
+            return ipaddress.ip_address(ip_address).version == 4
+        except ValueError:
+            return False
+
+    def authorize_client(
+        self,
+        ip_address: str,
+        timeout_minutes: int = 60,
+    ) -> Tuple[bool, str]:
+        """Authorize a LAN IPv4 client in the dynamic nftables set."""
+        if not self._validate_client_ip(ip_address):
+            return False, f"Invalid IPv4 client address: {ip_address}"
+
+        if not isinstance(timeout_minutes, int) or not (1 <= timeout_minutes <= 1440):
+            return False, "Captive Portal timeout must be between 1 and 1440 minutes"
+
+        ok, msg = self.ensure_captive_portal_set()
+        if not ok:
+            return False, msg
+
+        self._run_nft([
+            "delete", "element",
+            self.PORTAL_TABLE_FAMILY,
+            self.PORTAL_TABLE_NAME,
+            self.PORTAL_SET_NAME,
+            "{", ip_address, "}",
+        ])
+
+        ok, msg = self._run_nft([
+            "add", "element",
+            self.PORTAL_TABLE_FAMILY,
+            self.PORTAL_TABLE_NAME,
+            self.PORTAL_SET_NAME,
+            "{", f"{ip_address} timeout {timeout_minutes}m", "}",
+        ])
+
+        if not ok:
+            return False, f"Failed to authorize client {ip_address}: {msg}"
+
+        return True, f"Client {ip_address} authorized for {timeout_minutes} minutes"
+
+    def deauthorize_client(self, ip_address: str) -> Tuple[bool, str]:
+        """Remove a client from the dynamic authorization set."""
+        if not self._validate_client_ip(ip_address):
+            return False, f"Invalid IPv4 client address: {ip_address}"
+
+        ok, msg = self._run_nft([
+            "delete", "element",
+            self.PORTAL_TABLE_FAMILY,
+            self.PORTAL_TABLE_NAME,
+            self.PORTAL_SET_NAME,
+            "{", ip_address, "}",
+        ])
+
+        if not ok and "No such file or directory" not in msg:
+            return False, f"Failed to deauthorize client {ip_address}: {msg}"
+
+        return True, f"Client {ip_address} deauthorized"
+
+    def authorized_clients(self) -> Tuple[bool, str]:
+        """Return the current Captive Portal authorization set."""
+        return self._run_nft([
+            "-a", "list", "set",
+            self.PORTAL_TABLE_FAMILY,
+            self.PORTAL_TABLE_NAME,
+            self.PORTAL_SET_NAME,
+        ])
+
     def verify(self) -> Tuple[bool, str]:
         status = self.discover()
         if not status.available:

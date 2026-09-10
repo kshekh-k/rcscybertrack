@@ -137,7 +137,7 @@ class NATConfigModel(BaseModel):
 class NftablesCompiler:
     TABLE_NAME = "rcs_cybertrack"
 
-    def compile(self, policy: Dict, rules: List[Dict], nat: Optional[Dict] = None) -> str:
+    def compile(self, policy: Dict, rules: List[Dict], nat: Optional[Dict] = None, captive_portal: Optional[Dict] = None) -> str:
         # Validate Pydantic models
         pol = PolicyConfigModel(**policy)
         validated_rules = [FirewallRuleModel(**r) for r in rules]
@@ -147,6 +147,53 @@ class NftablesCompiler:
             nat_config = NATConfigModel(**nat)
             if nat_config.wan_interface == nat_config.lan_interface:
                 raise ValueError("WAN and LAN interfaces must be different")
+
+        # Captive Portal enforcement is opt-in. No portal table is generated
+        # unless captive_portal.enabled is explicitly true.
+        portal_config = None
+        if captive_portal is not None and bool(captive_portal.get("enabled", False)):
+            if nat_config is None:
+                raise ValueError("Captive Portal requires NAT configuration")
+
+            portal_interface = str(captive_portal.get("interface", nat_config.lan_interface))
+            portal_subnet = str(captive_portal.get("subnet", nat_config.lan_subnet))
+            portal_host = str(captive_portal.get("listen_host", ""))
+            portal_port = int(captive_portal.get("listen_port", 8000))
+
+            if not re.match(r"^[a-zA-Z0-9_.-]+$", portal_interface):
+                raise ValueError("Invalid Captive Portal interface")
+
+            try:
+                portal_network = ipaddress.ip_network(portal_subnet, strict=False)
+            except ValueError:
+                raise ValueError(f"Invalid Captive Portal subnet: '{portal_subnet}'")
+
+            if portal_network.version != 4:
+                raise ValueError("Captive Portal subnet must be IPv4")
+
+            try:
+                portal_ip = ipaddress.ip_address(portal_host)
+            except ValueError:
+                raise ValueError(f"Invalid Captive Portal listen_host: '{portal_host}'")
+
+            if portal_ip.version != 4:
+                raise ValueError("Captive Portal listen_host must be IPv4")
+
+            if not (1 <= portal_port <= 65535):
+                raise ValueError("Captive Portal listen_port must be 1-65535")
+
+            if portal_interface != nat_config.lan_interface:
+                raise ValueError("Captive Portal interface must match the NAT LAN interface")
+
+            if portal_network != ipaddress.ip_network(nat_config.lan_subnet, strict=False):
+                raise ValueError("Captive Portal subnet must match the NAT LAN subnet")
+
+            portal_config = {
+                "interface": portal_interface,
+                "subnet": str(portal_network),
+                "listen_host": str(portal_ip),
+                "listen_port": portal_port,
+            }
 
         # Duplicate ID and IP family mismatch check
         rule_ids = set()
@@ -173,7 +220,10 @@ class NftablesCompiler:
         lines.append(f"        type filter hook input priority 0; policy {_map_action(pol.input)};")
         lines.append('        iifname "lo" accept comment "rcscybertrack:mgmt-loopback"')
         lines.append('        ct state { established, related } accept comment "rcscybertrack:mgmt-state"')
-        lines.append(f'        tcp dport {pol.api_port} accept comment "rcscybertrack:mgmt-api"')
+        if nat_config:
+            lines.append(f'        iifname "{nat_config.lan_interface}" tcp dport {pol.api_port} accept comment "rcscybertrack:mgmt-api-lan"')
+        else:
+            lines.append(f'        tcp dport {pol.api_port} accept comment "rcscybertrack:mgmt-api"')
         lines.append(f'        tcp dport {pol.ssh_port} accept comment "rcscybertrack:mgmt-ssh"')
 
         for r in validated_rules:
@@ -216,6 +266,56 @@ class NftablesCompiler:
         lines.append("    }")
 
         lines.append("}")
+
+        # ------------------------------------------------------------
+        # Captive Portal enforcement
+        #
+        # This table is generated only when captive_portal.enabled is true.
+        # It remains separate from the normal firewall table so that the
+        # dynamic authorized_clients set survives normal firewall applies.
+        # ------------------------------------------------------------
+        if portal_config:
+            portal_interface = portal_config["interface"]
+            portal_subnet = portal_config["subnet"]
+            portal_host = portal_config["listen_host"]
+            portal_port = portal_config["listen_port"]
+
+            lines.extend([
+                "",
+                "# RCS CyberTrack Captive Portal Enforcement",
+                "table inet rcs_cybertrack_portal {",
+                "    set authorized_clients {",
+                "        type ipv4_addr",
+                "        flags timeout",
+                "    }",
+                "",
+                "    chain portal_forward {",
+                "        type filter hook forward priority -10; policy accept;",
+                "",
+                "        # Authenticated LAN clients may access the WAN.",
+                f'        iifname "{portal_interface}" oifname "{nat_config.wan_interface}" '
+                'ip saddr @authorized_clients accept comment "rcscybertrack:portal:authorized"',
+                "",
+                "        # Unauthenticated clients may reach the CyberTrack portal.",
+                f'        iifname "{portal_interface}" ip daddr {portal_host} tcp dport {portal_port} '
+                'accept comment "rcscybertrack:portal:web"',
+                "",
+                "        # Permit DNS to the firewall for captive-portal discovery.",
+                f'        iifname "{portal_interface}" ip daddr {portal_host} udp dport 53 '
+                'accept comment "rcscybertrack:portal:dns-udp"',
+                f'        iifname "{portal_interface}" ip daddr {portal_host} tcp dport 53 '
+                'accept comment "rcscybertrack:portal:dns-tcp"',
+                "",
+                "        # Permit DHCP traffic.",
+                f'        iifname "{portal_interface}" udp sport 68 udp dport 67 '
+                'accept comment "rcscybertrack:portal:dhcp"',
+                "",
+                "        # Block unauthenticated LAN clients from forwarding to WAN.",
+                f'        iifname "{portal_interface}" oifname "{nat_config.wan_interface}" '
+                f'ip saddr {portal_subnet} drop comment "rcscybertrack:portal:unauthorized"',
+                "    }",
+                "}",
+            ])
 
         # IPv4 NAT is deliberately kept in a separate table.
         # The filter table above remains independently managed.

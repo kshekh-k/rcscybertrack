@@ -54,9 +54,9 @@ export default function Alerts() {
           <button
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="px-3 py-2 bg-surface hover:bg-slate-800 border border-border-subtle text-text-primary text-xs font-medium rounded-lg transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50"
+            className="px-3 py-2 bg-surface hover:bg-slate-800 text-text-primary text-xs font-medium rounded-lg transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50"
           >
-            <RefreshCw className={`w-3.5 h-3.5 text-warning ${isRefreshing ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`size-3.5 text-warning ${isRefreshing ? 'animate-spin' : ''}`} />
             <span>Refresh</span>
           </button>
         </div>
@@ -71,63 +71,63 @@ export default function Alerts() {
 
       {/* Severity Breakdown Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-        <div className="bg-surface border border-rose-500/30 rounded-xl p-3.5 shadow-lg">
+        <div className="bg-surface rounded-xl p-3.5 shadow-lg">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] uppercase font-bold text-rose-400">Critical</span>
-            <AlertTriangle className="w-4 h-4 text-rose-400" />
+            <span className="text-3xs uppercase font-bold text-rose-400">Critical</span>
+            <AlertTriangle className="size-4 text-rose-400" />
           </div>
           <p className="text-xl font-mono font-bold text-text-primary mt-1">0</p>
-          <p className="text-[11px] text-text-muted mt-1">Immediate action required</p>
+          <p className="text-2xs text-text-muted mt-1">Immediate action required</p>
         </div>
 
-        <div className="bg-surface border border-amber-500/30 rounded-xl p-3.5 shadow-lg">
+        <div className="bg-surface rounded-xl p-3.5 shadow-lg">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] uppercase font-bold text-amber-400">High</span>
-            <ShieldAlert className="w-4 h-4 text-amber-400" />
+            <span className="text-3xs uppercase font-bold text-amber-400">High</span>
+            <ShieldAlert className="size-4 text-amber-400" />
           </div>
           <p className="text-xl font-mono font-bold text-text-primary mt-1">0</p>
-          <p className="text-[11px] text-text-muted mt-1">Elevated risk events</p>
+          <p className="text-2xs text-text-muted mt-1">Elevated risk events</p>
         </div>
 
-        <div className="bg-surface border border-yellow-500/30 rounded-xl p-3.5 shadow-lg">
+        <div className="bg-surface rounded-xl p-3.5 shadow-lg">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] uppercase font-bold text-yellow-300">Medium</span>
-            <Activity className="w-4 h-4 text-yellow-300" />
+            <span className="text-3xs uppercase font-bold text-yellow-300">Medium</span>
+            <Activity className="size-4 text-yellow-300" />
           </div>
           <p className="text-xl font-mono font-bold text-text-primary mt-1">0</p>
-          <p className="text-[11px] text-text-muted mt-1">Policy violations</p>
+          <p className="text-2xs text-text-muted mt-1">Policy violations</p>
         </div>
 
-        <div className="bg-surface border border-cyan-500/30 rounded-xl p-3.5 shadow-lg">
+        <div className="bg-surface rounded-xl p-3.5 shadow-lg">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] uppercase font-bold text-cyan-400">Low</span>
-            <Activity className="w-4 h-4 text-cyan-400" />
+            <span className="text-3xs uppercase font-bold text-cyan-400">Low</span>
+            <Activity className="size-4 text-cyan-400" />
           </div>
           <p className="text-xl font-mono font-bold text-text-primary mt-1">0</p>
-          <p className="text-[11px] text-text-muted mt-1">Minor anomalies</p>
+          <p className="text-2xs text-text-muted mt-1">Minor anomalies</p>
         </div>
 
-        <div className="bg-surface border border-slate-700/60 rounded-xl p-3.5 shadow-lg">
+        <div className="bg-surface /60 rounded-xl p-3.5 shadow-lg">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] uppercase font-bold text-slate-400">Info</span>
-            <Terminal className="w-4 h-4 text-slate-400" />
+            <span className="text-3xs uppercase font-bold text-slate-400">Info</span>
+            <Terminal className="size-4 text-slate-400" />
           </div>
           <p className="text-xl font-mono font-bold text-text-primary mt-1">0</p>
-          <p className="text-[11px] text-text-muted mt-1">Informational logs</p>
+          <p className="text-2xs text-text-muted mt-1">Informational logs</p>
         </div>
       </div>
 
       {/* Controls Bar */}
-      <div className="bg-surface border border-border-subtle rounded-xl p-4 shadow-lg flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+      <div className="bg-surface rounded-xl p-4 shadow-lg flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
         {/* Search */}
         <div className="relative flex-1 max-w-md">
-          <Search className="w-4 h-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="size-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search alert title, rule ID, source IP..."
-            className="w-full bg-app-bg border border-border-subtle rounded-lg pl-9 pr-4 py-2 text-xs text-text-primary placeholder-slate-500 focus:outline-none focus:border-primary transition-colors"
+            className="w-full bg-app-bg rounded-lg pl-9 pr-4 py-2 text-xs text-text-primary placeholder-slate-500 focus:outline-none focus:border-primary transition-colors"
           />
         </div>
 
@@ -135,12 +135,12 @@ export default function Alerts() {
         <div className="flex flex-wrap items-center gap-3">
           {/* Severity Filter */}
           <div className="flex items-center gap-1.5">
-            <Filter className="w-3.5 h-3.5 text-text-muted" />
+            <Filter className="size-3.5 text-text-muted" />
             <span className="text-xs text-text-muted font-medium">Severity:</span>
             <select
               value={severityFilter}
               onChange={(e) => setSeverityFilter(e.target.value)}
-              className="bg-app-bg border border-border-subtle text-text-primary text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-primary font-medium"
+              className="bg-app-bg text-text-primary text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-primary font-medium"
             >
               <option value="all">All Severities</option>
               <option value="critical">Critical</option>
@@ -157,7 +157,7 @@ export default function Alerts() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="bg-app-bg border border-border-subtle text-text-primary text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-primary font-medium"
+              className="bg-app-bg text-text-primary text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-primary font-medium"
             >
               <option value="all">All Statuses</option>
               <option value="open">Open</option>
@@ -169,11 +169,11 @@ export default function Alerts() {
       </div>
 
       {/* Main Alert Console Table / Empty State */}
-      <div className="bg-surface border border-border-subtle rounded-xl overflow-hidden shadow-lg">
+      <div className="bg-surface rounded-xl overflow-hidden shadow-lg">
         <div className="p-5 border-b border-slate-800/80 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
-              <ShieldAlert className="w-4 h-4" />
+            <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400 ">
+              <ShieldAlert className="size-4" />
             </div>
             <div>
               <h2 className="text-base font-semibold text-text-primary">Alert Detection Stream</h2>
@@ -184,15 +184,15 @@ export default function Alerts() {
 
         {filteredAlerts.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-12 text-center bg-app-bg/40">
-            <div className="p-4 bg-surface rounded-full border border-border-subtle text-slate-500 mb-4">
-              <AlertTriangle className="w-8 h-8 text-amber-400/60" />
+            <div className="p-4 bg-surface rounded-full text-slate-500 mb-4">
+              <AlertTriangle className="size-8 text-amber-400/60" />
             </div>
             <h3 className="text-base font-semibold text-text-primary mb-1">No security alerts available</h3>
             <p className="text-xs text-text-secondary max-w-md mb-4 leading-relaxed">
               The backend alert service (`GET /api/v1/alerts`) is not yet connected to stream live threat telemetry. No alerts have been triggered or recorded.
             </p>
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-900 text-slate-400 border border-slate-800 rounded-md font-mono text-[11px]">
-              <Terminal className="w-3.5 h-3.5 text-cyan-400" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-900 text-slate-400 rounded-md font-mono text-2xs">
+              <Terminal className="size-3.5 text-cyan-400" />
               <span>Target Endpoint: GET /api/v1/alerts</span>
             </div>
           </div>
@@ -200,7 +200,7 @@ export default function Alerts() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
-                <tr className="bg-app-bg/80 border-b border-border-subtle text-[11px] font-semibold text-text-muted uppercase tracking-wider">
+                <tr className="bg-app-bg/80 border-b border-border-subtle text-2xs font-semibold text-text-muted uppercase tracking-wider">
                   <th className="py-3.5 px-6">Timestamp</th>
                   <th className="py-3.5 px-6">Severity</th>
                   <th className="py-3.5 px-6">Alert Title</th>
@@ -249,7 +249,7 @@ export default function Alerts() {
       {/* Alert Detail Sheet Modal */}
       {selectedAlert && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs">
-          <div className="bg-surface border border-border-subtle rounded-xl max-w-xl w-full p-6 shadow-2xl space-y-4">
+          <div className="bg-surface rounded-xl max-w-xl w-full p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div className="flex items-center gap-2">
                 <AlertSeverityBadge severity={selectedAlert.severity} />
@@ -259,13 +259,13 @@ export default function Alerts() {
                 onClick={() => setSelectedAlert(null)}
                 className="text-text-muted hover:text-text-primary p-1 rounded"
               >
-                <X className="w-4 h-4" />
+                <X className="size-4" />
               </button>
             </div>
 
             <p className="text-xs text-text-secondary leading-relaxed">{selectedAlert.description}</p>
 
-            <div className="bg-app-bg p-3 rounded-lg border border-border-subtle space-y-1 font-mono text-xs text-slate-300">
+            <div className="bg-app-bg p-3 rounded-lg space-y-1 font-mono text-xs text-slate-300">
               <p>Source IP: {selectedAlert.source_ip || 'N/A'}</p>
               <p>Destination IP: {selectedAlert.destination_ip || 'N/A'}</p>
               <p>Rule Match: {selectedAlert.rule_id || 'N/A'}</p>
@@ -280,7 +280,7 @@ export default function Alerts() {
               </button>
               <button
                 disabled
-                className="px-4 py-2 bg-amber-500/30 text-amber-300 text-xs font-semibold rounded-lg cursor-not-allowed border border-amber-500/30"
+                className="px-4 py-2 bg-amber-500/30 text-amber-300 text-xs font-semibold rounded-lg cursor-not-allowed "
               >
                 Acknowledge Alert (Disabled)
               </button>

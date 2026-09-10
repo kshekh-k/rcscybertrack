@@ -45,6 +45,14 @@ class NetworkConfig(BaseModel):
     dhcp: dict = Field(default_factory=dict)
     dns: dict = Field(default_factory=dict)
 
+class CaptivePortalConfig(BaseModel):
+    enabled: bool = False
+    interface: str = "eth1"
+    subnet: str = "192.168.2.0/24"
+    listen_host: str = "192.168.2.1"
+    listen_port: int = 8080
+    session_timeout_minutes: int = 60
+
 class VPNConfig(BaseModel):
     enabled: bool = False
 
@@ -67,6 +75,7 @@ class RcsCyberTrackConfig(BaseModel):
     management: ManagementConfig
     firewall: FirewallConfig
     network: NetworkConfig
+    captive_portal: CaptivePortalConfig
     vpn: VPNConfig
     sdwan: SDWANConfig
     security: SecurityConfig

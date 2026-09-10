@@ -35,9 +35,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       primary:
         'bg-blue-500 bg-linear-to-r from-blue-500 to-cyan-500 font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:to-transparent',
       secondary:
-        'bg-slate-200 hover:bg-slate-300 text-slate-900 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-100 border border-slate-300 dark:border-slate-700',
+        'bg-slate-200 hover:bg-slate-300 text-slate-900 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-100 ',
       outline:
-        'border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200',
+        ' hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200',
       ghost:
         'hover:bg-slate-100 dark:hover:bg-slate-800/70 text-slate-700 dark:text-slate-300',
       destructive:
@@ -59,7 +59,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       cyan:
         'bg-cyan-500 bg-linear-to-r from-cyan-500 to-blue-500 font-semibold text-white shadow-lg shadow-cyan-500/30 transition hover:to-transparent',
       slate:
-        'bg-slate-700 bg-linear-to-r from-slate-700 to-slate-900 font-semibold text-white shadow-lg shadow-slate-900/30 transition hover:to-transparent border border-slate-600/50',
+        'bg-slate-700 bg-linear-to-r from-slate-700 to-slate-900 font-semibold text-white shadow-lg shadow-slate-900/30 transition hover:to-transparent ',
       sunset:
         'bg-orange-500 bg-linear-to-r from-orange-500 to-red-500 font-semibold text-white shadow-lg shadow-orange-500/30 transition hover:to-transparent',
       lime:
@@ -67,10 +67,10 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     }
 
     const sizes = {
-      sm: 'px-2.5 py-1.5 text-[11px]',
+      sm: 'px-2.5 py-1.5 text-2xs',
       default: 'px-3.5 py-2 text-xs',
       lg: 'px-4 py-2.5 text-sm',
-      icon: 'w-8 h-8 p-0',
+      icon: 'size-8 p-0',
     }
 
     return (
@@ -81,7 +81,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {isLoading && (
-          <svg className="animate-spin -ml-1 mr-2 h-3.5 w-3.5 text-current" fill="none" viewBox="0 0 24 24">
+          <svg className="animate-spin -ml-1 mr-2 size-3.5 text-current" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path
               className="opacity-75"
