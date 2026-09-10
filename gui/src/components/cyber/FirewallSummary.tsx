@@ -13,11 +13,11 @@ export const FirewallSummary: React.FC<FirewallSummaryProps> = ({ rules = [], is
   const displayRules = rules.slice(0, 5)
 
   return (
-    <div className="bg-surface border border-border-subtle rounded-xl p-5 shadow-lg flex flex-col justify-between">
+    <div className="bg-surface rounded-xl p-5 shadow-lg flex flex-col justify-between">
       <div>
         <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-800/80">
           <div className="flex items-center gap-2.5">
-            <Shield className="w-4 h-4 text-primary" />
+            <Shield className="size-4 text-primary" />
             <h3 className="text-sm font-semibold text-text-primary">Firewall Policy Summary</h3>
           </div>
           <Link
@@ -25,14 +25,14 @@ export const FirewallSummary: React.FC<FirewallSummaryProps> = ({ rules = [], is
             className="text-xs font-medium text-primary hover:text-primary-hover transition-colors flex items-center gap-1 group"
           >
             <span>View Firewall</span>
-            <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+            <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
           </Link>
         </div>
 
         {isLoading ? (
           <div className="space-y-2">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-9 bg-app-bg animate-pulse rounded-lg border border-border-subtle" />
+              <div key={i} className="h-9 bg-app-bg animate-pulse rounded-lg " />
             ))}
           </div>
         ) : displayRules.length === 0 ? (
@@ -44,18 +44,18 @@ export const FirewallSummary: React.FC<FirewallSummaryProps> = ({ rules = [], is
               return (
                 <div
                   key={rule.id}
-                  className="bg-app-bg/50 border border-border-subtle/80 rounded-lg p-2.5 flex items-center justify-between text-xs transition-colors hover:border-slate-700/60"
+                  className="bg-app-bg/50 /80 rounded-lg p-2.5 flex items-center justify-between text-xs transition-colors hover:border-slate-700/60"
                 >
                   <div className="flex items-center gap-2.5">
                     <StatusBadge
                       status={rule.action}
                       variant={isAllow ? 'success' : 'danger'}
                       showDot={false}
-                      className="text-[10px] px-1.5 uppercase font-mono"
+                      className="text-3xs px-1.5 uppercase font-mono"
                     />
                     <span className="font-mono text-text-primary font-medium">{rule.id}</span>
                   </div>
-                  <div className="flex items-center gap-3 text-text-secondary font-mono text-[11px]">
+                  <div className="flex items-center gap-3 text-text-secondary font-mono text-2xs">
                     <span className="capitalize">{rule.direction}</span>
                     <span className="bg-slate-800 px-1.5 py-0.5 rounded text-slate-300 uppercase">
                       {rule.protocol}

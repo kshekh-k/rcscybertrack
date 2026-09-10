@@ -65,9 +65,9 @@ export default function Sdwan() {
           <button
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="px-3 py-2 bg-surface hover:bg-slate-800 border border-border-subtle text-text-primary text-xs font-medium rounded-lg transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50"
+            className="px-3 py-2 bg-surface hover:bg-slate-800 text-text-primary text-xs font-medium rounded-lg transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50"
           >
-            <RefreshCw className={`w-3.5 h-3.5 text-accent ${isRefreshing ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`size-3.5 text-accent ${isRefreshing ? 'animate-spin' : ''}`} />
             <span>Refresh</span>
           </button>
         </div>
@@ -85,33 +85,33 @@ export default function Sdwan() {
         {CONCEPTUAL_WAN_LINKS.map((link) => (
           <div
             key={link.id}
-            className="bg-surface border border-border-subtle rounded-xl p-5 shadow-lg space-y-3 relative overflow-hidden"
+            className="bg-surface rounded-xl p-5 shadow-lg space-y-3 relative overflow-hidden"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                  <Globe className="w-4 h-4" />
+                <div className="p-2 rounded-lg bg-cyan-500/10 text-cyan-400 ">
+                  <Globe className="size-4" />
                 </div>
                 <div>
                   <h3 className="text-sm font-semibold text-text-primary">{link.name}</h3>
-                  <p className="text-[11px] font-mono text-text-muted">{link.interface} • {link.provider}</p>
+                  <p className="text-2xs font-mono text-text-muted">{link.interface} • {link.provider}</p>
                 </div>
               </div>
               <StatusBadge status="Standby / Ready" variant="neutral" />
             </div>
 
-            <div className="grid grid-cols-2 gap-2 text-xs font-mono bg-app-bg/60 p-3 rounded-lg border border-border-subtle/80">
+            <div className="grid grid-cols-2 gap-2 text-xs font-mono bg-app-bg/60 p-3 rounded-lg /80">
               <div>
-                <span className="text-[10px] text-text-muted block uppercase">Bandwidth (Down)</span>
+                <span className="text-3xs text-text-muted block uppercase">Bandwidth (Down)</span>
                 <span className="text-text-primary font-semibold">{link.bandwidth_down_mbps} Mbps</span>
               </div>
               <div>
-                <span className="text-[10px] text-text-muted block uppercase">Bandwidth (Up)</span>
+                <span className="text-3xs text-text-muted block uppercase">Bandwidth (Up)</span>
                 <span className="text-text-primary font-semibold">{link.bandwidth_up_mbps} Mbps</span>
               </div>
             </div>
 
-            <div className="text-[11px] text-text-muted flex justify-between items-center border-t border-slate-800/80 pt-2">
+            <div className="text-2xs text-text-muted flex justify-between items-center border-t border-slate-800/80 pt-2">
               <span>SLA Health Telemetry:</span>
               <span className="font-mono text-amber-400">Backend Stream Offline</span>
             </div>
@@ -120,7 +120,7 @@ export default function Sdwan() {
       </div>
 
       {/* Navigation Bar */}
-      <div className="flex items-center gap-2 p-1 bg-app-bg border border-border-subtle rounded-lg overflow-x-auto w-full md:w-fit">
+      <div className="flex items-center gap-2 p-1 bg-app-bg rounded-lg overflow-x-auto w-full md:w-fit">
         <button
           onClick={() => setActiveTab('overview')}
           className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-md transition-all whitespace-nowrap ${
@@ -129,7 +129,7 @@ export default function Sdwan() {
               : 'text-text-secondary hover:text-text-primary hover:bg-slate-800/50'
           }`}
         >
-          <Activity className="w-4 h-4" />
+          <Activity className="size-4" />
           <span>Overview</span>
         </button>
 
@@ -141,7 +141,7 @@ export default function Sdwan() {
               : 'text-text-secondary hover:text-text-primary hover:bg-slate-800/50'
           }`}
         >
-          <Globe className="w-4 h-4" />
+          <Globe className="size-4" />
           <span>WAN Links (3)</span>
         </button>
 
@@ -153,7 +153,7 @@ export default function Sdwan() {
               : 'text-text-secondary hover:text-text-primary hover:bg-slate-800/50'
           }`}
         >
-          <Sliders className="w-4 h-4" />
+          <Sliders className="size-4" />
           <span>Steering Policies</span>
         </button>
 
@@ -165,7 +165,7 @@ export default function Sdwan() {
               : 'text-text-secondary hover:text-text-primary hover:bg-slate-800/50'
           }`}
         >
-          <Activity className="w-4 h-4" />
+          <Activity className="size-4" />
           <span>SLA Health</span>
         </button>
 
@@ -177,16 +177,16 @@ export default function Sdwan() {
               : 'text-text-secondary hover:text-text-primary hover:bg-slate-800/50'
           }`}
         >
-          <AlertTriangle className="w-4 h-4" />
+          <AlertTriangle className="size-4" />
           <span>Failover Events</span>
         </button>
       </div>
 
       {/* Main Console Box */}
-      <div className="bg-surface border border-border-subtle rounded-xl p-6 shadow-lg space-y-4">
+      <div className="bg-surface rounded-xl p-6 shadow-lg space-y-4">
         <div className="flex items-center justify-between border-b border-slate-800 pb-3">
           <h3 className="text-base font-semibold text-text-primary">SD-WAN Traffic Path Control</h3>
-          <span className="text-xs font-mono text-slate-500 bg-slate-900 px-2.5 py-1 rounded border border-slate-800">
+          <span className="text-xs font-mono text-slate-500 bg-slate-900 px-2.5 py-1 rounded ">
             Target Endpoint: GET /api/v1/sdwan/policies
           </span>
         </div>
@@ -195,7 +195,7 @@ export default function Sdwan() {
           Dynamic path selection and latency-based traffic routing will route high-priority application flows across WAN1, WAN2, and WAN3 automatically based on real-time link health.
         </p>
 
-        <div className="p-4 bg-app-bg border border-border-subtle rounded-lg text-center text-xs text-text-muted font-mono">
+        <div className="p-4 bg-app-bg rounded-lg text-center text-xs text-text-muted font-mono">
           SD-WAN Link Steering Engine is in Standby Mode. Connect backend daemon to view live SLA path telemetry.
         </div>
       </div>

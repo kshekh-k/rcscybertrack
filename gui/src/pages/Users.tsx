@@ -206,16 +206,16 @@ export default function Users() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => refetch()}
-            className="px-3 py-2 bg-surface hover:bg-slate-800 border border-border-subtle text-text-primary text-xs font-medium rounded-lg transition-colors flex items-center gap-2 shadow-sm"
+            className="px-3 py-2 bg-surface hover:bg-slate-800 text-text-primary text-xs font-medium rounded-lg transition-colors flex items-center gap-2 shadow-sm"
           >
-            <RefreshCw className="w-3.5 h-3.5 text-accent" />
+            <RefreshCw className="size-3.5 text-accent" />
             <span>Refresh</span>
           </button>
         </div>
       </div>
 
       {/* Navigation Bar */}
-      <div className="flex items-center gap-2 p-1 bg-app-bg border border-border-subtle rounded-lg w-fit">
+      <div className="flex items-center gap-2 p-1 bg-app-bg rounded-lg w-fit">
         <button
           onClick={() => setActiveTab('users')}
           className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-md transition-all ${
@@ -224,7 +224,7 @@ export default function Users() {
               : 'text-text-secondary hover:text-text-primary hover:bg-slate-800/50'
           }`}
         >
-          <UserCheck className="w-4 h-4" />
+          <UserCheck className="size-4" />
           <span>User Accounts ({users.length})</span>
         </button>
 
@@ -236,15 +236,15 @@ export default function Users() {
               : 'text-text-secondary hover:text-text-primary hover:bg-slate-800/50'
           }`}
         >
-          <Layers className="w-4 h-4" />
+          <Layers className="size-4" />
           <span>Permission Matrix</span>
         </button>
       </div>
 
       {/* Error state alert banner */}
       {isError && (
-        <div className="p-4 bg-red-950/40 border border-red-800/60 rounded-xl flex items-center gap-3 text-red-300 text-sm">
-          <AlertCircle className="w-5 h-5 text-red-400 shrink-0" />
+        <div className="p-4 bg-red-950/40 rounded-xl flex items-center gap-3 text-red-300 text-sm">
+          <AlertCircle className="size-5 text-red-400 shrink-0" />
           <div>
             <span className="font-semibold">User Data Fetch Error: </span>
             {(error as Error).message}
@@ -255,8 +255,8 @@ export default function Users() {
       {/* Content Rendering */}
       {activeTab === 'users' ? (
         isLoading ? (
-          <div className="bg-surface border border-border-subtle rounded-xl p-12 text-center text-text-secondary">
-            <RefreshCw className="w-6 h-6 animate-spin text-accent mx-auto mb-3" />
+          <div className="bg-surface rounded-xl p-12 text-center text-text-secondary">
+            <RefreshCw className="size-6 animate-spin text-accent mx-auto mb-3" />
             <p className="text-sm font-medium">Loading persistent user accounts...</p>
           </div>
         ) : (
@@ -274,11 +274,11 @@ export default function Users() {
       {/* CREATE USER DIALOG */}
       {isCreateOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-surface border border-border-subtle rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-surface rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200">
             <div className="p-5 border-b border-slate-800 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="p-2 bg-primary/10 rounded-lg border border-primary/20 text-primary">
-                  <UserCheck className="w-5 h-5" />
+                <div className="p-2 bg-primary/10 rounded-lg text-primary">
+                  <UserCheck className="size-5" />
                 </div>
                 <h3 className="text-lg font-bold text-text-primary">Create User Account</h3>
               </div>
@@ -286,7 +286,7 @@ export default function Users() {
                 onClick={() => setIsCreateOpen(false)}
                 className="text-text-muted hover:text-text-primary p-1 rounded-lg transition-colors"
               >
-                <X className="w-5 h-5" />
+                <X className="size-5" />
               </button>
             </div>
 
@@ -298,8 +298,8 @@ export default function Users() {
               className="p-6 space-y-4"
             >
               {actionError && (
-                <div className="p-3 bg-red-950/50 border border-red-800/60 rounded-lg text-xs text-red-300 flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 shrink-0 text-red-400" />
+                <div className="p-3 bg-red-950/50 rounded-lg text-xs text-red-300 flex items-center gap-2">
+                  <AlertCircle className="size-4 shrink-0 text-red-400" />
                   <span>{actionError}</span>
                 </div>
               )}
@@ -314,7 +314,7 @@ export default function Users() {
                   value={formUsername}
                   onChange={(e) => setFormUsername(e.target.value)}
                   placeholder="e.g. secops-analyst"
-                  className="w-full px-3.5 py-2.5 bg-app-bg border border-border-subtle rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
+                  className="w-full px-3.5 py-2.5 bg-app-bg rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
                 />
               </div>
 
@@ -329,7 +329,7 @@ export default function Users() {
                   value={formPassword}
                   onChange={(e) => setFormPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="w-full px-3.5 py-2.5 bg-app-bg border border-border-subtle rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
+                  className="w-full px-3.5 py-2.5 bg-app-bg rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
                 />
               </div>
 
@@ -343,7 +343,7 @@ export default function Users() {
                   value={formEmail}
                   onChange={(e) => setFormEmail(e.target.value)}
                   placeholder="analyst@rcs-cybertrack.local"
-                  className="w-full px-3.5 py-2.5 bg-app-bg border border-border-subtle rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
+                  className="w-full px-3.5 py-2.5 bg-app-bg rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
                 />
               </div>
 
@@ -357,7 +357,7 @@ export default function Users() {
                   value={formFullName}
                   onChange={(e) => setFormFullName(e.target.value)}
                   placeholder="e.g. Alex Mercer"
-                  className="w-full px-3.5 py-2.5 bg-app-bg border border-border-subtle rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
+                  className="w-full px-3.5 py-2.5 bg-app-bg rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
                 />
               </div>
 
@@ -368,7 +368,7 @@ export default function Users() {
                 <select
                   value={formRole}
                   onChange={(e) => setFormRole(e.target.value as any)}
-                  className="w-full px-3.5 py-2.5 bg-app-bg border border-border-subtle rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
+                  className="w-full px-3.5 py-2.5 bg-app-bg rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
                 >
                   <option value="admin">Administrator (Full Access)</option>
                   <option value="operator">Security Operator (Write Rules/Alerts)</option>
@@ -391,7 +391,7 @@ export default function Users() {
                   isLoading={createUserMutation.isPending}
                   className="gap-2"
                 >
-                  {!createUserMutation.isPending && <Lock className="w-3.5 h-3.5" />}
+                  {!createUserMutation.isPending && <Lock className="size-3.5" />}
                   <span>Provision Account</span>
                 </Button>
               </div>
@@ -403,11 +403,11 @@ export default function Users() {
       {/* EDIT USER DIALOG */}
       {isEditOpen && selectedUser && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-surface border border-border-subtle rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-surface rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200">
             <div className="p-5 border-b border-slate-800 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="p-2 bg-primary/10 rounded-lg border border-primary/20 text-primary">
-                  <UserCheck className="w-5 h-5" />
+                <div className="p-2 bg-primary/10 rounded-lg text-primary">
+                  <UserCheck className="size-5" />
                 </div>
                 <h3 className="text-lg font-bold text-text-primary">Edit Account: {selectedUser.username}</h3>
               </div>
@@ -415,7 +415,7 @@ export default function Users() {
                 onClick={() => setIsEditOpen(false)}
                 className="text-text-muted hover:text-text-primary p-1 rounded-lg transition-colors"
               >
-                <X className="w-5 h-5" />
+                <X className="size-5" />
               </button>
             </div>
 
@@ -427,8 +427,8 @@ export default function Users() {
               className="p-6 space-y-4"
             >
               {actionError && (
-                <div className="p-3 bg-red-950/50 border border-red-800/60 rounded-lg text-xs text-red-300 flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 shrink-0 text-red-400" />
+                <div className="p-3 bg-red-950/50 rounded-lg text-xs text-red-300 flex items-center gap-2">
+                  <AlertCircle className="size-4 shrink-0 text-red-400" />
                   <span>{actionError}</span>
                 </div>
               )}
@@ -442,7 +442,7 @@ export default function Users() {
                   required
                   value={formEmail}
                   onChange={(e) => setFormEmail(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-app-bg border border-border-subtle rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
+                  className="w-full px-3.5 py-2.5 bg-app-bg rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
                 />
               </div>
 
@@ -455,7 +455,7 @@ export default function Users() {
                   required
                   value={formFullName}
                   onChange={(e) => setFormFullName(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-app-bg border border-border-subtle rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
+                  className="w-full px-3.5 py-2.5 bg-app-bg rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
                 />
               </div>
 
@@ -466,7 +466,7 @@ export default function Users() {
                 <select
                   value={formRole}
                   onChange={(e) => setFormRole(e.target.value as any)}
-                  className="w-full px-3.5 py-2.5 bg-app-bg border border-border-subtle rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
+                  className="w-full px-3.5 py-2.5 bg-app-bg rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
                 >
                   <option value="admin">Administrator</option>
                   <option value="operator">Security Operator</option>
@@ -485,7 +485,7 @@ export default function Users() {
                   value={formPassword}
                   onChange={(e) => setFormPassword(e.target.value)}
                   placeholder="Leave blank to keep existing password"
-                  className="w-full px-3.5 py-2.5 bg-app-bg border border-border-subtle rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
+                  className="w-full px-3.5 py-2.5 bg-app-bg rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
                 />
               </div>
 
@@ -503,7 +503,7 @@ export default function Users() {
                   isLoading={editUserMutation.isPending}
                   className="gap-2"
                 >
-                  {!editUserMutation.isPending && <Lock className="w-3.5 h-3.5" />}
+                  {!editUserMutation.isPending && <Lock className="size-3.5" />}
                   <span>Save Changes</span>
                 </Button>
               </div>
@@ -515,10 +515,10 @@ export default function Users() {
       {/* DISABLE USER CONFIRMATION DIALOG */}
       {isDisableOpen && selectedUser && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-surface border border-red-900/50 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-surface rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200">
             <div className="p-5 border-b border-red-900/40 bg-red-950/30 flex items-center gap-3">
-              <div className="p-2.5 bg-red-500/10 rounded-xl border border-red-500/20 text-red-400">
-                <AlertTriangle className="w-5 h-5" />
+              <div className="p-2.5 bg-red-500/10 rounded-xl text-red-400">
+                <AlertTriangle className="size-5" />
               </div>
               <div>
                 <h3 className="text-base font-bold text-text-primary">Disable Account Access</h3>
@@ -528,8 +528,8 @@ export default function Users() {
 
             <div className="p-6 space-y-4">
               {actionError && (
-                <div className="p-3 bg-red-950/50 border border-red-800/60 rounded-lg text-xs text-red-300 flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 shrink-0 text-red-400" />
+                <div className="p-3 bg-red-950/50 rounded-lg text-xs text-red-300 flex items-center gap-2">
+                  <AlertCircle className="size-4 shrink-0 text-red-400" />
                   <span>{actionError}</span>
                 </div>
               )}
@@ -552,7 +552,7 @@ export default function Users() {
                   disabled={disableUserMutation.isPending}
                   className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50"
                 >
-                  {disableUserMutation.isPending ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <AlertTriangle className="w-3.5 h-3.5" />}
+                  {disableUserMutation.isPending ? <RefreshCw className="size-3.5 animate-spin" /> : <AlertTriangle className="size-3.5" />}
                   <span>Disable User</span>
                 </button>
               </div>

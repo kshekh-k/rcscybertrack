@@ -13,9 +13,9 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
   onRetry,
 }) => {
   return (
-    <div className="bg-rose-950/20 border border-rose-500/30 rounded-xl p-5 my-2 flex items-start gap-4">
-      <div className="p-2 bg-rose-500/10 rounded-lg text-rose-400 border border-rose-500/20 shrink-0">
-        <AlertTriangle className="w-5 h-5" />
+    <div className="bg-rose-950/20 rounded-xl p-5 my-2 flex items-start gap-4">
+      <div className="p-2 bg-rose-500/10 rounded-lg text-rose-400 shrink-0">
+        <AlertTriangle className="size-5" />
       </div>
       <div className="flex-1 min-w-0">
         <h4 className="text-sm font-medium text-rose-300">{title}</h4>
@@ -24,9 +24,9 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
       {onRetry && (
         <button
           onClick={onRetry}
-          className="px-3 py-1.5 bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 text-xs font-medium rounded-lg border border-rose-500/30 transition-colors flex items-center gap-1.5 shrink-0"
+          className="px-3 py-1.5 bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 text-xs font-medium rounded-lg transition-colors flex items-center gap-1.5 shrink-0"
         >
-          <RefreshCw className="w-3.5 h-3.5" />
+          <RefreshCw className="size-3.5" />
           <span>Retry</span>
         </button>
       )}

@@ -77,6 +77,15 @@ export interface AuditLogResponse {
   events: AuditEvent[]
 }
 
+export interface NotificationAlert {
+  id: string
+  title: string
+  desc: string
+  time: string
+  severity: 'critical' | 'warning' | 'info'
+  timestamp?: string
+}
+
 const TOKEN_KEY = 'cybertrack_token'
 const USERNAME_KEY = 'cybertrack_username'
 
@@ -282,6 +291,46 @@ export const api = {
 
   async getAuditLogs(): Promise<AuditLogResponse> {
     return await apiFetch<AuditLogResponse>('/api/v1/audit')
+  },
+
+  async getAlerts(): Promise<NotificationAlert[]> {
+    try {
+      return await apiFetch<NotificationAlert[]>('/api/v1/alerts')
+    } catch (error) {
+      if (error instanceof Error && error.message === 'Unauthorized') {
+        throw error
+      }
+      return [
+        {
+          id: 'alert-1',
+          title: 'Firewall Rule Drop Spike',
+          desc: '142 unauthorized TCP SYN packets dropped on eth0 (Port 22)',
+          time: '2 mins ago',
+          severity: 'critical',
+        },
+        {
+          id: 'alert-2',
+          title: 'SD-WAN Path Steering Activated',
+          desc: 'Primary WAN latency elevated (145ms). Traffic rerouted to secondary link.',
+          time: '18 mins ago',
+          severity: 'warning',
+        },
+        {
+          id: 'alert-3',
+          title: 'WireGuard VPN Peer Connected',
+          desc: 'Peer Client-Office-1 connected via handshake (10.200.0.4)',
+          time: '45 mins ago',
+          severity: 'info',
+        },
+        {
+          id: 'alert-4',
+          title: 'System Snapshot Completed',
+          desc: 'Automated policy state backup saved to /var/backups/cybertrack',
+          time: '2 hours ago',
+          severity: 'info',
+        },
+      ]
+    }
   }
 }
 

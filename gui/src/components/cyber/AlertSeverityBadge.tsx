@@ -39,7 +39,7 @@ export const AlertSeverityBadge: React.FC<AlertSeverityBadgeProps> = ({ severity
 
   return (
     <span
-      className={`inline-flex items-center px-2.5 py-0.5 text-[10px] uppercase tracking-wider font-mono rounded border ${current.bg} ${current.text} ${current.border} ${className}`}
+      className={`inline-flex items-center px-2.5 py-0.5 text-3xs uppercase tracking-wider font-mono rounded border ${current.bg} ${current.text} ${current.border} ${className}`}
     >
       {severity}
     </span>

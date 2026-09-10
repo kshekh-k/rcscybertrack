@@ -14,9 +14,9 @@ export const SettingsSection: React.FC<SettingsSectionProps> = ({
   children,
 }) => {
   return (
-    <div className="bg-surface border border-border-subtle rounded-xl p-6 shadow-lg space-y-5">
+    <div className="bg-surface rounded-xl p-6 shadow-lg space-y-5">
       <div className="flex items-center gap-3 border-b border-slate-800/80 pb-4">
-        <div className="p-2 rounded-lg bg-primary/10 text-primary border border-primary/20 shrink-0">
+        <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
           {icon}
         </div>
         <div>
