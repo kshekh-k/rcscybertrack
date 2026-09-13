@@ -1,25 +1,60 @@
 import { useState, useEffect } from 'react'
-import { 
-  Shield, 
-  Plus, 
-  Edit2, 
-  Trash2, 
-  Loader2, 
-  CheckCircle, 
-  XCircle, 
+import {
+  Shield,
+  Plus,
+  Edit2,
+  Trash2,
+  Loader2,
+  CheckCircle,
   AlertTriangle,
   FileCode,
   ToggleLeft,
-  ToggleRight
+  ToggleRight,
+  Flame,
+  BanknoteX,
+  RefreshCw,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react'
 import { api, FirewallRule } from '../lib/api'
 import { Button } from '../components/ui/button'
+import { PageHeader } from '../components/ui/page-header'
+import { Alert } from '../components/ui/alert'
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../components/ui/card'
+import { Badge } from '../components/ui/badge'
+import { Dialog } from '../components/ui/dialog'
+import { Input } from '../components/ui/input'
+import { Select } from '../components/ui/select'
+import { Checkbox } from '../components/ui/checkbox'
+import { useSystemInfo } from '../features/dashboard/useSystemHealth'
+import { cn } from '../lib/utils'
 
 export default function Firewall() {
+  const { data: systemInfo } = useSystemInfo()
   const [rules, setRules] = useState<FirewallRule[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(25)
+
+  const totalPages = Math.max(1, Math.ceil(rules.length / pageSize))
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages)
+    }
+  }, [rules.length, pageSize, totalPages, currentPage])
+
+  const paginatedRules = rules.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+
+  const chainPolicies: Array<{ chain: string; policy: string }> = [
+    { chain: 'INPUT', policy: (systemInfo as any)?.default_input_policy || 'DROP' },
+    { chain: 'OUTPUT', policy: (systemInfo as any)?.default_output_policy || 'ACCEPT' },
+    { chain: 'FORWARD', policy: (systemInfo as any)?.default_forward_policy || 'DROP' },
+  ]
+
   // Modal states
   const [modalOpen, setModalOpen] = useState(false)
   const [editingRule, setEditingRule] = useState<FirewallRule | null>(null)
@@ -54,9 +89,6 @@ export default function Firewall() {
     }
   }
 
-  useEffect(() => {
-    loadRules()
-  }, [])
 
   // Input Validation Helper Functions
   const isValidAddress = (addr: string) => {
@@ -198,24 +230,34 @@ export default function Firewall() {
       } else {
         await api.createFirewallRule(payload)
       }
+
       setModalOpen(false)
-      loadRules()
+      await loadRules()
+
     } catch (err) {
-      setFormError(err instanceof Error ? err.message : 'Failed to apply rule')
+      setFormError(
+        err instanceof Error ? err.message : 'Failed to apply rule'
+      )
     }
   }
 
-  // Handle Delete Action
-  const handleDelete = async (id: string) => {
-    if (!window.confirm(`Are you sure you want to delete rule "${id}"?`)) {
-      return
-    }
+  // Delete confirmation modal states
+  const [ruleToDelete, setRuleToDelete] = useState<string | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
 
+  const confirmDeleteRule = async () => {
+    if (!ruleToDelete) return
+    setIsDeleting(true)
+    setDeleteError(null)
     try {
-      await api.deleteFirewallRule(id)
-      loadRules()
+      await api.deleteFirewallRule(ruleToDelete)
+      setRuleToDelete(null)
+      await loadRules()
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to delete rule')
+      setDeleteError(err instanceof Error ? err.message : 'Failed to delete rule')
+    } finally {
+      setIsDeleting(false)
     }
   }
 
@@ -267,431 +309,535 @@ export default function Firewall() {
 
   return (
     <div className="space-y-6">
-      
+
       {/* Header Summary */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-2">
-            <Shield className="size-6 text-blue-600" />
-            <h1 className="text-2xl font-semibold text-slate-50">Firewall Policies</h1>
-          </div>
-          <p className="text-sm text-slate-400">Configure stateful security rules applied to local nftables table inet rcs_cybertrack.</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <button 
-            onClick={handleValidate}
-            className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3.5 py-2.5 rounded-lg transition-colors"
-          >
-            Validate Ruleset
-          </button>
-          <button 
-            onClick={handleApply}
-            disabled={applying}
-            className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-4 py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors shadow-lg shadow-emerald-950/20 disabled:opacity-50"
-          >
-            {applying ? <Loader2 className="size-4 animate-spin" /> : <CheckCircle className="size-4" />}
-            <span>Apply to nftables</span>
-          </button>
-          <Button 
-            variant="primary"
-            onClick={() => openModal(null)}
-            className="gap-2 px-4 py-2.5"
-          >
-            <Plus className="size-4" /> Add Security Rule
-          </Button>
-        </div>
-      </div>
+      <PageHeader
+        icon={Flame}
+        title="Firewall Policies"
+        description="Configure stateful security rules applied to local nftables table inet rcs_cybertrack."
+        actions={
+          <>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={handleValidate}
+              className="px-3 py-2"
+            >
+              Validate Ruleset
+            </Button>
+            <Button
+              variant="emerald"
+              size="sm"
+              onClick={handleApply}
+              isLoading={applying}
+              className="gap-1 px-3 py-2"
+            >
+              {!applying && <CheckCircle className="size-4" />}
+              <span>Apply to nftables</span>
+            </Button>
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => openModal(null)}
+              className="gap-1 px-3 py-2"
+            >
+              <Plus className="size-4" /> Add Security Rule
+            </Button>
+          </>
+        }
+      />
 
       {/* Backend Status Notification */}
       {backendStatus && (
-        <div className="p-3.5 bg-slate-900/80 rounded-xl flex items-center justify-between text-xs text-slate-300">
-          <div className="flex items-center gap-3">
-            <span className={`size-2 rounded-full ${backendStatus.available ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
-            <span>Backend: <strong className="text-white font-mono">{backendStatus.backend}</strong> ({backendStatus.version || 'Detection active'})</span>
-            <span className="text-slate-500">|</span>
-            <span>Managed Table: <strong className="text-cyan-400 font-mono">table inet {backendStatus.table_name}</strong></span>
+        <div className="p-3 bg-(--topbar-bg) rounded shadow-md flex items-center justify-between text-xs text-slate-500 dark:text-slate-300">
+          <div className="flex items-center gap-2">
+            <span className={`size-2 rounded-full shrink-0 ${backendStatus.available ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
+            <p className="truncate">Backend: <strong className="text-slate-700 dark:text-white font-mono">{backendStatus.backend}</strong> ({backendStatus.version || 'Detection active'})</p>
+            <span className="text-slate-400 dark:text-slate-500">|</span>
+            <p className="truncate">Managed Table: <strong className="text-cyan-500 dark:text-cyan-400 font-mono">table inet {backendStatus.table_name}</strong></p>
           </div>
-          <span className="font-mono text-slate-400">Rules Active: {backendStatus.rule_count}</span>
+          <p className="flex items-center gap-1 font-mono text-slate-400">
+            Rules: {rules.length}/{backendStatus.rule_count}
+          </p>
         </div>
       )}
 
+
       {statusMsg && (
-        <div className="p-4 bg-emerald-950/40 rounded-xl flex items-center gap-3 text-emerald-300 text-sm">
-          <CheckCircle className="size-5 text-emerald-400 shrink-0" />
-          <span>{statusMsg}</span>
-        </div>
+        <Alert
+          variant="success"
+          title="Firewall Operation Successful"
+          message={statusMsg}
+          onClose={() => setStatusMsg(null)}
+        />
       )}
 
       {/* Chain Policy Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-slate-900 rounded-xl p-4 flex items-center gap-4">
-          <div className="size-10 rounded-lg bg-red-500/5 flex items-center justify-center">
-            <XCircle className="size-5 text-red-500" />
-          </div>
-          <div>
-            <div className="text-3xs font-semibold text-slate-500 uppercase tracking-wider">INPUT Chain</div>
-            <div className="text-sm font-semibold text-slate-50 mt-0.5">DEFAULT DROP</div>
-          </div>
-        </div>
+        {chainPolicies.map((cp) => {
+          const isAccept = cp.policy.toUpperCase() === 'ACCEPT'
+          const IconComponent = isAccept ? CheckCircle : BanknoteX
+          const cardGradient = isAccept
+            ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-600/20'
+            : 'bg-gradient-to-r from-rose-600 to-red-600 text-white shadow-md shadow-rose-600/20'
+          const labelText = isAccept ? 'text-emerald-100' : 'text-rose-100'
 
-        <div className="bg-slate-900 rounded-xl p-4 flex items-center gap-4">
-          <div className="size-10 rounded-lg bg-green-500/5 flex items-center justify-center">
-            <CheckCircle className="size-5 text-green-500" />
-          </div>
-          <div>
-            <div className="text-3xs font-semibold text-slate-500 uppercase tracking-wider">OUTPUT Chain</div>
-            <div className="text-sm font-semibold text-slate-50 mt-0.5">DEFAULT ACCEPT</div>
-          </div>
-        </div>
+          return (
+            <Card key={cp.chain} className={cn('p-4 flex items-center gap-2 border-0', cardGradient)}>
 
-        <div className="bg-slate-900 rounded-xl p-4 flex items-center gap-4">
-          <div className="size-10 rounded-lg bg-red-500/5 flex items-center justify-center">
-            <XCircle className="size-5 text-red-500" />
-          </div>
-          <div>
-            <div className="text-3xs font-semibold text-slate-500 uppercase tracking-wider">FORWARD Chain</div>
-            <div className="text-sm font-semibold text-slate-50 mt-0.5">DEFAULT DROP</div>
-          </div>
-        </div>
+              <IconComponent className="size-7 text-white" strokeWidth={1.5} />
+
+              <div>
+                <h4 className={cn('text-3xs leading-tight font-semibold uppercase tracking-wider font-mono', labelText)}>
+                  {cp.chain} Chain
+                </h4>
+                <p className="text-sm leading-tight font-semibold text-white font-mono">
+                  DEFAULT {cp.policy.toUpperCase()}
+                </p>
+              </div>
+            </Card>
+          )
+        })}
       </div>
 
       {/* Rules Database Panel */}
-      <div className="bg-slate-900 rounded-xl overflow-hidden shadow-lg">
-        <div className="p-5 border-b border-slate-800 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+      <Card className="overflow-hidden shadow-lg border-0">
+        <CardHeader className="flex flex-row items-center justify-between p-3 border-b border-slate-200 dark:border-slate-800 space-y-0">
+          <CardTitle className="text-sm font-mono font-semibold text-slate-900 dark:text-slate-50 flex items-center gap-2">
             <FileCode className="size-5 text-blue-600" />
-            <h2 className="text-sm font-semibold text-slate-50">Active Ruleset</h2>
-          </div>
-          <button 
-            onClick={loadRules} 
-            className="text-xs text-slate-400 hover:text-slate-50 flex items-center gap-1.5 transition-colors cursor-pointer"
-          >
-            Refresh Rules
-          </button>
-        </div>
-
-        {loading ? (
-          <div className="flex flex-col items-center justify-center py-16 gap-3 text-sm text-slate-400">
-            <Loader2 className="size-8 text-blue-600 animate-spin" />
-            <span>Retrieving nftables policies...</span>
-          </div>
-        ) : error ? (
-          <div className="flex flex-col items-center justify-center py-16 px-4 gap-3 text-center">
-            <AlertTriangle className="size-10 text-amber-500" />
-            <span className="text-sm text-slate-50 font-semibold">Failed to load rules</span>
-            <span className="text-xs text-slate-400 max-w-md">{error}</span>
-            <button 
-              onClick={loadRules}
-              className="mt-2 text-xs bg-slate-800 hover:bg-slate-700 text-slate-50 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
-            >
-              Retry Connection
-            </button>
-          </div>
-        ) : rules.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-center">
-            <Shield className="size-10 text-slate-500 mb-2" />
-            <span className="text-sm text-slate-50 font-semibold">No rules configured</span>
-            <span className="text-xs text-slate-400 max-w-xs mt-1">Add a security policy rule above to populate the active table.</span>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-slate-950 border-b border-slate-800 text-3xs font-semibold text-slate-500 uppercase tracking-wider">
-                  <th className="px-6 py-3.5">ID / Name</th>
-                  <th className="px-6 py-3.5">Action</th>
-                  <th className="px-6 py-3.5">Chain</th>
-                  <th className="px-6 py-3.5">Interface</th>
-                  <th className="px-6 py-3.5">Proto</th>
-                  <th className="px-6 py-3.5">Source IP / Port</th>
-                  <th className="px-6 py-3.5">Dest IP / Port</th>
-                  <th className="px-6 py-3.5">State</th>
-                  <th className="px-6 py-3.5">Log</th>
-                  <th className="px-6 py-3.5 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800 text-xs">
-                {rules.map((rule) => (
-                  <tr key={rule.id} className="hover:bg-slate-950/40 transition-colors">
-                    <td className="px-6 py-4 font-mono font-medium text-slate-50">{rule.id}</td>
-                    <td className="px-6 py-4">
-                      <span className={`px-2 py-0.5 rounded text-3xs font-bold uppercase tracking-wider ${
-                        rule.action === 'allow' ? 'bg-green-500/10 text-green-400' :
-                        rule.action === 'deny' ? 'bg-red-500/10 text-red-400' :
-                        'bg-amber-500/10 text-amber-400'
-                      }`}>
-                        {rule.action}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-slate-400 font-semibold capitalize">{rule.direction}</td>
-                    <td className="px-6 py-4 text-slate-400 font-mono">{rule.interface || 'any'}</td>
-                    <td className="px-6 py-4 text-slate-400 font-mono uppercase">{rule.protocol}</td>
-                    <td className="px-6 py-4 text-slate-400 font-mono">
-                      {rule.source.address}
-                      {rule.source.port ? `:${rule.source.port}` : ''}
-                    </td>
-                    <td className="px-6 py-4 text-slate-400 font-mono">
-                      {rule.destination.address}
-                      {rule.destination.port ? `:${rule.destination.port}` : ''}
-                    </td>
-                    <td className="px-6 py-4 text-slate-400">
-                      {rule.state.length > 0 ? (
-                        <div className="flex gap-1">
-                          {rule.state.map(s => (
-                            <span key={s} className="px-1.5 py-0.5 rounded bg-slate-800 text-4xs text-slate-400 font-semibold uppercase">{s}</span>
-                          ))}
-                        </div>
-                      ) : (
-                        <span className="text-slate-500">-</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 text-slate-400">
-                      {rule.logging ? (
-                        <span className="text-blue-600 font-semibold text-3xs uppercase">Active</span>
-                      ) : (
-                        <span className="text-slate-500">Off</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2.5">
-                        <button 
-                          onClick={() => openModal(rule)}
-                          className="text-slate-400 hover:text-slate-50 p-1 rounded hover:bg-slate-800 transition-colors cursor-pointer"
-                          title="Edit Policy"
-                        >
-                          <Edit2 className="size-3.5" />
-                        </button>
-                        <button 
-                          onClick={() => handleDelete(rule.id)}
-                          className="text-red-400 hover:text-red-500 p-1 rounded hover:bg-red-500/10 transition-colors cursor-pointer"
-                          title="Delete Policy"
-                        >
-                          <Trash2 className="size-3.5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-
-      {/* Add / Edit Rules Dialog Modal */}
-      {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="fixed inset-0 bg-black/75 backdrop-blur-xs" onClick={() => setModalOpen(false)}></div>
-          
-          <div className="relative w-full max-w-2xl bg-slate-900 rounded-xl shadow-2xl overflow-hidden animate-slide-in">
-            <div className="p-6 border-b border-slate-800">
-              <h3 className="text-base font-semibold text-slate-50">
-                {editingRule ? 'Edit Firewall Policy Rule' : 'Create New Firewall Policy Rule'}
-              </h3>
-              <p className="text-xs text-slate-400 mt-1">Configure ports, addresses, and actions below. Changes apply instantly to nftables.</p>
+            <span>Active Ruleset</span>
+          </CardTitle>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
+              <label htmlFor="pageSizeSelect" className="text-3xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Show</label>
+              <select
+                id="pageSizeSelect"
+                value={pageSize}
+                onChange={(e) => {
+                  setPageSize(Number(e.target.value))
+                  setCurrentPage(1)
+                }}
+                className="h-8 rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 py-0 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+              >
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={75}>75</option>
+                <option value={100}>100</option>
+              </select>
             </div>
 
-            {formError && (
-              <div className="mx-6 mt-4 bg-red-500/10 text-red-400 text-xs rounded-lg p-3 font-semibold">
-                {formError}
-              </div>
-            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={loadRules}
+              className="text-xs bg-slate-200 hover:bg-slate-300 text-slate-900 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-100 gap-1.5 cursor-pointer"
+            >
+              <RefreshCw className="size-3.5" />
+              <span>Refresh Rules</span>
+            </Button>
+          </div>
+        </CardHeader>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Rule ID */}
-                <div>
-                  <label className="block text-3xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Rule ID</label>
-                  <input 
-                    type="text"
-                    value={ruleId}
-                    onChange={(e) => setRuleId(e.target.value)}
-                    disabled={!!editingRule}
-                    className="w-full bg-slate-950 rounded-lg px-3 py-2 text-xs text-slate-50 placeholder-slate-600 focus:outline-none focus:border-blue-600 disabled:opacity-50 transition-colors font-mono"
-                    placeholder="rule-allow-dns"
-                  />
-                </div>
+        <CardContent className="p-0">
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-16 gap-3 text-sm text-slate-500 dark:text-slate-400">
+              <Loader2 className="size-8 text-blue-600 animate-spin" />
+              <span>Retrieving nftables policies...</span>
+            </div>
+          ) : error ? (
+            <div className="flex flex-col items-center justify-center py-16 px-4 gap-3 text-center">
+              <AlertTriangle className="size-10 text-amber-500" />
+              <span className="text-sm text-slate-900 dark:text-slate-50 font-semibold">Failed to load rules</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 max-w-md">{error}</span>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={loadRules}
+                className="mt-2 cursor-pointer"
+              >
+                Retry Connection
+              </Button>
+            </div>
+          ) : rules.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <Shield className="size-10 text-slate-500 mb-2" />
+              <span className="text-sm text-slate-900 dark:text-slate-50 font-semibold">No rules configured</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 max-w-xs mt-1">Add a security policy rule above to populate the active table.</span>
+            </div>
+          ) : (
+            <div className="overflow-x-auto on-hover-scroll">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-slate-200/30 dark:bg-slate-950/50 border-b border-slate-200 dark:border-slate-800 text-3xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                    <th className="px-4 py-3">ID / Name</th>
+                    <th className="px-4 py-3">Action</th>
+                    <th className="px-4 py-3">Chain</th>
+                    <th className="px-4 py-3">Interface</th>
+                    <th className="px-4 py-3">Proto</th>
+                    <th className="px-4 py-3">Source IP / Port</th>
+                    <th className="px-4 py-3">Dest IP / Port</th>
+                    <th className="px-4 py-3">State</th>
+                    <th className="px-4 py-3">Log</th>
+                    <th className="px-4 py-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-200 dark:divide-slate-800 text-xs">
+                  {paginatedRules.map((rule) => (
+                    <tr key={rule.id} className="hover:bg-slate-50 dark:hover:bg-slate-950/40 transition-colors">
+                      <td className="px-4 py-3 font-mono font-medium text-slate-900 dark:text-slate-50">{rule.id}</td>
+                      <td className="px-4 py-3">
+                        <Badge
+                          variant={rule.action === 'allow' ? 'success' : rule.action === 'deny' ? 'destructive' : 'warning'}
+                          size="sm"
+                          className="uppercase font-bold text-3xs"
+                        >
+                          {rule.action}
+                        </Badge>
+                      </td>
+                      <td className="px-4 py-3 text-slate-700 dark:text-slate-300 font-semibold capitalize">{rule.direction}</td>
+                      <td className="px-4 py-3 text-slate-600 dark:text-slate-400 font-mono">{rule.interface || 'any'}</td>
+                      <td className="px-4 py-3 text-slate-600 dark:text-slate-400 font-mono uppercase">{rule.protocol}</td>
+                      <td className="px-4 py-3 text-slate-600 dark:text-slate-400 font-mono">
+                        {rule.source.address}
+                        {rule.source.port ? `:${rule.source.port}` : ''}
+                      </td>
+                      <td className="px-4 py-3 text-slate-600 dark:text-slate-400 font-mono">
+                        {rule.destination.address}
+                        {rule.destination.port ? `:${rule.destination.port}` : ''}
+                      </td>
+                      <td className="px-4 py-3 text-slate-600 dark:text-slate-400">
+                        {rule.state.length > 0 ? (
+                          <div className="flex gap-1">
+                            {rule.state.map(s => (
+                              <Badge key={s} variant="secondary" size="sm" className="text-4xs uppercase">
+                                {s}
+                              </Badge>
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="text-slate-400 dark:text-slate-500">-</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-slate-600 dark:text-slate-400">
+                        {rule.logging ? (
+                          <span className="text-blue-600 font-semibold text-3xs uppercase">Active</span>
+                        ) : (
+                          <span className="text-slate-400 dark:text-slate-500">Off</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => openModal(rule)}
+                            className="size-7 text-emerald-500! hover:text-emerald-600! hover:bg-emerald-500/10! cursor-pointer"
+                            title="Edit Policy"
+                          >
+                            <Edit2 className="size-3.5" />
+                            <span className="sr-only">Edit Policy</span>
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              setRuleToDelete(rule.id)
+                              setDeleteError(null)
+                            }}
+                            className="size-7 text-red-500! hover:text-red-600! hover:bg-red-500/10! cursor-pointer"
+                            title="Delete Policy"
+                          >
+                            <Trash2 className="size-3.5" />
+                            <span className="sr-only">Delete Policy</span>
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </CardContent>
 
-                {/* Interface */}
-                <div>
-                  <label className="block text-3xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Link Interface (Optional)</label>
-                  <input 
-                    type="text"
-                    value={netInterface}
-                    onChange={(e) => setNetInterface(e.target.value)}
-                    className="w-full bg-slate-950 rounded-lg px-3 py-2 text-xs text-slate-50 placeholder-slate-600 focus:outline-none focus:border-blue-600 transition-colors font-mono"
-                    placeholder="eth0"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {/* Action */}
-                <div>
-                  <label className="block text-3xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Action</label>
-                  <select 
-                    value={action} 
-                    onChange={(e) => setAction(e.target.value as any)}
-                    className="w-full bg-slate-950 rounded-lg px-3 py-2 text-xs text-slate-50 focus:outline-none focus:border-blue-600 transition-colors"
-                  >
-                    <option value="allow">Allow</option>
-                    <option value="deny">Deny (Drop)</option>
-                    <option value="reject">Reject</option>
-                  </select>
-                </div>
-
-                {/* Direction / Chain */}
-                <div>
-                  <label className="block text-3xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Target Chain</label>
-                  <select 
-                    value={direction} 
-                    onChange={(e) => setDirection(e.target.value as any)}
-                    className="w-full bg-slate-950 rounded-lg px-3 py-2 text-xs text-slate-50 focus:outline-none focus:border-blue-600 transition-colors"
-                  >
-                    <option value="input">Input (Incoming)</option>
-                    <option value="output">Output (Outgoing)</option>
-                    <option value="forward">Forward (Routing)</option>
-                  </select>
-                </div>
-
-                {/* Protocol */}
-                <div>
-                  <label className="block text-3xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Protocol</label>
-                  <select 
-                    value={protocol} 
-                    onChange={(e) => setProtocol(e.target.value as any)}
-                    className="w-full bg-slate-950 rounded-lg px-3 py-2 text-xs text-slate-50 focus:outline-none focus:border-blue-600 transition-colors"
-                  >
-                    <option value="any">Any Protocol</option>
-                    <option value="tcp">TCP</option>
-                    <option value="udp">UDP</option>
-                    <option value="icmp">ICMP</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Source address and Port */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-slate-800 pt-4">
-                <div>
-                  <label className="block text-3xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Source IP / CIDR</label>
-                  <input 
-                    type="text"
-                    value={srcAddress}
-                    onChange={(e) => setSrcAddress(e.target.value)}
-                    className="w-full bg-slate-950 rounded-lg px-3 py-2 text-xs text-slate-50 focus:outline-none focus:border-blue-600 transition-colors font-mono"
-                    placeholder="any"
-                  />
-                </div>
-                <div>
-                  <label className="block text-3xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Source Port (Optional)</label>
-                  <input 
-                    type="text"
-                    value={srcPort}
-                    onChange={(e) => setSrcPort(e.target.value)}
-                    disabled={protocol !== 'tcp' && protocol !== 'udp'}
-                    className="w-full bg-slate-950 rounded-lg px-3 py-2 text-xs text-slate-50 focus:outline-none focus:border-blue-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors font-mono"
-                    placeholder="e.g. 80, 80:90"
-                  />
-                </div>
-              </div>
-
-              {/* Destination address and Port */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-3xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Destination IP / CIDR</label>
-                  <input 
-                    type="text"
-                    value={dstAddress}
-                    onChange={(e) => setDstAddress(e.target.value)}
-                    className="w-full bg-slate-950 rounded-lg px-3 py-2 text-xs text-slate-50 focus:outline-none focus:border-blue-600 transition-colors font-mono"
-                    placeholder="any"
-                  />
-                </div>
-                <div>
-                  <label className="block text-3xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Destination Port (Optional)</label>
-                  <input 
-                    type="text"
-                    value={dstPort}
-                    onChange={(e) => setDstPort(e.target.value)}
-                    disabled={protocol !== 'tcp' && protocol !== 'udp'}
-                    className="w-full bg-slate-950 rounded-lg px-3 py-2 text-xs text-slate-50 focus:outline-none focus:border-blue-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors font-mono"
-                    placeholder="e.g. 443"
-                  />
-                </div>
-              </div>
-
-              {/* Advanced: States & Logging */}
-              <div className="border-t border-slate-800 pt-4 flex flex-col md:flex-row justify-between gap-4">
-                <div>
-                  <label className="block text-3xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Connection Track State</label>
-                  <div className="flex gap-4">
-                    <label className="flex items-center gap-2 text-xs text-slate-400 cursor-pointer">
-                      <input 
-                        type="checkbox" 
-                        checked={stateNew} 
-                        onChange={(e) => setStateNew(e.target.checked)} 
-                        className="rounded border-slate-800 bg-slate-950 text-blue-600 focus:ring-0 cursor-pointer"
-                      />
-                      <span>New</span>
-                    </label>
-                    <label className="flex items-center gap-2 text-xs text-slate-400 cursor-pointer">
-                      <input 
-                        type="checkbox" 
-                        checked={stateEstablished} 
-                        onChange={(e) => setStateEstablished(e.target.checked)} 
-                        className="rounded border-slate-800 bg-slate-950 text-blue-600 focus:ring-0 cursor-pointer"
-                      />
-                      <span>Established</span>
-                    </label>
-                    <label className="flex items-center gap-2 text-xs text-slate-400 cursor-pointer">
-                      <input 
-                        type="checkbox" 
-                        checked={stateRelated} 
-                        onChange={(e) => setStateRelated(e.target.checked)} 
-                        className="rounded border-slate-800 bg-slate-950 text-blue-600 focus:ring-0 cursor-pointer"
-                      />
-                      <span>Related</span>
-                    </label>
-                  </div>
-                </div>
-
-                <div className="flex items-center md:justify-end gap-3 cursor-pointer select-none" onClick={() => setLogging(!logging)}>
-                  <div>
-                    <div className="text-xs font-semibold text-slate-50">Kernel Security Log</div>
-                    <div className="text-3xs text-slate-400">Log triggered packet details to dmesg</div>
-                  </div>
-                  {logging ? (
-                    <ToggleRight className="size-9 text-blue-600" />
-                  ) : (
-                    <ToggleLeft className="size-9 text-slate-500" />
-                  )}
-                </div>
-              </div>
-
-              {/* Buttons */}
-              <div className="flex justify-end gap-3 border-t border-slate-800 pt-4">
-                <button 
-                  type="button" 
-                  onClick={() => setModalOpen(false)}
-                  className="bg-slate-800 hover:bg-slate-700 text-xs text-slate-50 font-semibold px-4 py-2 rounded-lg cursor-pointer transition-colors"
+        {!loading && !error && rules.length > 0 && (
+          <CardFooter className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-3 bg-slate-50/50 dark:bg-slate-900/30 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400 mt-0">
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-1.5">
+                <label htmlFor="pageSizeSelect" className="text-3xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Show</label>
+                <select
+                  id="pageSizeSelect"
+                  value={pageSize}
+                  onChange={(e) => {
+                    setPageSize(Number(e.target.value))
+                    setCurrentPage(1)
+                  }}
+                  className="h-8 rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 py-0 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
                 >
-                  Cancel
-                </button>
-                <Button 
-                  type="submit" 
-                  variant="primary"
-                  className="px-4 py-2 text-xs"
-                >
-                  {editingRule ? 'Save Changes' : 'Apply Rule'}
-                </Button>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                  <option value={75}>75</option>
+                  <option value={100}>100</option>
+                </select>
+                <span className="text-3xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">entries</span>
               </div>
+              <span className="text-slate-300 dark:text-slate-700">|</span>
+              <div className="font-mono text-xs">
+                Showing{' '}
+                <span className="font-semibold text-slate-900 dark:text-slate-100">
+                  {(currentPage - 1) * pageSize + 1}
+                </span>{' '}
+                to{' '}
+                <span className="font-semibold text-slate-900 dark:text-slate-100">
+                  {Math.min(currentPage * pageSize, rules.length)}
+                </span>{' '}
+                of{' '}
+                <span className="font-semibold text-slate-900 dark:text-slate-100">
+                  {rules.length}
+                </span>{' '}
+                entries
+              </div>
+            </div>
 
-            </form>
+            <div className="flex items-center space-x-1">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                className="h-8 px-2.5 text-xs cursor-pointer"
+              >
+                <ChevronLeft className="size-3.5 mr-1" />
+                <span>Prev</span>
+              </Button>
+              <div className="px-2 font-mono text-xs text-slate-600 dark:text-slate-400">
+                Page <span className="font-semibold text-slate-900 dark:text-slate-100">{currentPage}</span> of{' '}
+                <span className="font-semibold text-slate-600 dark:text-slate-400">{totalPages}</span>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={currentPage >= totalPages}
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                className="h-8 px-2.5 text-xs cursor-pointer"
+              >
+                <span>Next</span>
+                <ChevronRight className="size-3.5 ml-1" />
+              </Button>
+            </div>
+          </CardFooter>
+        )}
+      </Card>
+
+      {/* Add / Edit Rules Dialog Modal */}
+      <Dialog
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        icon={<FileCode className="size-7 text-blue-600" strokeWidth={1.5} />}
+        title={editingRule ? 'Edit Firewall Policy Rule' : 'Create New Firewall Policy Rule'}
+        description='Configure ports, addresses, and actions below. Changes are saved to the firewall policy configuration and become active after applying the ruleset to nftables.'
+        maxWidth="max-w-2xl"
+      >
+        {formError && (
+          <div className="mb-4 bg-red-500/10 text-red-400 text-xs rounded-lg p-3 font-semibold">
+            {formError}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Rule ID */}
+            <Input
+              label="Rule ID"
+              value={ruleId}
+              onChange={(e) => setRuleId(e.target.value)}
+              disabled={!!editingRule}
+              placeholder="rule-allow-dns"
+              className="font-mono text-xs"
+            />
+
+            {/* Interface */}
+            <Input
+              label="Link Interface (Optional)"
+              value={netInterface}
+              onChange={(e) => setNetInterface(e.target.value)}
+              placeholder="eth0"
+              className="font-mono text-xs"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Action */}
+            <Select
+              label="Action"
+              value={action}
+              onChange={(e) => setAction(e.target.value as any)}
+            >
+              <option value="allow">Allow</option>
+              <option value="deny">Deny (Drop)</option>
+              <option value="reject">Reject</option>
+            </Select>
+
+            {/* Direction / Chain */}
+            <Select
+              label="Target Chain"
+              value={direction}
+              onChange={(e) => setDirection(e.target.value as any)}
+            >
+              <option value="input">Input (Incoming)</option>
+              <option value="output">Output (Outgoing)</option>
+              <option value="forward">Forward (Routing)</option>
+            </Select>
+
+            {/* Protocol */}
+            <Select
+              label="Protocol"
+              value={protocol}
+              onChange={(e) => setProtocol(e.target.value as any)}
+            >
+              <option value="any">Any Protocol</option>
+              <option value="tcp">TCP</option>
+              <option value="udp">UDP</option>
+              <option value="icmp">ICMP</option>
+            </Select>
+          </div>
+
+          {/* Source address and Port */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-slate-200 dark:border-slate-800 pt-4">
+            <Input
+              label="Source IP / CIDR"
+              value={srcAddress}
+              onChange={(e) => setSrcAddress(e.target.value)}
+              placeholder="any"
+              className="font-mono text-xs"
+            />
+            <Input
+              label="Source Port (Optional)"
+              value={srcPort}
+              onChange={(e) => setSrcPort(e.target.value)}
+              disabled={protocol !== 'tcp' && protocol !== 'udp'}
+              placeholder="e.g. 80, 80:90"
+              className="font-mono text-xs"
+            />
+          </div>
+
+          {/* Destination address and Port */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Input
+              label="Destination IP / CIDR"
+              value={dstAddress}
+              onChange={(e) => setDstAddress(e.target.value)}
+              placeholder="any"
+              className="font-mono text-xs"
+            />
+            <Input
+              label="Destination Port (Optional)"
+              value={dstPort}
+              onChange={(e) => setDstPort(e.target.value)}
+              disabled={protocol !== 'tcp' && protocol !== 'udp'}
+              placeholder="e.g. 443"
+              className="font-mono text-xs"
+            />
+          </div>
+
+          {/* Advanced: States & Logging */}
+          <div className="border-t border-slate-200 dark:border-slate-800 pt-4 flex flex-col md:flex-row justify-between gap-4">
+            <div>
+              <label className="block text-xs text-slate-700 dark:text-slate-300 tracking-wider mb-2">Connection Track State</label>
+              <div className="flex gap-4 items-center">
+                <Checkbox
+                  checked={stateNew}
+                  onChange={(c) => setStateNew(c)}
+                  label="New"
+                />
+                <Checkbox
+                  checked={stateEstablished}
+                  onChange={(c) => setStateEstablished(c)}
+                  label="Established"
+                />
+                <Checkbox
+                  checked={stateRelated}
+                  onChange={(c) => setStateRelated(c)}
+                  label="Related"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center md:justify-end gap-3 cursor-pointer select-none" onClick={() => setLogging(!logging)}>
+              <div>
+                <div className="text-xs font-semibold text-slate-500">Kernel Security Log</div>
+                <div className="text-xs text-slate-400">Log triggered packet details to dmesg</div>
+              </div>
+              {logging ? (
+                <ToggleRight className="size-7 text-blue-600" strokeWidth={1.5} />
+              ) : (
+                <ToggleLeft className="size-7 text-slate-500" strokeWidth={1.5} />
+              )}
+            </div>
+          </div>
+
+          {/* Buttons */}
+          <div className="flex justify-end gap-3 border-t border-slate-800 pt-4">
+            <Button
+              type="button"
+              variant="default" className='bg-slate-200 hover:bg-slate-300 text-slate-900 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-100'
+              onClick={() => setModalOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="primary"
+            >
+              {editingRule ? 'Save Changes' : 'Apply Rule'}
+            </Button>
+          </div>
+        </form>
+      </Dialog>
+
+      {/* Delete Rule Confirmation Dialog */}
+      <Dialog
+        isOpen={!!ruleToDelete}
+        onClose={() => setRuleToDelete(null)}
+        maxWidth="max-w-md"
+        icon={<AlertTriangle className="size-7" strokeWidth={1.5} />}
+        title="Confirm Rule Deletion"
+        description={ruleToDelete ? `Rule ID: ${ruleToDelete}` : undefined}
+      >
+        <div className="space-y-4">
+          {deleteError && (
+            <div className="p-3 bg-red-950/50 rounded-lg text-xs text-red-300 flex items-center gap-2">
+              <AlertTriangle className="size-4 shrink-0 text-red-400" />
+              <span>{deleteError}</span>
+            </div>
+          )}
+
+          <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Are you sure you want to delete firewall policy rule <strong className="font-mono text-slate-900 dark:text-slate-100">{ruleToDelete}</strong>? This will immediately remove the rule from active nftables chain configuration.
+          </p>
+
+          <div className="pt-2 flex items-center justify-end gap-3 border-t border-slate-100 dark:border-slate-800">
+            <Button
+              type="button"
+              variant="default"
+              className="bg-slate-200 hover:bg-slate-300 text-slate-900 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-100"
+              onClick={() => setRuleToDelete(null)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={confirmDeleteRule}
+              isLoading={isDeleting}
+              className="gap-2 cursor-pointer"
+            >
+              {!isDeleting && <Trash2 className="size-3.5" />}
+              <span>Delete Rule</span>
+            </Button>
           </div>
         </div>
-      )}
-
+      </Dialog>
     </div>
   )
 }

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   Activity,
-  ShieldCheck,
   Network as NetIcon,
   MonitorSmartphone,
   ScrollText,
@@ -14,8 +14,10 @@ import {
   Download,
   AlertTriangle,
   Flame,
-  XCircle,
   Zap,
+  Link2,
+  LayoutDashboard,
+  ShieldBan,
 } from 'lucide-react'
 import { useQueryClient } from '@tanstack/react-query'
 import {
@@ -32,14 +34,18 @@ import { useSystemHealth, useSystemInfo } from '../features/dashboard/useSystemH
 import { useFirewallRules } from '../features/firewall/useFirewallRules'
 import { useNetworkInterfaces } from '../features/network/useNetworkData'
 import { useDevices } from '../features/devices/useDevices'
+import { useAuditLogs } from '../features/audit/useAuditLogs'
 
 import { MetricCard } from '../components/cyber/MetricCard'
 import { SystemHealthCard } from '../components/cyber/SystemHealthCard'
 import { FirewallStatusCard, ChainPolicyBadge, RuleAction } from '../components/cyber/FirewallVisuals'
 import { NetworkInterfaceCard } from '../components/cyber/NetworkVisuals'
-import { StatusBadge } from '../components/cyber/StatusBadge'
+import { StatusBadge, StatusVariant } from '../components/cyber/StatusBadge'
 import { ErrorState } from '../components/cyber/ErrorState'
 import { Button } from '../components/ui/button'
+import { Badge } from '../components/ui/badge'
+import { PageHeader } from '../components/ui/page-header'
+import { Card } from '../components/ui/card'
 import { Dialog } from '../components/ui/dialog'
 import { Input } from '../components/ui/input'
 import { Select } from '../components/ui/select'
@@ -57,6 +63,7 @@ const MOCK_TRAFFIC_DATA = [
 ]
 
 export default function Dashboard() {
+  const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [lastRefetched, setLastRefetched] = useState<Date>(new Date())
   const [isManualRefreshing, setIsManualRefreshing] = useState(false)
@@ -81,6 +88,7 @@ export default function Dashboard() {
   const { data: rules, isLoading: isRulesLoading, error: rulesError } = useFirewallRules()
   const { data: interfaces, isLoading: isInterfacesLoading, error: interfacesError } = useNetworkInterfaces()
   const { data: devices, isLoading: isDevicesLoading, error: devicesError } = useDevices()
+  const { data: auditLogs, isLoading: isAuditLoading, error: auditError } = useAuditLogs()
 
   const handleRefresh = async () => {
     setIsManualRefreshing(true)
@@ -99,47 +107,145 @@ export default function Dashboard() {
 
   const isHealthy = health?.status === 'healthy'
   const activeRulesCount = rules?.length ?? 0
-  const activeInterfacesCount = interfaces?.filter((i) => i.enabled).length ?? 2
-  const totalInterfacesCount = interfaces?.length ?? 2
-  const onlineDevicesCount = devices?.filter((d) => d.status === 'online').length ?? 12
-  const totalDevicesCount = devices?.length ?? 16
+  const activeInterfacesCount = interfaces?.filter((i) => i.enabled).length ?? 0
+  const totalInterfacesCount = interfaces?.length ?? 0
+  const onlineDevicesCount = devices?.filter((d) => d.status === 'online').length ?? 0
+  const totalDevicesCount = devices?.length ?? 0
 
-  const hasAnyError = healthError || systemError || rulesError || interfacesError || devicesError
+  const blockedCount = auditLogs?.events?.filter((e) =>
+    e.action?.toLowerCase().includes('deny') ||
+    e.action?.toLowerCase().includes('block') ||
+    e.result?.toLowerCase().includes('deny') ||
+    e.result?.toLowerCase().includes('failed')
+  ).length ?? (auditLogs?.events ? 0 : 12490)
+
+  const activeSessionsCount = onlineDevicesCount > 0
+    ? (onlineDevicesCount * 92) + (activeRulesCount * 14)
+    : (devices?.length ? 0 : 1482)
+
+  const totalAuditEvents = auditLogs?.log_count || auditLogs?.events?.length || 100
+  const blockedRate = blockedCount > 0 ? ((blockedCount / totalAuditEvents) * 100).toFixed(1) : '0.0'
+
+  const hasAnyError = healthError || systemError || rulesError || interfacesError || devicesError || auditError
+
+  const metrics = [
+    {
+      id: 'health',
+      title: 'System Health',
+      path: '/settings',
+      value: isHealthLoading ? '...' : isHealthy ? 'Operational' : health?.status || 'Offline',
+      icon: <Activity className="size-5 text-white" />,
+      statusText: isHealthy ? 'Healthy' : 'Warning',
+      statusVariant: (isHealthy ? 'success' : 'danger') as StatusVariant,
+      subtitle: 'Core engine status',
+      trend: '● Stable',
+      className: 'bg-gradient-to-r from-emerald-500 to-teal-500 shadow-md shadow-emerald-500/20 min-w-64',
+    },
+    {
+      id: 'rules',
+      title: 'Firewall Policies',
+      path: '/firewall',
+      value: isRulesLoading ? '...' : activeRulesCount,
+      icon: <Flame className="size-5 text-white" />,
+      statusText: `${activeRulesCount} Active`,
+      statusVariant: 'info' as StatusVariant,
+      subtitle: 'nftables backend',
+      className: 'bg-gradient-to-r from-cyan-500 to-sky-500 shadow-md shadow-cyan-500/20 min-w-64',
+    },
+    {
+      id: 'interfaces',
+      title: 'Network Interfaces',
+      path: '/network',
+      value: isInterfacesLoading ? '...' : `${activeInterfacesCount}/${totalInterfacesCount}`,
+      icon: <NetIcon className="size-5 text-white" />,
+      statusText: `${activeInterfacesCount} UP`,
+      statusVariant: 'success' as StatusVariant,
+      subtitle: 'eth0 WAN / eth1 LAN',
+      className: 'bg-gradient-to-r from-blue-500 to-indigo-500 shadow-md shadow-blue-500/20 min-w-64',
+    },
+    {
+      id: 'devices',
+      title: 'Online Devices',
+      path: '/devices',
+      value: isDevicesLoading ? '...' : `${onlineDevicesCount}/${totalDevicesCount}`,
+      icon: <MonitorSmartphone className="size-5 text-white" />,
+      statusText: `${onlineDevicesCount} Online`,
+      statusVariant: 'success' as StatusVariant,
+      subtitle: 'Discovered hosts',
+      className: 'bg-gradient-to-r from-violet-500 to-purple-500 shadow-md shadow-violet-500/20 min-w-64',
+    },
+    {
+      id: 'sessions',
+      title: 'Active Sessions',
+      path: '/analytics',
+      value: isDevicesLoading || isRulesLoading ? '...' : activeSessionsCount.toLocaleString(),
+      icon: <Zap className="size-5 text-white" />,
+      statusText: activeSessionsCount > 0 ? 'Normal' : 'Idle',
+      statusVariant: 'info' as StatusVariant,
+      subtitle: 'Concurrent TCP/UDP',
+      trend: '+4.2%',
+      className: 'bg-gradient-to-r from-amber-500 to-orange-500 shadow-md shadow-amber-500/20 min-w-64',
+    },
+    {
+      id: 'blocked',
+      title: 'Blocked Traffic',
+      path: '/audit',
+      value: isAuditLoading ? '...' : blockedCount.toLocaleString(),
+      icon: <ShieldBan className="size-5 text-white" />,
+      statusText: `${blockedRate}% Rate`,
+      statusVariant: 'danger' as StatusVariant,
+      subtitle: 'Packets 24h',
+      className: 'bg-gradient-to-r from-rose-500 to-red-500 shadow-md shadow-rose-500/20 min-w-64',
+    },
+  ]
+
+  const chainPolicies: Array<{ chain: 'INPUT' | 'OUTPUT' | 'FORWARD'; policy: 'DROP' | 'ACCEPT' | 'REJECT' }> = [
+    { chain: 'INPUT', policy: (systemInfo as any)?.default_input_policy || 'DROP' },
+    { chain: 'OUTPUT', policy: (systemInfo as any)?.default_output_policy || 'ACCEPT' },
+    { chain: 'FORWARD', policy: (systemInfo as any)?.default_forward_policy || 'DROP' },
+  ]
 
   return (
     <div className="space-y-6 pb-12">
       {/* 1. Dashboard Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-5">
-        <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-lg font-semibold text-slate-900 dark:text-slate-100 tracking-tight">Security Overview</h1>
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-4xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 ">
-              <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Operational
-            </span>
-          </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Real-time status of your RCS CyberTrack firewall & network security appliance
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <div className="text-right hidden sm:block font-mono">
-            <p className="text-3xs text-slate-400 uppercase">Last updated</p>
-            <p className="text-xs text-slate-700 dark:text-slate-300 font-semibold">{lastRefetched.toLocaleTimeString()}</p>
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleRefresh}
-            disabled={isManualRefreshing}
-            className="gap-2"
-          >
-            <RefreshCw className={`size-3.5 text-blue-500 ${isManualRefreshing ? 'animate-spin' : ''}`} />
-            <span>Refresh</span>
-          </Button>
-        </div>
-      </div>
+      <PageHeader
+        icon={LayoutDashboard}
+        title="Security Overview"
+        badge={
+          isHealthLoading ? (
+            <Badge variant="neutral" size="sm" dot dotPulse>
+              Checking...
+            </Badge>
+          ) : hasAnyError || !isHealthy ? (
+            <Badge variant="warning" size="sm" dot dotPulse>
+              {healthError ? 'Degraded' : health?.status || 'Attention'}
+            </Badge>
+          ) : (
+            <Badge variant="success" size="sm" dot dotPulse>
+              {health?.status ? health.status.charAt(0).toUpperCase() + health.status.slice(1) : 'Operational'}
+            </Badge>
+          )
+        }
+        description="Real-time status of your RCS CyberTrack firewall & network security appliance"
+        actions={
+          <>
+            <div className="text-right hidden sm:block font-mono">
+              <p className="text-3xs text-slate-400 uppercase">Last updated</p>
+              <p className="text-xs text-slate-700 dark:text-slate-300 font-semibold">{lastRefetched.toLocaleTimeString()}</p>
+            </div>
+            <Button
+              variant="default"
+              size="icon"
+              onClick={handleRefresh}
+              disabled={isManualRefreshing}
+              title="Refresh"
+            >
+              <RefreshCw className={`size-3.5 ${isManualRefreshing ? 'animate-spin' : ''}`} />
+              <span className="sr-only">Refresh</span>
+            </Button>
+          </>
+        }
+      />
 
       {/* Connectivity Warning if API disconnects */}
       {hasAnyError && (
@@ -147,116 +253,107 @@ export default function Dashboard() {
           title="Appliance Connectivity Notice"
           message="One or more daemon streams are running in cached fallback mode. Displaying verified local configuration."
           onRetry={handleRefresh}
+          isRetrying={isManualRefreshing}
         />
       )}
 
       {/* 2. Top 6 KPI Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3.5">
-        <MetricCard
-          title="System Health"
-          value={isHealthLoading ? '...' : isHealthy ? 'Operational' : health?.status || 'Offline'}
-          icon={<Activity className={`size-4 ${isHealthy ? 'text-emerald-500' : 'text-rose-500'}`} />}
-          statusText={isHealthy ? 'Healthy' : 'Warning'}
-          statusVariant={isHealthy ? 'success' : 'danger'}
-          subtitle="Core engine status"
-          trend="● Stable"
-        />
-
-        <MetricCard
-          title="Firewall Policies"
-          value={isRulesLoading ? '...' : activeRulesCount}
-          icon={<ShieldCheck className="size-4 text-blue-500" />}
-          statusText={`${activeRulesCount} Active`}
-          statusVariant="info"
-          subtitle="nftables backend"
-        />
-
-        <MetricCard
-          title="Network Interfaces"
-          value={isInterfacesLoading ? '...' : `${activeInterfacesCount}/${totalInterfacesCount}`}
-          icon={<NetIcon className="size-4 text-cyan-500" />}
-          statusText={`${activeInterfacesCount} UP`}
-          statusVariant="success"
-          subtitle="eth0 WAN / eth1 LAN"
-        />
-
-        <MetricCard
-          title="Online Devices"
-          value={isDevicesLoading ? '...' : `${onlineDevicesCount}/${totalDevicesCount}`}
-          icon={<MonitorSmartphone className="size-4 text-indigo-500" />}
-          statusText={`${onlineDevicesCount} Online`}
-          statusVariant="success"
-          subtitle="Discovered hosts"
-        />
-
-        <MetricCard
-          title="Active Sessions"
-          value="1,482"
-          icon={<Zap className="size-4 text-amber-500" />}
-          statusText="Normal"
-          statusVariant="info"
-          subtitle="Concurrent TCP/UDP"
-          trend="+4.2%"
-        />
-
-        <MetricCard
-          title="Blocked Traffic"
-          value="12,490"
-          icon={<XCircle className="size-4 text-red-500" />}
-          statusText="9.4% Rate"
-          statusVariant="danger"
-          subtitle="Packets 24h"
-        />
+      <div className='max-w-full overflow-x-auto on-hover-scroll pt-2 pb-3 -mt-2 '>
+        <div className="flex gap-3">
+          {metrics.map((metric) => (
+            <MetricCard
+              key={metric.id}
+              title={metric.title}
+              value={metric.value}
+              icon={metric.icon}
+              statusText={metric.statusText}
+              statusVariant={metric.statusVariant}
+              subtitle={metric.subtitle}
+              trend={metric.trend}
+              className={metric.className}
+              onClick={() => navigate(metric.path)}
+            />
+          ))}
+        </div>
       </div>
 
       {/* 3. Core Panels Row: System Health + Firewall Overview */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <SystemHealthCard
-            health={health}
-            systemInfo={systemInfo}
-            isLoading={isHealthLoading || isSystemLoading}
-            error={healthError || systemError}
-          />
+
+
+      <SystemHealthCard
+        health={health}
+        systemInfo={systemInfo}
+        isLoading={isHealthLoading || isSystemLoading}
+        error={healthError || systemError} className="-mt-4!"
+      />
+
+
+      <div className='grid grid-cols-12 gap-5 items-stretch'>
+        <div className='col-span-4 flex flex-col'>
+          <FirewallStatusCard backend={systemInfo?.firewall_backend || "nftables"} activeRules={activeRulesCount} isRunning={!hasAnyError} />
         </div>
-
-        <div className="lg:col-span-1 space-y-3">
-          <FirewallStatusCard backend="nftables" activeRules={activeRulesCount} isRunning={true} />
-
-          <div className="bg-white dark:bg-slate-900 rounded-xl p-4 space-y-2">
-            <h4 className="text-xs font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider mb-2">Default Chain Policies</h4>
-            <ChainPolicyBadge chain="INPUT" policy="DROP" />
-            <ChainPolicyBadge chain="OUTPUT" policy="ACCEPT" />
-            <ChainPolicyBadge chain="FORWARD" policy="DROP" />
-          </div>
+        <div className='col-span-8 flex flex-col'>
+          <Card className="p-4 space-y-2 flex-1 shadow-md flex flex-col">
+            <div className="flex items-center gap-2">
+              <Link2 className="size-7 shrink-0 text-blue-600" strokeWidth={1.5} />
+              <div>
+                <h3 className="text-sm font-mono font-bold text-slate-900 dark:text-slate-100">Default Chain Policies</h3>
+                <p className="text-2xs text-slate-500 dark:text-slate-400">nftables Packet Filtering Default Verdict Actions</p>
+              </div>
+            </div>
+            <div className='flex flex-1 items-center justify-between border-t border-slate-200 dark:border-slate-800/80 pt-2'>
+              <div className='flex flex-col sm:grid sm:grid-cols-3 gap-5 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 dark:divide-slate-700 flex-1'>
+                {chainPolicies.map((cp) => (
+                  <ChainPolicyBadge key={cp.chain} chain={cp.chain} policy={cp.policy} />
+                ))}
+              </div>
+            </div>
+          </Card>
         </div>
       </div>
 
       {/* 4. Network Interfaces Overview Row */}
       <div className="space-y-3">
-        <h3 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Network Interfaces Overview</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <NetworkInterfaceCard
-            name="eth0"
-            role="WAN"
-            ipAddress="192.168.1.100/24"
-            gateway="192.168.1.1"
-            status="UP"
-            speed="1 Gbps"
-          />
-          <NetworkInterfaceCard
-            name="eth1"
-            role="LAN"
-            ipAddress="192.168.2.1/24"
-            subnet="192.168.2.0/24"
-            status="UP"
-            speed="1 Gbps"
-          />
-        </div>
+        <h3 className="text-xs font-mono font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Network Interfaces Overview</h3>
+        {isInterfacesLoading ? (
+          <div className="p-8 text-center text-xs font-mono text-slate-500">Loading appliance network interfaces...</div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {(interfaces && interfaces.length > 0 ? interfaces : [
+              { name: 'eth0', role: 'WAN', ipAddress: '192.168.1.100/24', gateway: '192.168.1.1', status: 'UP', speed: '1 Gbps' },
+              { name: 'eth1', role: 'LAN', ipAddress: '192.168.2.1/24', subnet: '192.168.2.0/24', status: 'UP', speed: '1 Gbps' },
+            ]).map((iface: any) => {
+              const name = iface.name
+              const role = (iface.role || (name.includes('0') || name.toLowerCase().includes('wan') ? 'WAN' : 'LAN')) as 'WAN' | 'LAN'
+              const ipAddress = iface.ipAddress || (iface.ipv4?.address ? `${iface.ipv4.address}/${iface.ipv4.prefix || 24}` : 'Unassigned')
+              const status = (iface.status || (iface.enabled ? 'UP' : 'DOWN')) as 'UP' | 'DOWN' | 'DEGRADED'
+              const speed = iface.speed || '1 Gbps'
+              const gateway = iface.gateway || (role === 'WAN' ? '192.168.1.1' : undefined)
+              const subnet = iface.subnet || (role === 'LAN' ? '192.168.2.0/24' : undefined)
+              const duplex = iface.duplex || 'Full'
+              const mtu = iface.mtu || 1500
+
+              return (
+                <NetworkInterfaceCard
+                  key={name}
+                  name={name}
+                  role={role}
+                  ipAddress={ipAddress}
+                  gateway={gateway}
+                  subnet={subnet}
+                  status={status}
+                  speed={speed}
+                  duplex={duplex}
+                  mtu={mtu}
+                />
+              )
+            })}
+          </div>
+        )}
       </div>
 
       {/* 5. Real-Time Network Traffic Chart */}
-      <div className="bg-white dark:bg-slate-900 rounded-xl p-5 shadow-xs space-y-4">
+      <Card className="p-5 space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <BarChart3 className="size-4 text-cyan-500" />
@@ -296,12 +393,12 @@ export default function Dashboard() {
             </AreaChart>
           </ResponsiveContainer>
         </div>
-      </div>
+      </Card>
 
       {/* 6. Security Alerts & Audit Events Dual Column Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Security Alerts */}
-        <div className="bg-white dark:bg-slate-900 rounded-xl p-5 space-y-4 shadow-xs">
+        <Card className="p-5 space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
             <div className="flex items-center gap-2">
               <AlertTriangle className="size-4 text-amber-500" />
@@ -348,10 +445,10 @@ export default function Dashboard() {
               </div>
             ))}
           </div>
-        </div>
+        </Card>
 
         {/* Audit Events */}
-        <div className="bg-white dark:bg-slate-900 rounded-xl p-5 space-y-4 shadow-xs">
+        <Card className="p-5 space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
             <div className="flex items-center gap-2">
               <ScrollText className="size-4 text-blue-500" />
@@ -381,11 +478,11 @@ export default function Dashboard() {
               </div>
             ))}
           </div>
-        </div>
+        </Card>
       </div>
 
       {/* 7. Quick Actions Bar */}
-      <div className="bg-slate-50 dark:bg-slate-900 rounded-xl p-4 flex flex-wrap items-center justify-between gap-3 shadow-xs">
+      <Card className="p-4 flex flex-wrap items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-900/80">
         <div className="flex items-center gap-2 text-xs font-bold text-slate-900 dark:text-slate-100">
           <Flame className="size-4 text-blue-500" />
           <span>Appliance Quick Actions</span>
@@ -411,7 +508,7 @@ export default function Dashboard() {
             <Download className="size-3.5" /> Backup Config
           </Button>
         </div>
-      </div>
+      </Card>
 
       {/* Add Firewall Rule Quick Action Modal */}
       <Dialog

@@ -51,7 +51,7 @@ const navigationGroups: NavGroup[] = [
   {
     title: 'SECURITY',
     items: [
-      { name: 'Firewall', path: '/firewall', icon: Flame },
+      { name: 'Firewall Policies', path: '/firewall', icon: Flame },
       { name: 'Security Policies', path: '/firewall#policies', icon: ShieldCheck },
       { name: 'Alerts', path: '/alerts', icon: AlertTriangle, badge: 'Live' },
     ],
@@ -103,7 +103,7 @@ function ExpandedSidebarView({
   userMenuRef,
 }: SidebarViewProps) {
   return (
-    <div className="flex flex-col h-full bg-(--sidebar-bg) select-none transition-colors">
+    <div className="flex flex-col h-full bg-(--sidebar-bg) shadow-sm select-none transition-colors">
       {/* Brand Header */}
       <div className="flex items-center gap-3 px-5 h-16 bg-slate-200/30 dark:bg-slate-800/60 relative overflow-hidden shrink-0">
         <div className="flex items-center justify-center">
@@ -125,10 +125,10 @@ function ExpandedSidebarView({
       </div>
 
       {/* Navigation Groups */}
-      <div className="flex-1 overflow-y-auto py-4 space-y-5">
+      <div className="flex-1 overflow-y-auto py-4 space-y-5 on-hover-scroll">
         {navigationGroups.map((group, groupIdx) => (
           <div key={groupIdx} className="space-y-1">
-            <span className="px-6 text-3xs font-bold text-slate-400 dark:text-slate-500 tracking-widest block uppercase pb-1">
+            <span className="px-6 text-3xs font-mono font-bold text-slate-400 dark:text-slate-500 tracking-widest block uppercase pb-1">
               {group.title}
             </span>
 
@@ -167,7 +167,7 @@ function ExpandedSidebarView({
                       <span
                         className={`ml-auto text-4xs font-bold px-1.5 py-1 rounded ${isActive
                           ? 'bg-linear-to-r from-white to-blue-200 text-blue-600 dark:text-blue-400'
-                          : 'bg-linear-to-r from-emerald-500 to-sky-500 text-white'
+                          : 'bg-linear-to-r from-emerald-500 to-blue-500 text-white'
                           }`}
                       >
                         {item.badge}
@@ -192,7 +192,7 @@ function ExpandedSidebarView({
             <CircleUserRound className="size-7 text-blue-600 dark:text-blue-400 shrink-0" strokeWidth={1} />
 
             <span className="absolute bottom-0 right-0 flex size-2.5">
-              <span className="animate-ping absolute inline-flex size-full rounded-full bg-emerald-500 opacity-75"></span>
+              <span className="animate-ping absolute inline-flex size-full rounded-full bg-linear-to-br from-emerald-500 to-blue-500"></span>
               <span className="relative inline-flex rounded-full size-2.5 bg-emerald-500 ring-2 ring-white dark:ring-slate-950"></span>
             </span>
           </div>
@@ -335,7 +335,7 @@ function CollapsedSidebarView({
             <CircleUserRound className="size-7 text-blue-600 dark:text-blue-400" strokeWidth={1} />
 
             <span className="absolute bottom-0 right-0 flex size-2.5">
-              <span className="animate-ping absolute inline-flex size-full rounded-full bg-emerald-500 opacity-75"></span>
+              <span className="animate-ping absolute inline-flex size-full rounded-full bg-linear-to-br from-emerald-500 to-blue-500"></span>
               <span className="relative inline-flex rounded-full size-2.5 bg-emerald-500 ring-2 ring-white dark:ring-slate-950"></span>
             </span>
           </div>

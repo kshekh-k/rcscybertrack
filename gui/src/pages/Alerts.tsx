@@ -5,13 +5,15 @@ import {
   Filter,
   RefreshCw,
   ShieldAlert,
-  X,
   Terminal,
   Activity,
 } from 'lucide-react'
 import { AlertSeverityBadge } from '../components/cyber/AlertSeverityBadge'
 import { CapabilityNotice } from '../components/cyber/CapabilityNotice'
 import { StatusBadge } from '../components/cyber/StatusBadge'
+import { Button } from '../components/ui/button'
+import { PageHeader } from '../components/ui/page-header'
+import { Dialog } from '../components/ui/dialog'
 import { Alert } from '../types/apiContracts'
 
 export default function Alerts() {
@@ -42,25 +44,24 @@ export default function Alerts() {
   return (
     <div className="space-y-6 pb-8">
       {/* Header section */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
-        <div>
-          <h1 className="text-2xl font-bold text-text-primary tracking-tight">Threat & Alert Center</h1>
-          <p className="text-sm text-text-secondary mt-0.5">
-            Enterprise intrusion detection alerts, anomaly signals, and automated threat mitigation events
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <button
+      <PageHeader
+        icon={AlertTriangle}
+        iconClassName="text-amber-500"
+        title="Threat & Alert Center"
+        description="Enterprise intrusion detection alerts, anomaly signals, and automated threat mitigation events"
+        actions={
+          <Button
+            variant="default"
+            size="icon"
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="px-3 py-2 bg-surface hover:bg-slate-800 text-text-primary text-xs font-medium rounded-lg transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50"
+            title="Refresh"
           >
-            <RefreshCw className={`size-3.5 text-warning ${isRefreshing ? 'animate-spin' : ''}`} />
-            <span>Refresh</span>
-          </button>
-        </div>
-      </div>
+            <RefreshCw className={`size-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <span className="sr-only">Refresh</span>
+          </Button>
+        }
+      />
 
       {/* Backend Contract Banner */}
       <CapabilityNotice
@@ -247,47 +248,46 @@ export default function Alerts() {
       </div>
 
       {/* Alert Detail Sheet Modal */}
-      {selectedAlert && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs">
-          <div className="bg-surface rounded-xl max-w-xl w-full p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <div className="flex items-center gap-2">
-                <AlertSeverityBadge severity={selectedAlert.severity} />
-                <h3 className="text-base font-semibold text-text-primary">{selectedAlert.title}</h3>
-              </div>
-              <button
-                onClick={() => setSelectedAlert(null)}
-                className="text-text-muted hover:text-text-primary p-1 rounded"
-              >
-                <X className="size-4" />
-              </button>
-            </div>
+      <Dialog
+        isOpen={!!selectedAlert}
+        onClose={() => setSelectedAlert(null)}
+        maxWidth="max-w-xl"
+        title={
+          selectedAlert && (
+            <span className="flex items-center gap-2">
+              <AlertSeverityBadge severity={selectedAlert.severity} />
+              <span>{selectedAlert.title}</span>
+            </span>
+          )
+        }
+      >
+        {selectedAlert && (
+          <div className="space-y-4">
+            <p className="text-xs text-slate-400 leading-relaxed">{selectedAlert.description}</p>
 
-            <p className="text-xs text-text-secondary leading-relaxed">{selectedAlert.description}</p>
-
-            <div className="bg-app-bg p-3 rounded-lg space-y-1 font-mono text-xs text-slate-300">
+            <div className="bg-slate-950 p-3 rounded-lg space-y-1 font-mono text-xs text-slate-300">
               <p>Source IP: {selectedAlert.source_ip || 'N/A'}</p>
               <p>Destination IP: {selectedAlert.destination_ip || 'N/A'}</p>
               <p>Rule Match: {selectedAlert.rule_id || 'N/A'}</p>
             </div>
 
             <div className="flex justify-end gap-3 pt-3 border-t border-slate-800">
-              <button
+              <Button
+                variant="outline"
                 onClick={() => setSelectedAlert(null)}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-text-primary text-xs font-medium rounded-lg"
               >
                 Close
-              </button>
-              <button
+              </Button>
+              <Button
                 disabled
-                className="px-4 py-2 bg-amber-500/30 text-amber-300 text-xs font-semibold rounded-lg cursor-not-allowed "
+                variant="secondary"
               >
                 Acknowledge Alert (Disabled)
-              </button>
+              </Button>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </Dialog>
     </div>
   )
 }

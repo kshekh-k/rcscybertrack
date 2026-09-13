@@ -4,8 +4,6 @@ import {
   Search,
   RefreshCw,
   Filter,
-  ShieldCheck,
-  ShieldAlert,
   Clock,
   User,
   Activity,
@@ -18,6 +16,9 @@ import { StatusBadge } from '../components/cyber/StatusBadge'
 import { EmptyState } from '../components/cyber/EmptyState'
 import { ErrorState } from '../components/cyber/ErrorState'
 import { TableSkeleton } from '../components/cyber/LoadingState'
+import { Button } from '../components/ui/button'
+import { Badge } from '../components/ui/badge'
+import { PageHeader } from '../components/ui/page-header'
 import { AuditEvent } from '../lib/api'
 
 export default function Audit() {
@@ -65,50 +66,36 @@ export default function Audit() {
   return (
     <div className="space-y-6 pb-8">
       {/* Header section */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
-        <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-text-primary tracking-tight">Audit Center</h1>
-            {auditData && (
-              <span
-                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${
-                  integrityVerified
-                    ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                    : 'bg-rose-500/10 text-rose-400 border-rose-500/20'
-                }`}
-                title="Cryptographic SHA-256 hash chain verification"
-              >
-                {integrityVerified ? (
-                  <>
-                    <ShieldCheck className="size-3.5" />
-                    <span>Log Integrity Verified</span>
-                  </>
-                ) : (
-                  <>
-                    <ShieldAlert className="size-3.5 animate-pulse" />
-                    <span>Hash Chain Tamper Alert</span>
-                  </>
-                )}
-              </span>
-            )}
-          </div>
-          <p className="text-sm text-text-secondary mt-0.5">
-            Security and administrative activity with SHA-256 cryptographic chain verification
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <button
+      <PageHeader
+        icon={ScrollText}
+        title="Audit Center"
+        badge={
+          auditData && (
+            integrityVerified ? (
+              <Badge variant="success" size="sm" dot dotPulse title="Cryptographic SHA-256 hash chain verification">
+                Log Integrity Verified
+              </Badge>
+            ) : (
+              <Badge variant="warning" size="sm" dot dotPulse title="Cryptographic SHA-256 hash chain verification">
+                Hash Chain Tamper Alert
+              </Badge>
+            )
+          )
+        }
+        description="Security and administrative activity with SHA-256 cryptographic chain verification"
+        actions={
+          <Button
+            variant="default"
+            size="icon"
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="px-3 py-2 bg-surface hover:bg-slate-800 text-text-primary text-xs font-medium rounded-lg transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50"
             title="Refresh audit logs"
           >
-            <RefreshCw className={`size-3.5 text-warning ${isRefreshing ? 'animate-spin' : ''}`} />
-            <span>Refresh</span>
-          </button>
-        </div>
-      </div>
+            <RefreshCw className={`size-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <span className="sr-only">Refresh</span>
+          </Button>
+        }
+      />
 
       {/* Error Callout */}
       {error && (

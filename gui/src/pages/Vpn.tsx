@@ -11,6 +11,8 @@ import {
 } from 'lucide-react'
 import { CapabilityNotice } from '../components/cyber/CapabilityNotice'
 import { EmptyState } from '../components/cyber/EmptyState'
+import { Button } from '../components/ui/button'
+import { PageHeader } from '../components/ui/page-header'
 import { VpnConnection, VpnPeer } from '../types/apiContracts'
 
 export default function Vpn() {
@@ -27,25 +29,23 @@ export default function Vpn() {
   return (
     <div className="space-y-6 pb-8">
       {/* Header section */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
-        <div>
-          <h1 className="text-2xl font-bold text-text-primary tracking-tight">Virtual Private Network (VPN)</h1>
-          <p className="text-sm text-text-secondary mt-0.5">
-            IPsec, WireGuard, and OpenVPN tunnel orchestration, remote site connectivity, and peer encryption
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <button
+      <PageHeader
+        icon={Shield}
+        title="Virtual Private Network (VPN)"
+        description="IPsec, WireGuard, and OpenVPN tunnel orchestration, remote site connectivity, and peer encryption"
+        actions={
+          <Button
+            variant="default"
+            size="icon"
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="px-3 py-2 bg-surface hover:bg-slate-800 text-text-primary text-xs font-medium rounded-lg transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50"
+            title="Refresh"
           >
-            <RefreshCw className={`size-3.5 text-primary ${isRefreshing ? 'animate-spin' : ''}`} />
-            <span>Refresh</span>
-          </button>
-        </div>
-      </div>
+            <RefreshCw className={`size-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <span className="sr-only">Refresh</span>
+          </Button>
+        }
+      />
 
       {/* Backend Contract Banner */}
       <CapabilityNotice

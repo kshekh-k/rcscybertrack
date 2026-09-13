@@ -37,7 +37,7 @@ export default function CyberTrackTopbar({ collapsed, setCollapsed, mobileOpen, 
   const pageTitle = breadcrumbs[breadcrumbs.length - 1]
 
   return (
-    <header className="h-16 bg-(--topbar-bg) px-4 flex items-center justify-between sticky top-0 z-20 shrink-0 select-none transition-colors">
+    <header className="h-16 bg-(--topbar-bg) shadow-md px-4 flex items-center justify-between sticky top-0 z-20 shrink-0 select-none transition-colors">
       {/* Left Side: Toggle & Breadcrumbs */}
       <div className="flex items-center gap-3">
         {/* Toggle Collapse Button (Mobile Only) */}
@@ -59,7 +59,7 @@ export default function CyberTrackTopbar({ collapsed, setCollapsed, mobileOpen, 
 
         {/* Breadcrumbs */}
         <div className="hidden sm:flex flex-col">
-          <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium uppercase tracking-wider">
+          <div className="flex font-mono items-center gap-1.5 text-xs text-slate-500 font-medium uppercase tracking-wider">
             {breadcrumbs.map((crumb, idx) => (
               <React.Fragment key={idx}>
                 {idx > 0 && <span className="text-slate-400">/</span>}
@@ -70,20 +70,20 @@ export default function CyberTrackTopbar({ collapsed, setCollapsed, mobileOpen, 
             ))}
           </div>
         </div>
-        <h1 className="sm:hidden text-sm font-bold text-slate-900 dark:text-slate-100">{pageTitle}</h1>
+        <h1 className="sm:hidden text-sm font-mono font-bold text-slate-900 dark:text-slate-100">{pageTitle}</h1>
       </div>
 
       {/* Right Side: Health Status, Search, Notifications, Theme Switcher */}
       <div className="flex items-center gap-1 md:gap-2">
         {/* System Health Badge */}
-        <div className="hidden xl:flex items-center gap-1 bg-emerald-500/10 px-2 py-1 rounded text-3xs text-emerald-600 dark:text-emerald-400 font-semibold tracking-wider select-none">
+        <div className="hidden xl:flex font-mono items-center gap-1 bg-emerald-500/10 px-2 py-1 rounded text-3xs text-emerald-600 dark:text-emerald-400 font-semibold tracking-wider select-none">
           <HeartPulse className="size-3" />
           <span>System Operational</span>
           <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
         </div>
 
         {/* WAN Connected Badge */}
-        <div className="hidden lg:flex items-center gap-1 bg-cyan-500/10 px-2 py-1 rounded text-3xs text-cyan-600 dark:text-cyan-400 font-semibold tracking-wider select-none">
+        <div className="hidden lg:flex font-mono items-center gap-1 bg-cyan-500/10 px-2 py-1 rounded text-3xs text-cyan-600 dark:text-cyan-400 font-semibold tracking-wider select-none">
           <Globe className="size-3" />
           <span>WAN Connected</span>
           <span className="size-1.5 rounded-full bg-cyan-500" />

@@ -20,6 +20,8 @@ import {
 } from 'recharts'
 import { CapabilityNotice } from '../components/cyber/CapabilityNotice'
 import { TelemetryUnavailable } from '../components/cyber/TelemetryUnavailable'
+import { Button } from '../components/ui/button'
+import { PageHeader } from '../components/ui/page-header'
 
 export default function Analytics() {
   const [activeTab, setActiveTab] = useState<
@@ -36,25 +38,23 @@ export default function Analytics() {
   return (
     <div className="space-y-6 pb-8">
       {/* Header section */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
-        <div>
-          <h1 className="text-2xl font-bold text-text-primary tracking-tight">Traffic Analytics & Telemetry</h1>
-          <p className="text-sm text-text-secondary mt-0.5">
-            Real-time network throughput, interface packet rates, session density, and bandwidth talkers
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <button
+      <PageHeader
+        icon={BarChart3}
+        title="Traffic Analytics & Telemetry"
+        description="Real-time network throughput, interface packet rates, session density, and bandwidth talkers"
+        actions={
+          <Button
+            variant="default"
+            size="icon"
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="px-3 py-2 bg-surface hover:bg-slate-800 text-text-primary text-xs font-medium rounded-lg transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50"
+            title="Refresh"
           >
-            <RefreshCw className={`size-3.5 text-accent ${isRefreshing ? 'animate-spin' : ''}`} />
-            <span>Refresh</span>
-          </button>
-        </div>
-      </div>
+            <RefreshCw className={`size-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <span className="sr-only">Refresh</span>
+          </Button>
+        }
+      />
 
       {/* Backend Contract Banner */}
       <CapabilityNotice

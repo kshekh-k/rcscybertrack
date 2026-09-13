@@ -30,3 +30,15 @@ rules:
   id: rule-test
   source:
     address: 192.168.1.5
+- action: allow
+  destination:
+    port: 8082
+  id: gui-state-log-02
+  logging: true
+  protocol: tcp
+  source:
+    address: 192.168.1.5
+  state:
+  - new
+  - established
+  - related

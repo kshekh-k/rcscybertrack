@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker, Session
 
 # Environment variable override or default SQLite database location
-DEFAULT_DB_URL = "sqlite:///./data/cybertrack.db"
+DEFAULT_DB_URL = "sqlite:////usr/share/rcscybertrack/data/cybertrack.db"
 DATABASE_URL = os.getenv("CYBERTRACK_DATABASE_URL", DEFAULT_DB_URL)
 
 # Ensure database directory exists for local SQLite deployment

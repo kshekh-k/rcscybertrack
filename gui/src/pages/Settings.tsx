@@ -12,14 +12,14 @@ import {
   GitCommit,
   Play,
   RotateCcw,
-  RefreshCw,
-  AlertCircle,
   Palette,
 } from 'lucide-react'
 import { useSystemInfo } from '../features/dashboard/useSystemHealth'
 import { SettingsSection } from '../components/cyber/SettingsSection'
 import { StatusBadge } from '../components/cyber/StatusBadge'
 import { Button } from '../components/ui/button'
+import { PageHeader } from '../components/ui/page-header'
+import { Alert } from '../components/ui/alert'
 import { useBrand } from '../lib/brand'
 
 export default function Settings() {
@@ -187,57 +187,65 @@ export default function Settings() {
   return (
     <div className="space-y-6 pb-8">
       {/* Header section */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
-        <div>
-          <h1 className="text-2xl font-bold text-text-primary tracking-tight">System Settings & Configuration Lifecycle</h1>
-          <p className="text-sm text-text-secondary mt-0.5">
-            Safe persistent configuration engine with Candidate Staging, Dry-Run Validation, OS Commit, and Rollback
-          </p>
-        </div>
+      <PageHeader
+        icon={Server}
+        title="System Settings & Configuration Lifecycle"
+        description="Safe persistent configuration engine with Candidate Staging, Dry-Run Validation, OS Commit, and Rollback"
+        actions={
+          <>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => stageMutation.mutate()}
+              isLoading={stageMutation.isPending}
+              className="gap-2"
+            >
+              {!stageMutation.isPending && <GitCommit className="size-3.5 text-blue-500" />}
+              <span>Stage Candidate</span>
+            </Button>
 
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => stageMutation.mutate()}
-            disabled={stageMutation.isPending}
-            className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-text-primary text-xs font-medium rounded-lg transition-colors flex items-center gap-2 "
-          >
-            {stageMutation.isPending ? <RefreshCw className="size-3.5 animate-spin" /> : <GitCommit className="size-3.5 text-accent" />}
-            <span>Stage Candidate</span>
-          </button>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => commitMutation.mutate()}
+              isLoading={commitMutation.isPending}
+              className="gap-2"
+            >
+              {!commitMutation.isPending && <CheckCircle2 className="size-3.5 text-emerald-400" />}
+              <span>Commit</span>
+            </Button>
 
-          <button
-            onClick={() => commitMutation.mutate()}
-            disabled={commitMutation.isPending}
-            className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-text-primary text-xs font-medium rounded-lg transition-colors flex items-center gap-2 "
-          >
-            {commitMutation.isPending ? <RefreshCw className="size-3.5 animate-spin" /> : <CheckCircle2 className="size-3.5 text-emerald-400" />}
-            <span>Commit</span>
-          </button>
-
-          <button
-            onClick={() => applyMutation.mutate()}
-            disabled={applyMutation.isPending}
-            className="px-4 py-2 bg-primary hover:bg-cyan-600 text-white text-xs font-semibold rounded-lg transition-colors flex items-center gap-2 shadow-md disabled:opacity-50"
-          >
-            {applyMutation.isPending ? <RefreshCw className="size-3.5 animate-spin" /> : <Play className="size-3.5" />}
-            <span>Apply to OS</span>
-          </button>
-        </div>
-      </div>
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => applyMutation.mutate()}
+              isLoading={applyMutation.isPending}
+              className="gap-2"
+            >
+              {!applyMutation.isPending && <Play className="size-3.5" />}
+              <span>Apply to OS</span>
+            </Button>
+          </>
+        }
+      />
 
       {/* Status Notifications */}
       {statusMsg && (
-        <div className="p-4 bg-emerald-950/40 rounded-xl flex items-center gap-3 text-emerald-300 text-sm">
-          <CheckCircle2 className="size-5 text-emerald-400 shrink-0" />
-          <span>{statusMsg}</span>
-        </div>
+        <Alert
+          variant="success"
+          title="Configuration Engine Status"
+          message={statusMsg}
+          onClose={() => setStatusMsg(null)}
+        />
       )}
 
       {errorMsg && (
-        <div className="p-4 bg-red-950/40 rounded-xl flex items-center gap-3 text-red-300 text-sm">
-          <AlertCircle className="size-5 text-red-400 shrink-0" />
-          <span>{errorMsg}</span>
-        </div>
+        <Alert
+          variant="error"
+          title="Configuration Error"
+          message={errorMsg}
+          onClose={() => setErrorMsg(null)}
+        />
       )}
 
       {/* Tabs Bar */}

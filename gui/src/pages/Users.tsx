@@ -3,7 +3,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   UserCheck,
   Layers,
-  X,
   AlertTriangle,
   Lock,
   RefreshCw,
@@ -13,6 +12,9 @@ import { UserTable } from '../components/cyber/UserTable'
 import { PermissionMatrix } from '../components/cyber/PermissionMatrix'
 import { User } from '../types/apiContracts'
 import { Button } from '../components/ui/button'
+import { PageHeader } from '../components/ui/page-header'
+import { Alert } from '../components/ui/alert'
+import { Dialog } from '../components/ui/dialog'
 
 export default function Users() {
   const queryClient = useQueryClient()
@@ -41,6 +43,7 @@ export default function Users() {
     isError,
     error,
     refetch,
+    isFetching,
   } = useQuery<User[]>({
     queryKey: ['users'],
     queryFn: async () => {
@@ -195,24 +198,23 @@ export default function Users() {
   return (
     <div className="space-y-6 pb-8">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
-        <div>
-          <h1 className="text-2xl font-bold text-text-primary tracking-tight">Users & Role-Based Access Control (RBAC)</h1>
-          <p className="text-sm text-text-secondary mt-0.5">
-            Persistent administrative user governance, role permissions, and security controls
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <button
+      <PageHeader
+        icon={UserCheck}
+        title="Users & Role-Based Access Control (RBAC)"
+        description="Persistent administrative user governance, role permissions, and security controls"
+        actions={
+          <Button
+            variant="default"
+            size="icon"
             onClick={() => refetch()}
-            className="px-3 py-2 bg-surface hover:bg-slate-800 text-text-primary text-xs font-medium rounded-lg transition-colors flex items-center gap-2 shadow-sm"
+            disabled={isFetching}
+            title="Refresh"
           >
-            <RefreshCw className="size-3.5 text-accent" />
-            <span>Refresh</span>
-          </button>
-        </div>
-      </div>
+            <RefreshCw className={`size-3.5 ${isFetching ? 'animate-spin' : ''}`} />
+            <span className="sr-only">Refresh</span>
+          </Button>
+        }
+      />
 
       {/* Navigation Bar */}
       <div className="flex items-center gap-2 p-1 bg-app-bg rounded-lg w-fit">
@@ -243,13 +245,11 @@ export default function Users() {
 
       {/* Error state alert banner */}
       {isError && (
-        <div className="p-4 bg-red-950/40 rounded-xl flex items-center gap-3 text-red-300 text-sm">
-          <AlertCircle className="size-5 text-red-400 shrink-0" />
-          <div>
-            <span className="font-semibold">User Data Fetch Error: </span>
-            {(error as Error).message}
-          </div>
-        </div>
+        <Alert
+          variant="error"
+          title="User Data Fetch Error"
+          message={(error as Error).message}
+        />
       )}
 
       {/* Content Rendering */}
@@ -272,294 +272,272 @@ export default function Users() {
       )}
 
       {/* CREATE USER DIALOG */}
-      {isCreateOpen && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-surface rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-            <div className="p-5 border-b border-slate-800 flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="p-2 bg-primary/10 rounded-lg text-primary">
-                  <UserCheck className="size-5" />
-                </div>
-                <h3 className="text-lg font-bold text-text-primary">Create User Account</h3>
-              </div>
-              <button
-                onClick={() => setIsCreateOpen(false)}
-                className="text-text-muted hover:text-text-primary p-1 rounded-lg transition-colors"
-              >
-                <X className="size-5" />
-              </button>
+      <Dialog
+        isOpen={isCreateOpen}
+        onClose={() => setIsCreateOpen(false)}
+        title={
+          <span className="flex items-center gap-2">
+            <UserCheck className="size-5 text-blue-500" />
+            <span>Create User Account</span>
+          </span>
+        }
+      >
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            createUserMutation.mutate()
+          }}
+          className="space-y-4"
+        >
+          {actionError && (
+            <div className="p-3 bg-red-950/50 rounded-lg text-xs text-red-300 flex items-center gap-2">
+              <AlertCircle className="size-4 shrink-0 text-red-400" />
+              <span>{actionError}</span>
             </div>
+          )}
 
-            <form
-              onSubmit={(e) => {
-                e.preventDefault()
-                createUserMutation.mutate()
-              }}
-              className="p-6 space-y-4"
-            >
-              {actionError && (
-                <div className="p-3 bg-red-950/50 rounded-lg text-xs text-red-300 flex items-center gap-2">
-                  <AlertCircle className="size-4 shrink-0 text-red-400" />
-                  <span>{actionError}</span>
-                </div>
-              )}
-
-              <div>
-                <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5">
-                  Username *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formUsername}
-                  onChange={(e) => setFormUsername(e.target.value)}
-                  placeholder="e.g. secops-analyst"
-                  className="w-full px-3.5 py-2.5 bg-app-bg rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5">
-                  Password * (Min 8 characters)
-                </label>
-                <input
-                  type="password"
-                  required
-                  minLength={8}
-                  value={formPassword}
-                  onChange={(e) => setFormPassword(e.target.value)}
-                  placeholder="••••••••••••"
-                  className="w-full px-3.5 py-2.5 bg-app-bg rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5">
-                  Email Address *
-                </label>
-                <input
-                  type="email"
-                  required
-                  value={formEmail}
-                  onChange={(e) => setFormEmail(e.target.value)}
-                  placeholder="analyst@rcs-cybertrack.local"
-                  className="w-full px-3.5 py-2.5 bg-app-bg rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5">
-                  Full Name *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formFullName}
-                  onChange={(e) => setFormFullName(e.target.value)}
-                  placeholder="e.g. Alex Mercer"
-                  className="w-full px-3.5 py-2.5 bg-app-bg rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5">
-                  Assigned RBAC Role *
-                </label>
-                <select
-                  value={formRole}
-                  onChange={(e) => setFormRole(e.target.value as any)}
-                  className="w-full px-3.5 py-2.5 bg-app-bg rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
-                >
-                  <option value="admin">Administrator (Full Access)</option>
-                  <option value="operator">Security Operator (Write Rules/Alerts)</option>
-                  <option value="auditor">Compliance Auditor (Read Audit/Config)</option>
-                  <option value="viewer">Read-Only Monitor (NOC View)</option>
-                </select>
-              </div>
-
-              <div className="pt-4 border-t border-slate-800 flex items-center justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setIsCreateOpen(false)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-text-secondary text-xs font-semibold rounded-lg transition-colors"
-                >
-                  Cancel
-                </button>
-                <Button
-                  type="submit"
-                  variant="primary"
-                  isLoading={createUserMutation.isPending}
-                  className="gap-2"
-                >
-                  {!createUserMutation.isPending && <Lock className="size-3.5" />}
-                  <span>Provision Account</span>
-                </Button>
-              </div>
-            </form>
+          <div>
+            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+              Username *
+            </label>
+            <input
+              type="text"
+              required
+              value={formUsername}
+              onChange={(e) => setFormUsername(e.target.value)}
+              placeholder="e.g. secops-analyst"
+              className="w-full px-3.5 py-2.5 bg-slate-950 rounded-lg text-sm text-slate-50 focus:outline-none focus:border-blue-600"
+            />
           </div>
-        </div>
-      )}
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+              Password * (Min 8 characters)
+            </label>
+            <input
+              type="password"
+              required
+              minLength={8}
+              value={formPassword}
+              onChange={(e) => setFormPassword(e.target.value)}
+              placeholder="••••••••••••"
+              className="w-full px-3.5 py-2.5 bg-slate-950 rounded-lg text-sm text-slate-50 focus:outline-none focus:border-blue-600"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+              Email Address *
+            </label>
+            <input
+              type="email"
+              required
+              value={formEmail}
+              onChange={(e) => setFormEmail(e.target.value)}
+              placeholder="analyst@rcs-cybertrack.local"
+              className="w-full px-3.5 py-2.5 bg-slate-950 rounded-lg text-sm text-slate-50 focus:outline-none focus:border-blue-600"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+              Full Name *
+            </label>
+            <input
+              type="text"
+              required
+              value={formFullName}
+              onChange={(e) => setFormFullName(e.target.value)}
+              placeholder="e.g. Alex Mercer"
+              className="w-full px-3.5 py-2.5 bg-slate-950 rounded-lg text-sm text-slate-50 focus:outline-none focus:border-blue-600"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+              Assigned RBAC Role *
+            </label>
+            <select
+              value={formRole}
+              onChange={(e) => setFormRole(e.target.value as any)}
+              className="w-full px-3.5 py-2.5 bg-slate-950 rounded-lg text-sm text-slate-50 focus:outline-none focus:border-blue-600"
+            >
+              <option value="admin">Administrator (Full Access)</option>
+              <option value="operator">Security Operator (Write Rules/Alerts)</option>
+              <option value="auditor">Compliance Auditor (Read Audit/Config)</option>
+              <option value="viewer">Read-Only Monitor (NOC View)</option>
+            </select>
+          </div>
+
+          <div className="pt-4 border-t border-slate-800 flex items-center justify-end gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsCreateOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="primary"
+              isLoading={createUserMutation.isPending}
+              className="gap-2"
+            >
+              {!createUserMutation.isPending && <Lock className="size-3.5" />}
+              <span>Provision Account</span>
+            </Button>
+          </div>
+        </form>
+      </Dialog>
 
       {/* EDIT USER DIALOG */}
-      {isEditOpen && selectedUser && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-surface rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-            <div className="p-5 border-b border-slate-800 flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="p-2 bg-primary/10 rounded-lg text-primary">
-                  <UserCheck className="size-5" />
-                </div>
-                <h3 className="text-lg font-bold text-text-primary">Edit Account: {selectedUser.username}</h3>
-              </div>
-              <button
-                onClick={() => setIsEditOpen(false)}
-                className="text-text-muted hover:text-text-primary p-1 rounded-lg transition-colors"
-              >
-                <X className="size-5" />
-              </button>
+      <Dialog
+        isOpen={isEditOpen && !!selectedUser}
+        onClose={() => setIsEditOpen(false)}
+        title={
+          <span className="flex items-center gap-2">
+            <UserCheck className="size-5 text-blue-500" />
+            <span>Edit Account: {selectedUser?.username}</span>
+          </span>
+        }
+      >
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            editUserMutation.mutate()
+          }}
+          className="space-y-4"
+        >
+          {actionError && (
+            <div className="p-3 bg-red-950/50 rounded-lg text-xs text-red-300 flex items-center gap-2">
+              <AlertCircle className="size-4 shrink-0 text-red-400" />
+              <span>{actionError}</span>
             </div>
+          )}
 
-            <form
-              onSubmit={(e) => {
-                e.preventDefault()
-                editUserMutation.mutate()
-              }}
-              className="p-6 space-y-4"
-            >
-              {actionError && (
-                <div className="p-3 bg-red-950/50 rounded-lg text-xs text-red-300 flex items-center gap-2">
-                  <AlertCircle className="size-4 shrink-0 text-red-400" />
-                  <span>{actionError}</span>
-                </div>
-              )}
-
-              <div>
-                <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  required
-                  value={formEmail}
-                  onChange={(e) => setFormEmail(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-app-bg rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formFullName}
-                  onChange={(e) => setFormFullName(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-app-bg rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5">
-                  Assigned Role
-                </label>
-                <select
-                  value={formRole}
-                  onChange={(e) => setFormRole(e.target.value as any)}
-                  className="w-full px-3.5 py-2.5 bg-app-bg rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
-                >
-                  <option value="admin">Administrator</option>
-                  <option value="operator">Security Operator</option>
-                  <option value="auditor">Compliance Auditor</option>
-                  <option value="viewer">Read-Only Monitor</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5">
-                  Reset Password (Optional)
-                </label>
-                <input
-                  type="password"
-                  minLength={8}
-                  value={formPassword}
-                  onChange={(e) => setFormPassword(e.target.value)}
-                  placeholder="Leave blank to keep existing password"
-                  className="w-full px-3.5 py-2.5 bg-app-bg rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
-                />
-              </div>
-
-              <div className="pt-4 border-t border-slate-800 flex items-center justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setIsEditOpen(false)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-text-secondary text-xs font-semibold rounded-lg transition-colors"
-                >
-                  Cancel
-                </button>
-                <Button
-                  type="submit"
-                  variant="primary"
-                  isLoading={editUserMutation.isPending}
-                  className="gap-2"
-                >
-                  {!editUserMutation.isPending && <Lock className="size-3.5" />}
-                  <span>Save Changes</span>
-                </Button>
-              </div>
-            </form>
+          <div>
+            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+              Email Address
+            </label>
+            <input
+              type="email"
+              required
+              value={formEmail}
+              onChange={(e) => setFormEmail(e.target.value)}
+              className="w-full px-3.5 py-2.5 bg-slate-950 rounded-lg text-sm text-slate-50 focus:outline-none focus:border-blue-600"
+            />
           </div>
-        </div>
-      )}
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+              Full Name
+            </label>
+            <input
+              type="text"
+              required
+              value={formFullName}
+              onChange={(e) => setFormFullName(e.target.value)}
+              className="w-full px-3.5 py-2.5 bg-slate-950 rounded-lg text-sm text-slate-50 focus:outline-none focus:border-blue-600"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+              Assigned Role
+            </label>
+            <select
+              value={formRole}
+              onChange={(e) => setFormRole(e.target.value as any)}
+              className="w-full px-3.5 py-2.5 bg-slate-950 rounded-lg text-sm text-slate-50 focus:outline-none focus:border-blue-600"
+            >
+              <option value="admin">Administrator</option>
+              <option value="operator">Security Operator</option>
+              <option value="auditor">Compliance Auditor</option>
+              <option value="viewer">Read-Only Monitor</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+              Reset Password (Optional)
+            </label>
+            <input
+              type="password"
+              minLength={8}
+              value={formPassword}
+              onChange={(e) => setFormPassword(e.target.value)}
+              placeholder="Leave blank to keep existing password"
+              className="w-full px-3.5 py-2.5 bg-slate-950 rounded-lg text-sm text-slate-50 focus:outline-none focus:border-blue-600"
+            />
+          </div>
+
+          <div className="pt-4 border-t border-slate-800 flex items-center justify-end gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsEditOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="primary"
+              isLoading={editUserMutation.isPending}
+              className="gap-2"
+            >
+              {!editUserMutation.isPending && <Lock className="size-3.5" />}
+              <span>Save Changes</span>
+            </Button>
+          </div>
+        </form>
+      </Dialog>
 
       {/* DISABLE USER CONFIRMATION DIALOG */}
-      {isDisableOpen && selectedUser && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-surface rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-            <div className="p-5 border-b border-red-900/40 bg-red-950/30 flex items-center gap-3">
-              <div className="p-2.5 bg-red-500/10 rounded-xl text-red-400">
-                <AlertTriangle className="size-5" />
-              </div>
-              <div>
-                <h3 className="text-base font-bold text-text-primary">Disable Account Access</h3>
-                <p className="text-xs text-red-300/80">Target User: {selectedUser.username}</p>
-              </div>
+      <Dialog
+        isOpen={isDisableOpen && !!selectedUser}
+        onClose={() => setIsDisableOpen(false)}
+        maxWidth="max-w-md"
+        title={
+          <span className="flex items-center gap-2 text-rose-500">
+            <AlertTriangle className="size-5" />
+            <span>Disable Account Access</span>
+          </span>
+        }
+        description={`Target User: ${selectedUser?.username}`}
+      >
+        <div className="space-y-4">
+          {actionError && (
+            <div className="p-3 bg-red-950/50 rounded-lg text-xs text-red-300 flex items-center gap-2">
+              <AlertCircle className="size-4 shrink-0 text-red-400" />
+              <span>{actionError}</span>
             </div>
+          )}
 
-            <div className="p-6 space-y-4">
-              {actionError && (
-                <div className="p-3 bg-red-950/50 rounded-lg text-xs text-red-300 flex items-center gap-2">
-                  <AlertCircle className="size-4 shrink-0 text-red-400" />
-                  <span>{actionError}</span>
-                </div>
-              )}
+          <p className="text-xs text-slate-400 leading-relaxed">
+            Disabling <strong className="text-slate-100">{selectedUser?.username}</strong> will immediately revoke all active JWT session tokens and block access to the RCS CyberTrack management API.
+          </p>
 
-              <p className="text-xs text-text-secondary leading-relaxed">
-                Disabling <strong className="text-text-primary">{selectedUser.username}</strong> will immediately revoke all active JWT session tokens and block access to the RCS CyberTrack management API.
-              </p>
-
-              <div className="pt-2 flex items-center justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setIsDisableOpen(false)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-text-secondary text-xs font-semibold rounded-lg transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={() => disableUserMutation.mutate()}
-                  disabled={disableUserMutation.isPending}
-                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50"
-                >
-                  {disableUserMutation.isPending ? <RefreshCw className="size-3.5 animate-spin" /> : <AlertTriangle className="size-3.5" />}
-                  <span>Disable User</span>
-                </button>
-              </div>
-            </div>
+          <div className="pt-2 flex items-center justify-end gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsDisableOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={() => disableUserMutation.mutate()}
+              isLoading={disableUserMutation.isPending}
+              className="gap-2"
+            >
+              {!disableUserMutation.isPending && <AlertTriangle className="size-3.5" />}
+              <span>Disable User</span>
+            </Button>
           </div>
         </div>
-      )}
+      </Dialog>
     </div>
   )
 }

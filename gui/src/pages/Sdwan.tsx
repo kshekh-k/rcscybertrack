@@ -8,6 +8,8 @@ import {
 } from 'lucide-react'
 import { CapabilityNotice } from '../components/cyber/CapabilityNotice'
 import { StatusBadge } from '../components/cyber/StatusBadge'
+import { Button } from '../components/ui/button'
+import { PageHeader } from '../components/ui/page-header'
 import { WanLink } from '../types/apiContracts'
 
 // Conceptual WAN Link representations
@@ -53,25 +55,23 @@ export default function Sdwan() {
   return (
     <div className="space-y-6 pb-8">
       {/* Header section */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
-        <div>
-          <h1 className="text-2xl font-bold text-text-primary tracking-tight">Software-Defined WAN (SD-WAN)</h1>
-          <p className="text-sm text-text-secondary mt-0.5">
-            Multi-WAN link balancing, dynamic traffic steering, SLA monitoring, and automated failover orchestration
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <button
+      <PageHeader
+        icon={Globe}
+        title="Software-Defined WAN (SD-WAN)"
+        description="Multi-WAN link balancing, dynamic traffic steering, SLA monitoring, and automated failover orchestration"
+        actions={
+          <Button
+            variant="default"
+            size="icon"
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="px-3 py-2 bg-surface hover:bg-slate-800 text-text-primary text-xs font-medium rounded-lg transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50"
+            title="Refresh"
           >
-            <RefreshCw className={`size-3.5 text-accent ${isRefreshing ? 'animate-spin' : ''}`} />
-            <span>Refresh</span>
-          </button>
-        </div>
-      </div>
+            <RefreshCw className={`size-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <span className="sr-only">Refresh</span>
+          </Button>
+        }
+      />
 
       {/* Backend Contract Banner */}
       <CapabilityNotice

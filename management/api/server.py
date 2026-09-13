@@ -55,7 +55,7 @@ from management.adapter.os_adapter import os_adapter
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # --- Configuration Loading ---
-CONFIG_PATH = BASE_DIR / "os" / "config" / "rcscybertrack.yaml"
+CONFIG_PATH = Path(os.getenv("CYBERTRACK_CONFIG_PATH", str(BASE_DIR / "os" / "config" / "rcscybertrack.yaml")))
 config: RcsCyberTrackConfig = load_config(CONFIG_PATH)
 
 # Service Layer Initializations

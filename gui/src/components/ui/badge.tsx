@@ -1,39 +1,106 @@
 import React from 'react'
 import { cn } from '../../lib/utils'
 
+export type BadgeVariant =
+  | 'default'
+  | 'secondary'
+  | 'outline'
+  | 'destructive'
+  | 'success'
+  | 'warning'
+  | 'danger'
+  | 'info'
+  | 'cyan'
+  | 'neutral'
+
+export type BadgeSize = 'sm' | 'default' | 'lg'
+
 export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: 'default' | 'secondary' | 'outline' | 'success' | 'warning' | 'danger' | 'info' | 'cyan'
+  variant?: BadgeVariant
+  size?: BadgeSize
+  dot?: boolean
+  dotPulse?: boolean
 }
 
-export const Badge: React.FC<BadgeProps> = ({ className, variant = 'default', children, ...props }) => {
-  const variants = {
-    default:
-      'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20',
-    secondary:
-      'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700',
-    outline:
-      'bg-transparent text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700',
-    success:
-      'bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20',
-    warning:
-      'bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20',
-    danger:
-      'bg-red-100 text-red-800 border-red-200 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/20',
-    info:
-      'bg-sky-100 text-sky-800 border-sky-200 dark:bg-sky-500/10 dark:text-sky-400 dark:border-sky-500/20',
-    cyan:
-      'bg-cyan-100 text-cyan-800 border-cyan-200 dark:bg-cyan-500/10 dark:text-cyan-400 dark:border-cyan-500/20',
+export const Badge: React.FC<BadgeProps> = ({
+  className,
+  variant = 'default',
+  size = 'default',
+  dot = false,
+  dotPulse = false,
+  children,
+  ...props
+}) => {
+  const variantStyles: Record<BadgeVariant, { bg: string; dot: string }> = {
+    default: {
+      bg: 'bg-blue-500/10 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400',
+      dot: 'bg-blue-500',
+    },
+    secondary: {
+      bg: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
+      dot: 'bg-slate-400',
+    },
+    outline: {
+      bg: 'bg-transparent text-slate-700 dark:text-slate-300',
+      dot: 'bg-slate-400',
+    },
+    destructive: {
+      bg: 'bg-rose-500/10 text-rose-700 dark:bg-rose-500/15 dark:text-rose-400',
+      dot: 'bg-rose-500',
+    },
+    danger: {
+      bg: 'bg-red-500/10 text-red-700 dark:bg-red-500/15 dark:text-red-400',
+      dot: 'bg-red-500',
+    },
+    success: {
+      bg: 'bg-emerald-500/10 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400',
+      dot: 'bg-emerald-500',
+    },
+    warning: {
+      bg: 'bg-amber-500/10 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400',
+      dot: 'bg-amber-500',
+    },
+    info: {
+      bg: 'bg-sky-500/10 text-sky-700 dark:bg-sky-500/15 dark:text-sky-400',
+      dot: 'bg-sky-500',
+    },
+    cyan: {
+      bg: 'bg-cyan-500/10 text-cyan-700 dark:bg-cyan-500/15 dark:text-cyan-400',
+      dot: 'bg-cyan-500',
+    },
+    neutral: {
+      bg: 'bg-slate-500/10 text-slate-600 dark:bg-slate-500/15 dark:text-slate-400',
+      dot: 'bg-slate-400',
+    },
   }
+
+  const sizeStyles: Record<BadgeSize, string> = {
+    sm: 'px-1.5 py-0.5 text-3xs rounded',
+    default: 'px-2 py-1 text-2xs rounded',
+    lg: 'px-2.5 py-1.5 text-xs rounded',
+  }
+
+  const currentVariant = variantStyles[variant] || variantStyles.default
 
   return (
     <div
       className={cn(
-        'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-2xs font-semibold border transition-colors select-none',
-        variants[variant],
+        'inline-flex items-center gap-1 font-mono font-semibold transition-colors select-none leading-none shrink-0',
+        currentVariant.bg,
+        sizeStyles[size],
         className
       )}
       {...props}
     >
+      {dot && (
+        <span
+          className={cn(
+            'size-1.5 rounded-full shrink-0',
+            currentVariant.dot,
+            dotPulse && 'animate-pulse'
+          )}
+        />
+      )}
       {children}
     </div>
   )

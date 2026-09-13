@@ -1,5 +1,6 @@
 import logging
 import json
+import os
 from typing import Dict, Tuple, Optional
 
 from firewall.nftables_backend import nftables_backend, FirewallBackend
@@ -170,19 +171,34 @@ class OSAdapter:
 
         if not fw_ok:
             return False, f"Firewall/NAT apply failed: {fw_msg}"
+        # IPv4 forwarding is required for the production appliance,
+        # but can be disabled during development/integration testing.
+        apply_forwarding = os.getenv(
+            "CYBERTRACK_APPLY_FORWARDING",
+            "true",
+        ).lower() == "true"
 
-        forwarding_ok = self.forwarding.apply(forwarding_enabled)
+        if nat is not None and apply_forwarding:
+            forwarding_ok = self.forwarding.apply(forwarding_enabled)
 
-        if not forwarding_ok:
-            return False, (
-                "Firewall/NAT applied successfully, "
-                "but IPv4 forwarding state could not be applied"
+            if not forwarding_ok:
+                return False, (
+                    "Firewall/NAT applied successfully, "
+                    "but IPv4 forwarding state could not be applied"
+                )
+
+            return True, (
+                "Firewall, NAT and IPv4 forwarding "
+                "configuration successfully applied"
             )
 
-        return True, (
-            "Firewall, NAT and IPv4 forwarding "
-            "configuration successfully applied"
-        )
+        if nat is not None:
+            return True, (
+                "Firewall/NAT applied successfully; "
+                "IPv4 forwarding skipped in development mode"
+            )
+
+        return True, "Firewall configuration successfully applied"
 
     def verify_health(self) -> Tuple[bool, str]:
         """Post-apply health verification."""

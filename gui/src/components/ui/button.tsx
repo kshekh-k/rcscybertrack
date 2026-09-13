@@ -31,7 +31,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variants = {
       default:
-        'bg-blue-500 font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:bg-cyan-500',
+        'bg-(--topbar-bg) text-slate-800 dark:text-slate-200 font-semibold transition',
       primary:
         'bg-blue-500 bg-linear-to-r from-blue-500 to-cyan-500 font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:to-transparent',
       secondary:
