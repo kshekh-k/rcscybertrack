@@ -56,12 +56,12 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   return (
     <div
       className={cn(
-        'flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5',
+        'flex flex-row flex-wrap sm:items-center justify-between gap-4 pb-5',
         border && 'border-b border-slate-200 dark:border-slate-800',
         className
       )}
     >
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 flex-1 max-w-full">
         {renderIcon()}
         <div className="flex flex-col">
           <div className="flex items-center gap-2 flex-wrap">
@@ -76,7 +76,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
             {badge}
           </div>
           {description && (
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate max-w-60 sm:max-w-full">
               {description}
             </p>
           )}

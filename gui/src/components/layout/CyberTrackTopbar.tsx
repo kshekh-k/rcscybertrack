@@ -146,20 +146,19 @@ export default function CyberTrackTopbar({ collapsed, setCollapsed, mobileOpen, 
         <Dialog
           isOpen={showSearchModal}
           onClose={() => setShowSearchModal(false)}
+          icon={<Search className="size-7 text-blue-600 shrink-0" strokeWidth={1.5} />}
           title="Appliance Command & Search Palette"
+          description="Quickly navigate management pages and system resources."
         >
-          <div className="space-y-3">
-            <div className="relative">
-              <Search className="size-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                autoFocus
-                placeholder="Type command or page name (e.g. firewall, eth0, audit)..."
-                className="w-full bg-slate-100 dark:bg-slate-950 rounded-lg pl-9 pr-4 py-2 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-500"
-              />
-            </div>
-            <div className="space-y-1 text-xs pt-2">
-              <p className="text-3xs uppercase font-bold text-slate-400">Popular Quick Links</p>
+          <div className="space-y-4">
+            <Input
+              icon={<Search className="size-4 text-slate-400" />}
+              autoFocus
+              placeholder="Type command or page name (e.g. firewall, eth0, audit)..."
+              className="text-xs"
+            />
+            <div className="space-y-1 text-xs pt-1 border-t border-slate-200 dark:border-slate-800">
+              <p className="text-3xs uppercase font-bold text-slate-500 dark:text-slate-400 pt-2 pb-1">Popular Quick Links</p>
               {[
                 { label: 'Security Overview Dashboard', path: '/dashboard' },
                 { label: 'nftables Firewall Rules', path: '/firewall' },
@@ -173,10 +172,10 @@ export default function CyberTrackTopbar({ collapsed, setCollapsed, mobileOpen, 
                     setShowSearchModal(false)
                     navigate(item.path)
                   }}
-                  className="p-2 rounded-lg hover:bg-blue-500/10 hover:text-blue-500 cursor-pointer flex items-center justify-between transition-colors"
+                  className="p-2.5 rounded-lg hover:bg-blue-500/10 hover:text-blue-500 cursor-pointer flex items-center justify-between transition-colors text-slate-700 dark:text-slate-300"
                 >
                   <span>{item.label}</span>
-                  <span className="text-3xs font-mono text-slate-400">{item.path}</span>
+                  <span className="text-3xs font-mono text-slate-400 dark:text-slate-500">{item.path}</span>
                 </div>
               ))}
             </div>

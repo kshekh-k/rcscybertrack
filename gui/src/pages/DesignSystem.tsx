@@ -57,7 +57,7 @@ export default function DesignSystem() {
   ]
 
   return (
-    <div className="space-y-8 pb-16">
+    <div className="space-y-8">
       {/* Header */}
       <PageHeader
         icon={Palette}

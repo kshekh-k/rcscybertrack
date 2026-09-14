@@ -8,6 +8,9 @@ import {
   Radio,
   Users,
   HardDrive,
+  Terminal,
+  ChartNoAxesCombined,
+  TrendingUp,
 } from 'lucide-react'
 import {
   ResponsiveContainer,
@@ -19,27 +22,31 @@ import {
   CartesianGrid,
 } from 'recharts'
 import { CapabilityNotice } from '../components/cyber/CapabilityNotice'
+import { Badge } from '../components/ui/badge'
 import { TelemetryUnavailable } from '../components/cyber/TelemetryUnavailable'
 import { Button } from '../components/ui/button'
 import { PageHeader } from '../components/ui/page-header'
+import { Card } from '../components/ui/card'
 
 export default function Analytics() {
   const [activeTab, setActiveTab] = useState<
     'overview' | 'interfaces' | 'throughput' | 'packets' | 'sessions' | 'sources' | 'destinations'
   >('overview')
-
   const [isRefreshing, setIsRefreshing] = useState(false)
 
   const handleRefresh = () => {
     setIsRefreshing(true)
-    setTimeout(() => setIsRefreshing(false), 500)
+    setTimeout(() => setIsRefreshing(false), 800)
   }
 
+  const telemetryData: Array<{ timestamp: string; bytes_in: number; bytes_out: number }> = []
+  const hasTelemetryData = telemetryData.length > 0
+
   return (
-    <div className="space-y-6 pb-8">
+    <div className="space-y-6">
       {/* Header section */}
       <PageHeader
-        icon={BarChart3}
+        icon={TrendingUp}
         title="Traffic Analytics & Telemetry"
         description="Real-time network throughput, interface packet rates, session density, and bandwidth talkers"
         actions={
@@ -64,126 +71,73 @@ export default function Analytics() {
       />
 
       {/* Navigation Bar */}
-      <div className="flex items-center gap-2 p-1 bg-app-bg rounded-lg overflow-x-auto w-full md:w-fit">
-        <button
-          onClick={() => setActiveTab('overview')}
-          className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-md transition-all whitespace-nowrap ${
-            activeTab === 'overview'
-              ? 'bg-primary text-white shadow-md'
-              : 'text-text-secondary hover:text-text-primary hover:bg-slate-800/50'
-          }`}
-        >
-          <BarChart3 className="size-4" />
-          <span>Traffic Overview</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('interfaces')}
-          className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-md transition-all whitespace-nowrap ${
-            activeTab === 'interfaces'
-              ? 'bg-primary text-white shadow-md'
-              : 'text-text-secondary hover:text-text-primary hover:bg-slate-800/50'
-          }`}
-        >
-          <NetIcon className="size-4" />
-          <span>Interfaces</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('throughput')}
-          className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-md transition-all whitespace-nowrap ${
-            activeTab === 'throughput'
-              ? 'bg-primary text-white shadow-md'
-              : 'text-text-secondary hover:text-text-primary hover:bg-slate-800/50'
-          }`}
-        >
-          <ArrowDownUp className="size-4" />
-          <span>Throughput</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('packets')}
-          className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-md transition-all whitespace-nowrap ${
-            activeTab === 'packets'
-              ? 'bg-primary text-white shadow-md'
-              : 'text-text-secondary hover:text-text-primary hover:bg-slate-800/50'
-          }`}
-        >
-          <Radio className="size-4" />
-          <span>Packets</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('sessions')}
-          className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-md transition-all whitespace-nowrap ${
-            activeTab === 'sessions'
-              ? 'bg-primary text-white shadow-md'
-              : 'text-text-secondary hover:text-text-primary hover:bg-slate-800/50'
-          }`}
-        >
-          <Activity className="size-4" />
-          <span>Active Sessions</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('sources')}
-          className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-md transition-all whitespace-nowrap ${
-            activeTab === 'sources'
-              ? 'bg-primary text-white shadow-md'
-              : 'text-text-secondary hover:text-text-primary hover:bg-slate-800/50'
-          }`}
-        >
-          <Users className="size-4" />
-          <span>Top Sources</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('destinations')}
-          className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-md transition-all whitespace-nowrap ${
-            activeTab === 'destinations'
-              ? 'bg-primary text-white shadow-md'
-              : 'text-text-secondary hover:text-text-primary hover:bg-slate-800/50'
-          }`}
-        >
-          <HardDrive className="size-4" />
-          <span>Top Destinations</span>
-        </button>
+      <div className="flex items-center gap-2 pb-3 overflow-x-auto on-hover-scroll max-w-full md:w-fit">
+        {[
+          { id: 'overview', label: 'Traffic Overview', icon: BarChart3 },
+          { id: 'interfaces', label: 'Interfaces', icon: NetIcon },
+          { id: 'throughput', label: 'Throughput', icon: ArrowDownUp },
+          { id: 'packets', label: 'Packets', icon: Radio },
+          { id: 'sessions', label: 'Active Sessions', icon: Activity },
+          { id: 'sources', label: 'Top Sources', icon: Users },
+          { id: 'destinations', label: 'Top Destinations', icon: HardDrive },
+        ].map((tab) => {
+          const Icon = tab.icon
+          const isActive = activeTab === tab.id
+          return (
+            <Button
+              key={tab.id}
+              variant={isActive ? 'primary' : 'ghost'}
+              size="lg"
+              onClick={() => setActiveTab(tab.id as typeof activeTab)}
+              className="whitespace-nowrap gap-2 shadow-md bg-(--topbar-bg) hover:bg-blue-500 hover:text-white"
+            >
+              <Icon className="size-4 shrink-0" />
+              <span>{tab.label}</span>
+            </Button>
+          )
+        })}
       </div>
 
       {/* Recharts Chart Container Template */}
-      <div className="bg-surface rounded-xl p-6 shadow-lg space-y-6">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+      <Card className="p-4 space-y-4 -mt-3">
+        <div className="flex flex-wrap gap-2 items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
           <div className="flex items-center gap-2">
-            <BarChart3 className="size-5 text-accent" />
-            <h3 className="text-base font-semibold text-text-primary capitalize">
-              {activeTab} Telemetry Chart Container
-            </h3>
+            <ChartNoAxesCombined className="size-7 shrink-0 text-blue-600" strokeWidth={1.5} />
+            <div className="flex flex-col">
+              <h3 className="text-sm font-mono font-bold text-slate-900 dark:text-slate-100 capitalize">
+                {activeTab} Telemetry Chart Container
+              </h3>
+              <p className="text-2xs text-slate-500 dark:text-slate-400">Real-Time Inbound & Outbound Bandwidth Monitoring</p>
+            </div>
           </div>
-          <span className="text-xs font-mono text-slate-500 bg-slate-900 px-2.5 py-1 rounded ">
-            Target Endpoint: GET /api/v1/analytics/{activeTab}
-          </span>
+          <div className="flex items-center gap-2">
+            <Badge variant="default" dot size="sm">
+              Target Endpoint: GET /api/v1/analytics/{activeTab}
+            </Badge>
+          </div>
         </div>
 
-        {/* Empty Telemetry Stream Callout */}
-        <TelemetryUnavailable
-          title={`${activeTab.toUpperCase()} Telemetry Feed Offline`}
-          description="Real-time network traffic throughput, eBPF socket tracing, and Netflow sampling require active backend telemetry streaming."
-          endpoint={`GET /api/v1/analytics/${activeTab}`}
-        />
-
-        {/* Prepared Responsive Recharts Primitive */}
-        <div className="h-48 opacity-30 pointer-events-none">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={[]}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" />
-              <XAxis dataKey="timestamp" stroke="#64748B" />
-              <YAxis stroke="#64748B" />
-              <Tooltip />
-              <Area type="monotone" dataKey="bytes_in" stroke="#06B6D4" fill="#06B6D4" fillOpacity={0.1} />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
+        {/* Telemetry Stream Display (Conditional) */}
+        {hasTelemetryData ? (
+          <div className="h-48">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={telemetryData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" opacity={0.3} />
+                <XAxis dataKey="timestamp" stroke="var(--color-slate-500)" fontSize={10} tickLine={false} />
+                <YAxis stroke="var(--color-slate-500)" fontSize={10} tickLine={false} />
+                <Tooltip />
+                <Area type="monotone" dataKey="bytes_in" stroke="#06B6D4" fill="#06B6D4" fillOpacity={0.1} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        ) : (
+          <TelemetryUnavailable
+            title={`${activeTab.toUpperCase()} Telemetry Feed Offline`}
+            description="Real-time network traffic throughput, eBPF socket tracing, and Netflow sampling require active backend telemetry streaming."
+            endpoint={`GET /api/v1/analytics/${activeTab}`}
+          />
+        )}
+      </Card>
     </div>
   )
 }

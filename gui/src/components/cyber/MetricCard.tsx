@@ -32,7 +32,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
     <Card
       onClick={onClick}
       className={cn(
-        'p-3 transition-all duration-200 flex flex-col justify-between space-y-2.5 text-white',
+        'p-3 transition-all duration-200 flex flex-col justify-between space-y-1 text-white',
         onClick && 'cursor-pointer hover:opacity-95 hover:-translate-y-1 active:-translate-y-1 select-none',
         className
       )}

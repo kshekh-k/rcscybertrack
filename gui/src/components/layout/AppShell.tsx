@@ -1,12 +1,29 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
 import CyberTrackSidebar from './CyberTrackSidebar'
 import CyberTrackTopbar from './CyberTrackTopbar'
 import { ThemeProvider } from '../../lib/theme'
 
 export default function AppShell() {
-  const [collapsed, setCollapsed] = useState(false)
+  const [collapsed, setCollapsed] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth <= 1279
+    }
+    return false
+  })
   const [mobileOpen, setMobileOpen] = useState(false)
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 1279) {
+        setCollapsed(true)
+      }
+    }
+
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   return (
     <ThemeProvider>
@@ -29,7 +46,7 @@ export default function AppShell() {
           />
 
           {/* Page Content */}
-          <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-(--background)">
+          <main className="flex-1 p-4 md:p-6 bg-(--background)">
             <div className="w-full space-y-6">
               <Outlet />
             </div>

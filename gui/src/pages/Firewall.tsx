@@ -308,7 +308,7 @@ export default function Firewall() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 overflow-hidden">
 
       {/* Header Summary */}
       <PageHeader
@@ -333,7 +333,7 @@ export default function Firewall() {
               className="gap-1 px-3 py-2"
             >
               {!applying && <CheckCircle className="size-4" />}
-              <span>Apply to nftables</span>
+              <span className="hidden md:block">Apply to nftables</span>
             </Button>
             <Button
               variant="primary"
@@ -341,7 +341,7 @@ export default function Firewall() {
               onClick={() => openModal(null)}
               className="gap-1 px-3 py-2"
             >
-              <Plus className="size-4" /> Add Security Rule
+              <Plus className="size-4" /> <span className="hidden md:block">Add Security Rule</span>
             </Button>
           </>
         }
@@ -349,14 +349,14 @@ export default function Firewall() {
 
       {/* Backend Status Notification */}
       {backendStatus && (
-        <div className="p-3 bg-(--topbar-bg) rounded shadow-md flex items-center justify-between text-xs text-slate-500 dark:text-slate-300">
-          <div className="flex items-center gap-2">
+        <div className="p-3 bg-(--topbar-bg) rounded shadow-md flex flex-wrap items-center justify-between text-xs text-slate-500 dark:text-slate-300 ">
+          <div className="flex flex-wrap items-center gap-2">
             <span className={`size-2 rounded-full shrink-0 ${backendStatus.available ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
-            <p className="truncate">Backend: <strong className="text-slate-700 dark:text-white font-mono">{backendStatus.backend}</strong> ({backendStatus.version || 'Detection active'})</p>
+            <p className="">Backend: <strong className="text-slate-700 dark:text-white font-mono">{backendStatus.backend}</strong> ({backendStatus.version || 'Detection active'})</p>
             <span className="text-slate-400 dark:text-slate-500">|</span>
-            <p className="truncate">Managed Table: <strong className="text-cyan-500 dark:text-cyan-400 font-mono">table inet {backendStatus.table_name}</strong></p>
+            <p className="">Managed Table: <strong className="text-cyan-500 dark:text-cyan-400 font-mono">table inet {backendStatus.table_name}</strong></p>
           </div>
-          <p className="flex items-center gap-1 font-mono text-slate-400">
+          <p className="flex items-center gap-1 font-mono text-slate-400 whitespace-nowrap">
             Rules: {rules.length}/{backendStatus.rule_count}
           </p>
         </div>
@@ -373,7 +373,7 @@ export default function Firewall() {
       )}
 
       {/* Chain Policy Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="flex flex-col sm:grid sm:grid-cols-3 gap-2 ">
         {chainPolicies.map((cp) => {
           const isAccept = cp.policy.toUpperCase() === 'ACCEPT'
           const IconComponent = isAccept ? CheckCircle : BanknoteX
@@ -401,29 +401,29 @@ export default function Firewall() {
       </div>
 
       {/* Rules Database Panel */}
-      <Card className="overflow-hidden shadow-lg border-0">
-        <CardHeader className="flex flex-row items-center justify-between p-3 border-b border-slate-200 dark:border-slate-800 space-y-0">
+      <Card className="overflow-hidden shadow-lg border-0 block!">
+        <CardHeader className="flex flex-wrap flex-row items-center justify-between p-3 border-b border-slate-200 dark:border-slate-800 space-y-0 gap-1">
           <CardTitle className="text-sm font-mono font-semibold text-slate-900 dark:text-slate-50 flex items-center gap-2">
             <FileCode className="size-5 text-blue-600" />
             <span>Active Ruleset</span>
           </CardTitle>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1">
-              <label htmlFor="pageSizeSelect" className="text-3xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Show</label>
-              <select
-                id="pageSizeSelect"
+              <label htmlFor="pageSizeSelectHeader" className="text-3xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Show</label>
+              <Select
+                id="pageSizeSelectHeader"
                 value={pageSize}
                 onChange={(e) => {
                   setPageSize(Number(e.target.value))
                   setCurrentPage(1)
                 }}
-                className="h-8 rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 py-0 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                className="h-8 py-1 text-xs font-mono"
               >
                 <option value={25}>25</option>
                 <option value={50}>50</option>
                 <option value={75}>75</option>
                 <option value={100}>100</option>
-              </select>
+              </Select>
             </div>
 
             <Button
@@ -438,7 +438,7 @@ export default function Firewall() {
           </div>
         </CardHeader>
 
-        <CardContent className="p-0">
+        <CardContent className="p-0 overflow-hidden block!">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-16 gap-3 text-sm text-slate-500 dark:text-slate-400">
               <Loader2 className="size-8 text-blue-600 animate-spin" />
@@ -465,26 +465,27 @@ export default function Firewall() {
               <span className="text-xs text-slate-500 dark:text-slate-400 max-w-xs mt-1">Add a security policy rule above to populate the active table.</span>
             </div>
           ) : (
-            <div className="overflow-x-auto on-hover-scroll">
-              <table className="w-full text-left border-collapse">
+
+            <div className="overflow-x-auto on-hover-scroll min-w-0 w-full">
+              <table className="text-left border-collapse table-auto w-max min-w-full">
                 <thead>
                   <tr className="bg-slate-200/30 dark:bg-slate-950/50 border-b border-slate-200 dark:border-slate-800 text-3xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                    <th className="px-4 py-3">ID / Name</th>
-                    <th className="px-4 py-3">Action</th>
-                    <th className="px-4 py-3">Chain</th>
-                    <th className="px-4 py-3">Interface</th>
-                    <th className="px-4 py-3">Proto</th>
-                    <th className="px-4 py-3">Source IP / Port</th>
-                    <th className="px-4 py-3">Dest IP / Port</th>
-                    <th className="px-4 py-3">State</th>
-                    <th className="px-4 py-3">Log</th>
-                    <th className="px-4 py-3 text-right">Actions</th>
+                    <th className="px-4 py-3 whitespace-nowrap">ID / Name</th>
+                    <th className="px-4 py-3 whitespace-nowrap">Action</th>
+                    <th className="px-4 py-3 whitespace-nowrap">Chain</th>
+                    <th className="px-4 py-3 whitespace-nowrap">Interface</th>
+                    <th className="px-4 py-3 whitespace-nowrap">Proto</th>
+                    <th className="px-4 py-3 whitespace-nowrap">Source IP / Port</th>
+                    <th className="px-4 py-3 whitespace-nowrap">Dest IP / Port</th>
+                    <th className="px-4 py-3 whitespace-nowrap">State</th>
+                    <th className="px-4 py-3 whitespace-nowrap">Log</th>
+                    <th className="px-4 py-3 whitespace-nowrap text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200 dark:divide-slate-800 text-xs">
                   {paginatedRules.map((rule) => (
                     <tr key={rule.id} className="hover:bg-slate-50 dark:hover:bg-slate-950/40 transition-colors">
-                      <td className="px-4 py-3 font-mono font-medium text-slate-900 dark:text-slate-50">{rule.id}</td>
+                      <td className="px-4 py-3 font-mono font-medium text-slate-900 dark:text-slate-50 whitespace-nowrap">{rule.id}</td>
                       <td className="px-4 py-3">
                         <Badge
                           variant={rule.action === 'allow' ? 'success' : rule.action === 'deny' ? 'destructive' : 'warning'}
@@ -531,7 +532,7 @@ export default function Firewall() {
                             variant="ghost"
                             size="icon"
                             onClick={() => openModal(rule)}
-                            className="size-7 text-emerald-500! hover:text-emerald-600! hover:bg-emerald-500/10! cursor-pointer"
+                            className="size-7 relative text-emerald-500! hover:text-emerald-600! hover:bg-emerald-500/10! cursor-pointer"
                             title="Edit Policy"
                           >
                             <Edit2 className="size-3.5" />
@@ -544,7 +545,7 @@ export default function Firewall() {
                               setRuleToDelete(rule.id)
                               setDeleteError(null)
                             }}
-                            className="size-7 text-red-500! hover:text-red-600! hover:bg-red-500/10! cursor-pointer"
+                            className="size-7 relative text-red-500! hover:text-red-600! hover:bg-red-500/10! cursor-pointer"
                             title="Delete Policy"
                           >
                             <Trash2 className="size-3.5" />
@@ -557,28 +558,29 @@ export default function Firewall() {
                 </tbody>
               </table>
             </div>
+
           )}
         </CardContent>
 
         {!loading && !error && rules.length > 0 && (
-          <CardFooter className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-3 bg-slate-50/50 dark:bg-slate-900/30 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400 mt-0">
+          <CardFooter className="flex-col sm:flex-row items-center justify-between gap-4 px-4 py-3 bg-slate-50/50 dark:bg-slate-900/30 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400 mt-0">
             <div className="flex flex-wrap items-center gap-3">
               <div className="flex items-center gap-1.5">
-                <label htmlFor="pageSizeSelect" className="text-3xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Show</label>
-                <select
-                  id="pageSizeSelect"
+                <label htmlFor="pageSizeSelectFooter" className="text-3xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Show</label>
+                <Select
+                  id="pageSizeSelectFooter"
                   value={pageSize}
                   onChange={(e) => {
                     setPageSize(Number(e.target.value))
                     setCurrentPage(1)
                   }}
-                  className="h-8 rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 py-0 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                  className="h-8 py-1 text-xs font-mono"
                 >
                   <option value={25}>25</option>
                   <option value={50}>50</option>
                   <option value={75}>75</option>
                   <option value={100}>100</option>
-                </select>
+                </Select>
                 <span className="text-3xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">entries</span>
               </div>
               <span className="text-slate-300 dark:text-slate-700">|</span>
@@ -633,7 +635,7 @@ export default function Firewall() {
       <Dialog
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
-        icon={<FileCode className="size-7 text-blue-600" strokeWidth={1.5} />}
+        icon={<FileCode className="size-7 text-blue-600 shrink-0" strokeWidth={1.5} />}
         title={editingRule ? 'Edit Firewall Policy Rule' : 'Create New Firewall Policy Rule'}
         description='Configure ports, addresses, and actions below. Changes are saved to the firewall policy configuration and become active after applying the ruleset to nftables.'
         maxWidth="max-w-2xl"
@@ -765,7 +767,7 @@ export default function Firewall() {
 
             <div className="flex items-center md:justify-end gap-3 cursor-pointer select-none" onClick={() => setLogging(!logging)}>
               <div>
-                <div className="text-xs font-semibold text-slate-500">Kernel Security Log</div>
+                <div className="text-xs font-semibold text-slate-700 dark:text-slate-300">Kernel Security Log</div>
                 <div className="text-xs text-slate-400">Log triggered packet details to dmesg</div>
               </div>
               {logging ? (

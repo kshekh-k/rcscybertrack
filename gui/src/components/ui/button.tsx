@@ -27,13 +27,13 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'default', size = 'default', isLoading = false, children, disabled, ...props }, ref) => {
     const baseStyles =
-      'inline-flex items-center justify-center font-medium rounded text-xs transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed select-none cursor-pointer'
+      'inline-flex items-center justify-center font-medium rounded text-xs transition-all duration-150 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed select-none cursor-pointer'
 
     const variants = {
       default:
-        'bg-(--topbar-bg) text-slate-800 dark:text-slate-200 font-semibold transition',
+        'bg-(--topbar-bg) text-slate-800 dark:text-slate-200 transition',
       primary:
-        'bg-blue-500 bg-linear-to-r from-blue-500 to-cyan-500 font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:to-transparent',
+        'bg-blue-500 bg-linear-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/30 transition hover:to-transparent',
       secondary:
         'bg-slate-200 hover:bg-slate-300 text-slate-900 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-100 ',
       outline:
@@ -45,25 +45,25 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       link:
         'text-blue-600 dark:text-blue-400 underline-offset-4 hover:underline p-0 h-auto font-normal',
       emerald:
-        'bg-emerald-500 bg-linear-to-r from-emerald-500 to-teal-500 font-semibold text-white shadow-lg shadow-emerald-500/30 transition hover:to-transparent',
+        'bg-emerald-500 bg-linear-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/30 transition hover:to-transparent',
       success:
-        'bg-emerald-500 bg-linear-to-r from-emerald-500 to-teal-500 font-semibold text-white shadow-lg shadow-emerald-500/30 transition hover:to-transparent',
+        'bg-emerald-500 bg-linear-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/30 transition hover:to-transparent',
       purple:
-        'bg-purple-500 bg-linear-to-r from-purple-500 to-indigo-500 font-semibold text-white shadow-lg shadow-purple-500/30 transition hover:to-transparent',
+        'bg-purple-500 bg-linear-to-r from-purple-500 to-indigo-500 text-white shadow-lg shadow-purple-500/30 transition hover:to-transparent',
       amber:
-        'bg-amber-500 bg-linear-to-r from-amber-500 to-orange-500 font-semibold text-white shadow-lg shadow-amber-500/30 transition hover:to-transparent',
+        'bg-amber-500 bg-linear-to-r from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/30 transition hover:to-transparent',
       warning:
-        'bg-amber-500 bg-linear-to-r from-amber-500 to-orange-500 font-semibold text-white shadow-lg shadow-amber-500/30 transition hover:to-transparent',
+        'bg-amber-500 bg-linear-to-r from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/30 transition hover:to-transparent',
       rose:
-        'bg-rose-500 bg-linear-to-r from-rose-500 to-pink-500 font-semibold text-white shadow-lg shadow-rose-500/30 transition hover:to-transparent',
+        'bg-rose-500 bg-linear-to-r from-rose-500 to-pink-500 text-white shadow-lg shadow-rose-500/30 transition hover:to-transparent',
       cyan:
-        'bg-cyan-500 bg-linear-to-r from-cyan-500 to-blue-500 font-semibold text-white shadow-lg shadow-cyan-500/30 transition hover:to-transparent',
+        'bg-cyan-500 bg-linear-to-r from-cyan-500 to-blue-500 text-white shadow-lg shadow-cyan-500/30 transition hover:to-transparent',
       slate:
-        'bg-slate-700 bg-linear-to-r from-slate-700 to-slate-900 font-semibold text-white shadow-lg shadow-slate-900/30 transition hover:to-transparent ',
+        'bg-slate-700 bg-linear-to-r from-slate-700 to-slate-900 text-white shadow-lg shadow-slate-900/30 transition hover:to-transparent ',
       sunset:
-        'bg-orange-500 bg-linear-to-r from-orange-500 to-red-500 font-semibold text-white shadow-lg shadow-orange-500/30 transition hover:to-transparent',
+        'bg-orange-500 bg-linear-to-r from-orange-500 to-red-500 text-white shadow-lg shadow-orange-500/30 transition hover:to-transparent',
       lime:
-        'bg-lime-500 bg-linear-to-r from-lime-500 to-emerald-500 font-semibold text-white shadow-lg shadow-lime-500/30 transition hover:to-transparent',
+        'bg-lime-500 bg-linear-to-r from-lime-500 to-emerald-500 text-white shadow-lg shadow-lime-500/30 transition hover:to-transparent',
     }
 
     const sizes = {

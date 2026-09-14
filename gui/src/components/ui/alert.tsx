@@ -74,7 +74,7 @@ export const Alert: React.FC<AlertProps> = ({
   return (
     <div
       className={cn(
-        'rounded py-3 px-4 flex items-center gap-2 transition-colors',
+        'rounded py-3 px-4 flex items-start gap-2 transition-colors',
         current.container,
         className
       )}
