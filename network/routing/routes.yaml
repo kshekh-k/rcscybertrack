@@ -1,5 +1,5 @@
 routes:
   - destination: 0.0.0.0/0
     gateway: 192.168.1.1
-    interface: eth0
+    interface: wlp0s20f3
     metric: 100

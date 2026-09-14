@@ -27,10 +27,6 @@ rules:
   - established
   - related
 - action: allow
-  id: rule-test
-  source:
-    address: 192.168.1.5
-- action: allow
   destination:
     port: 8082
   id: gui-state-log-02
@@ -42,3 +38,17 @@ rules:
   - new
   - established
   - related
+- action: allow
+  destination:
+    port: 8080
+  id: test-block-8080
+  protocol: tcp
+  state:
+  - new
+- action: allow
+  destination:
+    port: 9091
+  id: test-allow-9091
+  protocol: tcp
+  state:
+  - new

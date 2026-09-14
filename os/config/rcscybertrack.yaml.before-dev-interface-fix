@@ -15,8 +15,8 @@ firewall:
   nat:
     enabled: true
     forwarding_enabled: true
-    wan_interface: enp57s0
-    lan_interface: enxec9a0c16008e
+    wan_interface: eth0
+    lan_interface: eth1
     lan_subnet: 192.168.2.0/24
 
 network:
@@ -31,7 +31,7 @@ network:
 
 captive_portal:
   enabled: false
-  interface: enxec9a0c16008e
+  interface: eth1
   subnet: 192.168.2.0/24
   listen_host: 192.168.2.1
   listen_port: 8080

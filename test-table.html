@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberTrack - Table Test</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --border-color: #e2e8f0;
+      --header-bg: rgba(226, 232, 240, 0.3);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-subtle: #94a3b8;
+      --font-sans: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      /* Badges */
+      --badge-success-bg: rgba(16, 185, 129, 0.1);
+      --badge-success-text: #047857;
+      --badge-deny-bg: rgba(244, 63, 94, 0.1);
+      --badge-deny-text: #be123c;
+      --badge-warning-bg: rgba(245, 158, 11, 0.1);
+      --badge-warning-text: #b45309;
+      --badge-secondary-bg: #f1f5f9;
+      --badge-secondary-text: #334155;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-color: #090d16;
+        --card-bg: #0f172a;
+        --border-color: #1e293b;
+        --header-bg: rgba(2, 6, 23, 0.5);
+        --text-main: #f8fafc;
+        --text-muted: #94a3b8;
+        --text-subtle: #64748b;
+
+        --badge-success-bg: rgba(16, 185, 129, 0.15);
+        --badge-success-text: #34d399;
+        --badge-deny-bg: rgba(244, 63, 94, 0.15);
+        --badge-deny-text: #fb7185;
+        --badge-warning-bg: rgba(245, 158, 11, 0.15);
+        --badge-warning-text: #fbbf24;
+        --badge-secondary-bg: #1e293b;
+        --badge-secondary-text: #cbd5e1;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      padding: 2rem;
+      min-height: 100vh;
+    }
+
+    .page-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .table-container {
+      max-width: 100%;
+      overflow-x: auto;
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .custom-table {
+      width: 100%;
+      text-align: left;
+      border-collapse: collapse;
+    }
+
+    .table-header-row {
+      background-color: var(--header-bg);
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .table-th {
+      padding: 0.75rem 1rem;
+      white-space: nowrap;
+    }
+
+    .table-tbody {
+      font-size: 0.75rem;
+    }
+
+    .table-row {
+      border-bottom: 1px solid var(--border-color);
+      transition: background-color 0.15s ease;
+    }
+
+    .table-row:last-child {
+      border-bottom: none;
+    }
+
+    .table-row:hover {
+      background-color: rgba(241, 245, 249, 0.5);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .table-row:hover {
+        background-color: rgba(30, 41, 59, 0.5);
+      }
+    }
+
+    .td-mono-bold {
+      padding: 0.75rem 1rem;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .td-direction {
+      padding: 0.75rem 1rem;
+      color: var(--text-main);
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+
+    .td-mono {
+      padding: 0.75rem 1rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    .td-mono-uppercase {
+      padding: 0.75rem 1rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+    }
+
+    .td-standard {
+      padding: 0.75rem 1rem;
+      color: var(--text-muted);
+    }
+
+    .td-right {
+      padding: 0.75rem 1rem;
+      text-align: right;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.125rem 0.375rem;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      line-height: 1;
+      user-select: none;
+    }
+
+    .badge-success {
+      background-color: var(--badge-success-bg);
+      color: var(--badge-success-text);
+    }
+
+    .badge-destructive {
+      background-color: var(--badge-deny-bg);
+      color: var(--badge-deny-text);
+    }
+
+    .badge-warning {
+      background-color: var(--badge-warning-bg);
+      color: var(--badge-warning-text);
+    }
+
+    .badge-secondary {
+      background-color: var(--badge-secondary-bg);
+      color: var(--badge-secondary-text);
+      font-size: 0.55rem;
+    }
+
+    .state-group {
+      display: flex;
+      gap: 0.25rem;
+      flex-wrap: wrap;
+    }
+
+    .text-muted {
+      color: var(--text-subtle);
+    }
+
+    .log-active {
+      color: #2563eb;
+      font-weight: 600;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+    }
+
+    .log-off {
+      color: var(--text-subtle);
+      font-size: 0.65rem;
+      text-transform: uppercase;
+    }
+
+    /* Action Buttons */
+    .actions-group {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.25rem;
+    }
+
+    .btn-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.75rem;
+      height: 1.75rem;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-edit {
+      color: #10b981;
+    }
+
+    .btn-edit:hover {
+      color: #059669;
+      background-color: rgba(16, 185, 129, 0.1);
+    }
+
+    .btn-delete {
+      color: #ef4444;
+    }
+
+    .btn-delete:hover {
+      color: #dc2626;
+      background-color: rgba(239, 68, 68, 0.1);
+    }
+
+    .icon-svg {
+      width: 0.875rem;
+      height: 0.875rem;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <h1 class="page-title">Firewall Rules Table (Simple CSS Only)</h1>
+
+  <div class="table-container">
+    <table class="custom-table">
+      <thead>
+        <tr class="table-header-row">
+          <th class="table-th">ID / Name</th>
+          <th class="table-th">Action</th>
+          <th class="table-th">Chain</th>
+          <th class="table-th">Interface</th>
+          <th class="table-th">Proto</th>
+          <th class="table-th">Source IP / Port</th>
+          <th class="table-th">Dest IP / Port</th>
+          <th class="table-th">State</th>
+          <th class="table-th">Log</th>
+          <th class="table-th" style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="table-tbody" id="rules-body">
+        <tr class="table-row">
+          <td class="td-mono-bold">1</td>
+          <td class="td-standard">
+            <span class="badge badge-success">allow</span>
+          </td>
+          <td class="td-direction">input</td>
+          <td class="td-mono">eth0</td>
+          <td class="td-mono-uppercase">tcp</td>
+          <td class="td-mono">0.0.0.0/0</td>
+          <td class="td-mono">192.168.1.10:443</td>
+          <td class="td-standard">
+            <div class="state-group">
+              <span class="badge badge-secondary">ESTABLISHED</span>
+              <span class="badge badge-secondary">RELATED</span>
+            </div>
+          </td>
+          <td class="td-standard">
+            <span class="log-active">Active</span>
+          </td>
+          <td class="td-right">
+            <div class="actions-group">
+              <button class="btn-icon btn-edit" title="Edit Policy" onclick="alert('Edit rule 1')">
+                <svg class="icon-svg" viewBox="0 0 24 24">
+                  <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                </svg>
+                <span class="sr-only">Edit Policy</span>
+              </button>
+              <button class="btn-icon btn-delete" title="Delete Policy" onclick="deleteRow(this)">
+                <svg class="icon-svg" viewBox="0 0 24 24">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+                <span class="sr-only">Delete Policy</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr class="table-row">
+          <td class="td-mono-bold">2</td>
+          <td class="td-standard">
+            <span class="badge badge-destructive">deny</span>
+          </td>
+          <td class="td-direction">input</td>
+          <td class="td-mono">eth1</td>
+          <td class="td-mono-uppercase">udp</td>
+          <td class="td-mono">10.0.0.0/8</td>
+          <td class="td-mono">any</td>
+          <td class="td-standard">
+            <span class="text-muted">-</span>
+          </td>
+          <td class="td-standard">
+            <span class="log-off">Off</span>
+          </td>
+          <td class="td-right">
+            <div class="actions-group">
+              <button class="btn-icon btn-edit" title="Edit Policy" onclick="alert('Edit rule 2')">
+                <svg class="icon-svg" viewBox="0 0 24 24">
+                  <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                </svg>
+                <span class="sr-only">Edit Policy</span>
+              </button>
+              <button class="btn-icon btn-delete" title="Delete Policy" onclick="deleteRow(this)">
+                <svg class="icon-svg" viewBox="0 0 24 24">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+                <span class="sr-only">Delete Policy</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr class="table-row">
+          <td class="td-mono-bold">3</td>
+          <td class="td-standard">
+            <span class="badge badge-warning">reject</span>
+          </td>
+          <td class="td-direction">forward</td>
+          <td class="td-mono">any</td>
+          <td class="td-mono-uppercase">icmp</td>
+          <td class="td-mono">192.168.2.0/24</td>
+          <td class="td-mono">192.168.1.0/24</td>
+          <td class="td-standard">
+            <div class="state-group">
+              <span class="badge badge-secondary">NEW</span>
+            </div>
+          </td>
+          <td class="td-standard">
+            <span class="log-active">Active</span>
+          </td>
+          <td class="td-right">
+            <div class="actions-group">
+              <button class="btn-icon btn-edit" title="Edit Policy" onclick="alert('Edit rule 3')">
+                <svg class="icon-svg" viewBox="0 0 24 24">
+                  <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                </svg>
+                <span class="sr-only">Edit Policy</span>
+              </button>
+              <button class="btn-icon btn-delete" title="Delete Policy" onclick="deleteRow(this)">
+                <svg class="icon-svg" viewBox="0 0 24 24">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+                <span class="sr-only">Delete Policy</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    function deleteRow(btn) {
+      const row = btn.closest('tr');
+      if (row) {
+        row.remove();
+      }
+    }
+  </script>
+</body>
+</html>

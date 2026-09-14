@@ -48,7 +48,6 @@ FirewallRule = firewall_engine_module.FirewallRule
 PolicyConfig = firewall_engine_module.PolicyConfig
 
 from network.network_manager import NetworkManager, LinuxNetworkAdapter, InterfaceConfig, RouteConfig
-from network.dns.dns_manager import DNSManager
 from management.device.device import Device, DeviceRegistry
 from management.audit.audit import AuditLogger
 from management.adapter.os_adapter import os_adapter
@@ -152,48 +151,16 @@ def _apply_firewall_config() -> tuple[bool, str]:
 
 
 # Initialize Network Manager
-# --- Network Manager
 network_manager = NetworkManager(adapter=LinuxNetworkAdapter())
-
 try:
-    network_manager.load_interfaces(
-        BASE_DIR / "network" / "interfaces" / "interfaces.yaml"
-    )
-    network_manager.load_routes(
-        BASE_DIR / "network" / "routing" / "routes.yaml"
-    )
-    network_manager.load_dhcp(
-        BASE_DIR / "network" / "dhcp" / "dhcp.yaml"
-    )
-    network_manager.load_dns(
-        BASE_DIR / "network" / "dns" / "dns.yaml"
-    )
-
-    # DNS service is attached after configuration loading so the
-    # manager receives the validated DNSConfig object.
-    dns_interface = os.getenv(
-        "CYBERTRACK_DNS_INTERFACE",
-        "enxec9a0c16008e",
-    )
-    dns_listen_ip = os.getenv(
-        "CYBERTRACK_DNS_LISTEN_IP",
-        "192.168.2.1",
-    )
-    dns_port = int(
-        os.getenv("CYBERTRACK_DNS_PORT", "53")
-    )
-
-    network_manager.dns_manager = DNSManager(
-        config=network_manager.dns,
-        interface=dns_interface,
-        listen_ip=dns_listen_ip,
-        port=dns_port,
-    )
-
+    network_manager.load_interfaces(BASE_DIR / "network" / "interfaces" / "interfaces.yaml")
+    network_manager.load_routes(BASE_DIR / "network" / "routing" / "routes.yaml")
+    network_manager.load_dhcp(BASE_DIR / "network" / "dhcp" / "dhcp.yaml")
+    network_manager.load_dns(BASE_DIR / "network" / "dns" / "dns.yaml")
     network_manager.apply_all()
-
 except Exception as e:
     print(f"Error loading network manager: {e}")
+
 
 
 # Initialize Device Registry

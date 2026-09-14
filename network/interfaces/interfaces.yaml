@@ -1,11 +1,11 @@
 interfaces:
-  - name: eth0
+  - name: wlp0s20f3
     enabled: true
     ipv4:
       address: 192.168.1.100
       prefix: 24
       dhcp: false
-  - name: eth1
+  - name: enxec9a0c16008e
     enabled: true
     ipv4:
       address: 192.168.2.1
