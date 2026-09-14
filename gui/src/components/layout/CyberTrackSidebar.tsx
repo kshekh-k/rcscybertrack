@@ -16,8 +16,9 @@ import {
   AlertTriangle,
   UserCheck,
   BarChart3,
-  Palette,
   X,
+  Shield,
+  TrendingUp,
 } from 'lucide-react'
 import { cn } from '../../lib/utils'
 import { useBrand } from '../../lib/brand'
@@ -48,7 +49,7 @@ const navigationGroups: NavGroup[] = [
     title: 'CONTROL CENTER',
     items: [
       { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-      { name: 'Analytics & Traffic', path: '/analytics', icon: BarChart3 },
+      { name: 'Analytics & Traffic', path: '/analytics', icon: TrendingUp },
     ],
   },
   {
@@ -62,7 +63,7 @@ const navigationGroups: NavGroup[] = [
     title: 'CONNECTIVITY',
     items: [
       { name: 'Interfaces', path: '/network', icon: Network },
-      { name: 'VPN Tunnels', path: '/vpn', icon: LockKeyhole },
+      { name: 'VPN Tunnels', path: '/vpn', icon: Shield },
       { name: 'SD-WAN', path: '/sdwan', icon: Globe },
     ],
   },
@@ -73,7 +74,6 @@ const navigationGroups: NavGroup[] = [
       { name: 'Audit Logs', path: '/audit', icon: ScrollText },
       { name: 'Users & RBAC', path: '/users', icon: UserCheck },
       { name: 'Settings', path: '/settings', icon: Settings2 },
-      { name: 'Design System', path: '/design-system', icon: Palette, badge: 'UI' },
     ],
   },
 ]

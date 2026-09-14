@@ -13,6 +13,7 @@ import {
   Play,
   RotateCcw,
   Palette,
+  Settings2
 } from 'lucide-react'
 import { useSystemInfo } from '../features/dashboard/useSystemHealth'
 import { SettingsSection } from '../components/cyber/SettingsSection'
@@ -202,7 +203,7 @@ export default function Settings() {
     <div className="space-y-6">
       {/* Header section */}
       <PageHeader
-        icon={Server}
+        icon={Settings2}
         title="System Settings & Configuration Lifecycle"
         description="Safe persistent configuration engine with Candidate Staging, Dry-Run Validation, OS Commit, and Rollback"
         actions={
