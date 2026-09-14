@@ -1,6 +1,8 @@
 import React from 'react'
-import { ShieldCheck, ShieldAlert, Ban, CheckCircle, Flame } from 'lucide-react'
+import { ShieldCheck, ShieldAlert, Ban, CheckCircle } from 'lucide-react'
 import { cn } from '../../lib/utils'
+import { Card } from '../ui/card'
+import { Badge } from '../ui/badge'
 
 export type RuleAction = 'allow' | 'deny' | 'reject'
 
@@ -42,63 +44,69 @@ export interface ChainPolicyProps {
 export const ChainPolicyBadge: React.FC<ChainPolicyProps> = ({ chain, policy }) => {
   const isDrop = policy === 'DROP' || policy === 'REJECT'
   return (
-    <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 dark:bg-slate-950">
-      <div className="flex items-center gap-2">
-        <Flame className="size-3.5 text-blue-500" />
-        <span className="font-mono text-xs font-semibold text-slate-700 dark:text-slate-300">{chain} CHAIN</span>
-      </div>
-      <span
-        className={cn(
-          'px-2 py-0.5 rounded text-3xs font-bold font-mono border',
-          isDrop
-            ? 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/25'
-            : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/25'
-        )}
-      >
+    <div className="flex items-center justify-between pb-5 sm:pb-0 sm:pr-5">
+
+
+      <span className="font-mono text-xs font-semibold text-slate-700 dark:text-slate-300">{chain} CHAIN</span>
+
+      <Badge variant={isDrop ? 'danger' : 'success'} size="sm">
         DEFAULT {policy}
-      </span>
+      </Badge>
     </div>
   )
 }
 
-export const FirewallStatusCard: React.FC<{
+export interface FirewallStatusCardProps {
   backend: string
   activeRules: number
   isRunning?: boolean
-}> = ({ backend, activeRules, isRunning = true }) => {
+  defaultInput?: string
+  defaultOutput?: string
+  className?: string
+}
+
+export const FirewallStatusCard: React.FC<FirewallStatusCardProps> = ({
+  backend,
+  activeRules,
+  isRunning = true,
+  defaultInput = 'DROP',
+  defaultOutput = 'ACCEPT',
+  className,
+}) => {
   return (
-    <div className="p-4 rounded-xl bg-white dark:bg-slate-900 space-y-3">
+    <Card className={cn('p-4 space-y-2 shadow-md', className)}>
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 ">
-            <ShieldCheck className="size-4" />
-          </div>
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="size-7 shrink-0 text-blue-600" strokeWidth={1.5} />
           <div>
-            <h4 className="text-xs font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider">Firewall Core</h4>
-            <p className="text-2xs font-mono text-slate-500 dark:text-slate-400">Backend: {backend}</p>
+            <h3 className="text-sm font-mono font-bold text-slate-900 dark:text-slate-100">Firewall Core</h3>
+            <p className="text-2xs text-slate-500 dark:text-slate-400">Backend: {backend}</p>
           </div>
         </div>
 
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 ">
-          <span className="size-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <Badge variant={isRunning ? 'success' : 'danger'} size="sm" dot dotPulse={isRunning}>
           {isRunning ? 'RUNNING' : 'STOPPED'}
-        </span>
+        </Badge>
       </div>
 
-      <div className="grid grid-cols-3 gap-2 pt-2 border-t border-slate-100 dark:border-slate-800/80 text-center font-mono">
-        <div className="p-2 bg-slate-50 dark:bg-slate-950 rounded-lg">
+      <div className="grid grid-cols-3 gap-2 pt-2 border-t border-slate-200 dark:border-slate-800/80 text-left font-mono">
+        <div className="">
           <span className="text-3xs text-slate-400 block uppercase">Rules</span>
           <span className="text-sm font-bold text-slate-900 dark:text-slate-100">{activeRules}</span>
         </div>
-        <div className="p-2 bg-slate-50 dark:bg-slate-950 rounded-lg">
+        <div className="">
           <span className="text-3xs text-slate-400 block uppercase">Default Input</span>
-          <span className="text-xs font-bold text-red-500">DROP</span>
+          <span className={cn('text-xs font-bold', defaultInput === 'ACCEPT' ? 'text-emerald-500' : 'text-red-500')}>
+            {defaultInput}
+          </span>
         </div>
-        <div className="p-2 bg-slate-50 dark:bg-slate-950 rounded-lg">
+        <div className="">
           <span className="text-3xs text-slate-400 block uppercase">Default Output</span>
-          <span className="text-xs font-bold text-emerald-500">ACCEPT</span>
+          <span className={cn('text-xs font-bold', defaultOutput === 'ACCEPT' ? 'text-emerald-500' : 'text-red-500')}>
+            {defaultOutput}
+          </span>
         </div>
       </div>
-    </div>
+    </Card>
   )
 }

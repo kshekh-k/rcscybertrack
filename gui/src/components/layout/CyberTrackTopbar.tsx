@@ -37,7 +37,7 @@ export default function CyberTrackTopbar({ collapsed, setCollapsed, mobileOpen, 
   const pageTitle = breadcrumbs[breadcrumbs.length - 1]
 
   return (
-    <header className="h-16 bg-(--topbar-bg) px-4 flex items-center justify-between sticky top-0 z-20 shrink-0 select-none transition-colors">
+    <header className="h-16 bg-(--topbar-bg) shadow-md px-4 flex items-center justify-between sticky top-0 z-20 shrink-0 select-none transition-colors">
       {/* Left Side: Toggle & Breadcrumbs */}
       <div className="flex items-center gap-3">
         {/* Toggle Collapse Button (Mobile Only) */}
@@ -59,7 +59,7 @@ export default function CyberTrackTopbar({ collapsed, setCollapsed, mobileOpen, 
 
         {/* Breadcrumbs */}
         <div className="hidden sm:flex flex-col">
-          <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium uppercase tracking-wider">
+          <div className="flex font-mono items-center gap-1.5 text-xs text-slate-500 font-medium uppercase tracking-wider">
             {breadcrumbs.map((crumb, idx) => (
               <React.Fragment key={idx}>
                 {idx > 0 && <span className="text-slate-400">/</span>}
@@ -70,20 +70,20 @@ export default function CyberTrackTopbar({ collapsed, setCollapsed, mobileOpen, 
             ))}
           </div>
         </div>
-        <h1 className="sm:hidden text-sm font-bold text-slate-900 dark:text-slate-100">{pageTitle}</h1>
+        <h1 className="sm:hidden text-sm font-mono font-bold text-slate-900 dark:text-slate-100">{pageTitle}</h1>
       </div>
 
       {/* Right Side: Health Status, Search, Notifications, Theme Switcher */}
       <div className="flex items-center gap-1 md:gap-2">
         {/* System Health Badge */}
-        <div className="hidden xl:flex items-center gap-1 bg-emerald-500/10 px-2 py-1 rounded text-3xs text-emerald-600 dark:text-emerald-400 font-semibold tracking-wider select-none">
+        <div className="hidden xl:flex font-mono items-center gap-1 bg-emerald-500/10 px-2 py-1 rounded text-3xs text-emerald-600 dark:text-emerald-400 font-semibold tracking-wider select-none">
           <HeartPulse className="size-3" />
           <span>System Operational</span>
           <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
         </div>
 
         {/* WAN Connected Badge */}
-        <div className="hidden lg:flex items-center gap-1 bg-cyan-500/10 px-2 py-1 rounded text-3xs text-cyan-600 dark:text-cyan-400 font-semibold tracking-wider select-none">
+        <div className="hidden lg:flex font-mono items-center gap-1 bg-cyan-500/10 px-2 py-1 rounded text-3xs text-cyan-600 dark:text-cyan-400 font-semibold tracking-wider select-none">
           <Globe className="size-3" />
           <span>WAN Connected</span>
           <span className="size-1.5 rounded-full bg-cyan-500" />
@@ -146,20 +146,19 @@ export default function CyberTrackTopbar({ collapsed, setCollapsed, mobileOpen, 
         <Dialog
           isOpen={showSearchModal}
           onClose={() => setShowSearchModal(false)}
+          icon={<Search className="size-7 text-blue-600 shrink-0" strokeWidth={1.5} />}
           title="Appliance Command & Search Palette"
+          description="Quickly navigate management pages and system resources."
         >
-          <div className="space-y-3">
-            <div className="relative">
-              <Search className="size-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                autoFocus
-                placeholder="Type command or page name (e.g. firewall, eth0, audit)..."
-                className="w-full bg-slate-100 dark:bg-slate-950 rounded-lg pl-9 pr-4 py-2 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-500"
-              />
-            </div>
-            <div className="space-y-1 text-xs pt-2">
-              <p className="text-3xs uppercase font-bold text-slate-400">Popular Quick Links</p>
+          <div className="space-y-4">
+            <Input
+              icon={<Search className="size-4 text-slate-400" />}
+              autoFocus
+              placeholder="Type command or page name (e.g. firewall, eth0, audit)..."
+              className="text-xs"
+            />
+            <div className="space-y-1 text-xs pt-1 border-t border-slate-200 dark:border-slate-800">
+              <p className="text-3xs uppercase font-bold text-slate-500 dark:text-slate-400 pt-2 pb-1">Popular Quick Links</p>
               {[
                 { label: 'Security Overview Dashboard', path: '/dashboard' },
                 { label: 'nftables Firewall Rules', path: '/firewall' },
@@ -173,10 +172,10 @@ export default function CyberTrackTopbar({ collapsed, setCollapsed, mobileOpen, 
                     setShowSearchModal(false)
                     navigate(item.path)
                   }}
-                  className="p-2 rounded-lg hover:bg-blue-500/10 hover:text-blue-500 cursor-pointer flex items-center justify-between transition-colors"
+                  className="p-2.5 rounded-lg hover:bg-blue-500/10 hover:text-blue-500 cursor-pointer flex items-center justify-between transition-colors text-slate-700 dark:text-slate-300"
                 >
                   <span>{item.label}</span>
-                  <span className="text-3xs font-mono text-slate-400">{item.path}</span>
+                  <span className="text-3xs font-mono text-slate-400 dark:text-slate-500">{item.path}</span>
                 </div>
               ))}
             </div>

@@ -9,6 +9,9 @@ RCS CyberTrack is a modular, secure-by-default Linux-based security and network 
 ### 1. Setup Python Environment
 Make sure you have **Python 3.12+** installed on your Linux system.
 
+## start GUI:
+cd gui && npm install && npm run dev -- --host 127.0.0.1
+
 ```bash
 # Activate the pre-configured virtual environment (if present)
 source .venv/bin/activate

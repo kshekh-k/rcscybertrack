@@ -1,46 +1,52 @@
 import React from 'react'
 import { UserRole } from '../../types/apiContracts'
+import { Badge, BadgeVariant, BadgeSize } from '../ui/badge'
 
-interface RoleBadgeProps {
+export interface RoleBadgeProps {
   role: UserRole
+  size?: BadgeSize
+  dot?: boolean
+  dotPulse?: boolean
   className?: string
 }
 
-export const RoleBadge: React.FC<RoleBadgeProps> = ({ role, className = '' }) => {
-  const styles: Record<UserRole, { bg: string; text: string; border: string; label: string }> = {
+export const RoleBadge: React.FC<RoleBadgeProps> = ({
+  role,
+  size = 'default',
+  dot = false,
+  dotPulse = false,
+  className = '',
+}) => {
+  const roleConfig: Record<UserRole, { variant: BadgeVariant; label: string }> = {
     admin: {
-      bg: 'bg-rose-500/10',
-      text: 'text-rose-400',
-      border: 'border-rose-500/20',
+      variant: 'destructive',
       label: 'Admin',
     },
     operator: {
-      bg: 'bg-primary/10',
-      text: 'text-primary-hover',
-      border: 'border-primary/20',
+      variant: 'default',
       label: 'Security Operator',
     },
     auditor: {
-      bg: 'bg-amber-500/10',
-      text: 'text-amber-400',
-      border: 'border-amber-500/20',
+      variant: 'warning',
       label: 'Auditor',
     },
     viewer: {
-      bg: 'bg-slate-500/10',
-      text: 'text-slate-400',
-      border: 'border-slate-500/20',
+      variant: 'secondary',
       label: 'Viewer',
     },
   }
 
-  const current = styles[role] || styles.viewer
+  const current = roleConfig[role] || roleConfig.viewer
 
   return (
-    <span
-      className={`inline-flex items-center px-2.5 py-0.5 text-2xs font-mono font-medium rounded-full border ${current.bg} ${current.text} ${current.border} ${className}`}
+    <Badge
+      variant={current.variant}
+      size={size}
+      dot={dot}
+      dotPulse={dotPulse}
+      className={className}
     >
       {current.label}
-    </span>
+    </Badge>
   )
 }

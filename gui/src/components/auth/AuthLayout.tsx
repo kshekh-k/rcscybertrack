@@ -28,12 +28,12 @@ export function AuthLayout({ children }: AuthLayoutProps) {
       {/* Foreground Content Layer */}
       <div className="relative z-10 flex-1 flex flex-col w-full">
         <div className="flex lex-wrap flex-1 w-full">
-          <div className="flex justify-center items-center h-ful w-3/5 relative after:absolute dark:after:bg-slate-950/60  after:bg-slate-950/40 after:inset-0" >
+          <div className="hidden xl:flex justify-center items-center h-ful w-3/5 relative after:absolute dark:after:bg-slate-950/60  after:bg-slate-950/40 after:inset-0" >
 
-            <div className='overflow-hidden bg-linear-to-br from-blue-500 to-cyan-500 shadow-1 max-h-screen'><img src="/images/dashboard-login-image-v3.png" className='object-cover' /></div>
+            <div className='overflow-hidden bg-linear-to-br from-blue-500 to-cyan-500 shadow-1 max-h-screen flex justify-center items-center'><img src="/images/dashboard-login-image-v3.png" className='object-cover h-full max-w-none' /></div>
 
           </div>
-          <div className="flex justify-center items-center p-8 w-1/2">
+          <div className="flex justify-center items-center p-3 sm:p-8 w-full xl:w-1/2">
             <div className="w-full max-w-115 flex flex-col items-center justify-center">
               {/* Floating Authentication Card */}
               <div className="w-full max-w-115 bg-white/85 dark:bg-slate-900/85 backdrop-blur-xl rounded-xl p-5 xl:p-8 shadow-1 relative overflow-hidden transition-all duration-300">

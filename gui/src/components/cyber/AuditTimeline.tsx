@@ -1,8 +1,9 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { ScrollText, ArrowRight, ShieldCheck, ShieldAlert } from 'lucide-react'
+import { ScrollText, ArrowRight } from 'lucide-react'
 import { AuditLogResponse } from '../../lib/api'
 import { StatusBadge } from './StatusBadge'
+import { Badge } from '../ui/badge'
 
 interface AuditTimelineProps {
   auditData?: AuditLogResponse
@@ -23,21 +24,15 @@ export const AuditTimeline: React.FC<AuditTimelineProps> = ({ auditData, isLoadi
           </div>
           <div className="flex items-center gap-3">
             {auditData && (
-              <span
-                className={`inline-flex items-center gap-1 text-2xs font-medium px-2 py-0.5 rounded border ${
-                  auditData.integrity_verified
-                    ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                    : 'bg-rose-500/10 text-rose-400 border-rose-500/20'
-                }`}
+              <Badge
+                variant={auditData.integrity_verified ? 'success' : 'warning'}
+                size="sm"
+                dot
+                dotPulse
                 title="Cryptographic hash chain verification"
               >
-                {auditData.integrity_verified ? (
-                  <ShieldCheck className="size-3" />
-                ) : (
-                  <ShieldAlert className="size-3" />
-                )}
-                <span>{auditData.integrity_verified ? 'Chain Verified' : 'Integrity Alert'}</span>
-              </span>
+                {auditData.integrity_verified ? 'Chain Verified' : 'Integrity Alert'}
+              </Badge>
             )}
             <Link
               to="/audit"

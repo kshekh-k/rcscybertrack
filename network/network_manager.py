@@ -1,8 +1,11 @@
 import logging
+import os
 import re
 import ipaddress
 from pathlib import Path
 from typing import List, Optional
+
+from network.dns.dns_manager import DNSManager
 import yaml
 from pydantic import BaseModel, Field, field_validator, ValidationError
 
@@ -311,8 +314,13 @@ class LinuxNetworkAdapter(NetworkAdapter):
 # --- Network Manager ---
 
 class NetworkManager:
-    def __init__(self, adapter: Optional[NetworkAdapter] = None):
+    def __init__(
+        self,
+        adapter: Optional[NetworkAdapter] = None,
+        dns_manager: Optional[DNSManager] = None,
+    ):
         self.adapter: NetworkAdapter = adapter or MockNetworkAdapter()
+        self.dns_manager = dns_manager
         self.interfaces: List[InterfaceConfig] = []
         self.routes: List[RouteConfig] = []
         self.dhcp: Optional[DHCPConfig] = None
@@ -382,4 +390,16 @@ class NetworkManager:
             success = success and self.adapter.apply_dhcp(self.dhcp)
         if self.dns:
             success = success and self.adapter.apply_dns(self.dns)
+
+            if self.dns_manager is not None:
+                dns_enabled = (
+                    os.getenv("CYBERTRACK_DNS_ENABLED", "false")
+                    .strip()
+                    .lower()
+                    in ("true", "1", "yes")
+                )
+
+                if dns_enabled:
+                    success = success and self.dns_manager.start()
+
         return success

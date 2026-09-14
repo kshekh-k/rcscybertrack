@@ -145,6 +145,11 @@
 
   --shadow-1: var(--shadow-1);
   --shadow-2: var(--shadow-2);
+  --shadow-right: 3px 0 6px -1px rgba(0, 0, 0, 0.05), 2px 0 4px -1px rgba(0, 0, 0, 0.06);
+
+  --background-image-gradient-primary: linear-gradient(135deg, var(--color-blue-500) 0%, var(--color-cyan-500) 100%);
+  --background-image-gradient-secondary: linear-gradient(135deg, var(--color-blue-600) 0%, var(--color-cyan-600) 100%);
+  --background-image-radial-blue: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
 }
 
 /* Global resets for RCS CyberTrack appliance */
@@ -161,23 +166,61 @@ body {
 
 /* Universal Custom Scrollbar with Blue-to-Cyan Gradient Handle */
 /* Custom Green Gradient Scrollbar Styles */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+body::-webkit-scrollbar {
+  @apply size-1.5;
+
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
+body::-webkit-scrollbar-track {
+  @apply bg-transparent;
+
 }
 
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
-  border-radius: 9999px;
+body::-webkit-scrollbar-thumb {
+  @apply bg-gradient-primary rounded-full;
 }
 
+/* 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #2563eb 0%, #0891b2 100%);
+  @apply bg-gradient-secondary;
+} */
+
+
+
+/*  --------  */
+.on-hover-scroll {
+  scrollbar-color: transparent;
 }
+
+.on-hover-scroll::-webkit-scrollbar {
+  @apply size-1.5 opacity-0 absolute bg-transparent transition-all duration-200 ease-in-out;
+}
+
+.on-hover-scroll:hover::-webkit-scrollbar {
+  @apply size-1.5 opacity-100;
+}
+
+
+.on-hover-scroll::-webkit-scrollbar-track {
+  @apply absolute bg-transparent transition-all duration-200 ease-in-out opacity-0;
+}
+
+.on-hover-scroll:hover::-webkit-scrollbar-track {
+  @apply bg-transparent opacity-0
+}
+
+.on-hover-scroll::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-transparent transition-all duration-200 ease-in-out opacity-0;
+}
+
+.on-hover-scroll:hover::-webkit-scrollbar-thumb {
+  @apply bg-gradient-primary opacity-100;
+}
+
+
+
+
+
 
 /* Utility class for thin green gradient scrollbars */
 .scrollbar-thin::-webkit-scrollbar {

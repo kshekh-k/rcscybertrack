@@ -50,4 +50,5 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 Input.displayName = 'Input'
 
 export const FormField = Input
+export const TextField = Input
 

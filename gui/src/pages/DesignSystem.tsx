@@ -12,6 +12,7 @@ import { useTheme } from '../lib/theme'
 import { Button } from '../components/ui/button'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/card'
 import { Badge } from '../components/ui/badge'
+import { PageHeader } from '../components/ui/page-header'
 import { Input } from '../components/ui/input'
 import { Select } from '../components/ui/select'
 import { Switch } from '../components/ui/switch'
@@ -56,24 +57,20 @@ export default function DesignSystem() {
   ]
 
   return (
-    <div className="space-y-8 pb-16">
+    <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-5">
-        <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">RCS CyberTrack Design System</h1>
-            <Badge variant="cyan">Tailwind v4 + shadcn/ui</Badge>
-          </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Official visual language, design tokens, typography, and component specifications for CyberTrack hardware appliances.
-          </p>
-        </div>
-
-        <Button onClick={toggleTheme} variant="outline" className="gap-2">
-          {theme === 'dark' ? <Sun className="size-4 text-amber-400" /> : <Moon className="size-4 text-blue-600" />}
-          <span>Toggle Mode ({theme.toUpperCase()})</span>
-        </Button>
-      </div>
+      <PageHeader
+        icon={Palette}
+        title="RCS CyberTrack Design System"
+        badge={<Badge variant="cyan" size="sm">Tailwind v4 + shadcn/ui</Badge>}
+        description="Official visual language, design tokens, typography, and component specifications for CyberTrack hardware appliances."
+        actions={
+          <Button onClick={toggleTheme} variant="outline" className="gap-2">
+            {theme === 'dark' ? <Sun className="size-4 text-amber-400" /> : <Moon className="size-4 text-blue-600" />}
+            <span>Toggle Mode ({theme.toUpperCase()})</span>
+          </Button>
+        }
+      />
 
       {/* Color Palette Section */}
       <Card>

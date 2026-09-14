@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict, List, Tuple, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
+
 
 class BackendStatus(BaseModel):
     available: bool
@@ -11,25 +12,27 @@ class BackendStatus(BaseModel):
     reason: Optional[str] = None
     rule_count: int = 0
 
+
 class FirewallBackend(ABC):
+
     @abstractmethod
     def discover(self) -> BackendStatus:
         """Read-only discovery detecting nftables availability, version, and table ownership."""
         pass
 
     @abstractmethod
-    def validate(self, policy: Dict, rules: List[Dict]) -> Tuple[bool, str]:
-        """Validate firewall rules syntax and parameters."""
+    def validate(self, policy: Dict, rules: List[Dict], nat: Optional[Dict] = None) -> Tuple[bool, str]:
+        """Validate firewall rules and optional NAT configuration."""
         pass
 
     @abstractmethod
-    def compile(self, policy: Dict, rules: List[Dict]) -> str:
-        """Compile policy and typed rules into deterministic nftables syntax."""
+    def compile(self, policy: Dict, rules: List[Dict], nat: Optional[Dict] = None) -> str:
+        """Compile firewall policy, rules and optional NAT into nftables syntax."""
         pass
 
     @abstractmethod
-    def apply(self, policy: Dict, rules: List[Dict]) -> Tuple[bool, str]:
-        """Atomically apply compiled ruleset to table inet rcs_cybertrack."""
+    def apply(self, policy: Dict, rules: List[Dict], nat: Optional[Dict] = None) -> Tuple[bool, str]:
+        """Atomically apply compiled firewall and optional NAT ruleset."""
         pass
 
     @abstractmethod

@@ -89,43 +89,6 @@ export interface NotificationAlert {
 const TOKEN_KEY = 'cybertrack_token'
 const USERNAME_KEY = 'cybertrack_username'
 
-// Mock fallback rules in case the API is offline
-const MOCK_RULES: FirewallRule[] = [
-  {
-    id: 'rule-allow-ssh',
-    action: 'allow',
-    direction: 'input',
-    interface: 'eth0',
-    protocol: 'tcp',
-    source: { address: 'any', port: null },
-    destination: { address: 'any', port: 22 },
-    state: ['new'],
-    logging: true
-  },
-  {
-    id: 'rule-allow-http',
-    action: 'allow',
-    direction: 'input',
-    interface: 'eth0',
-    protocol: 'tcp',
-    source: { address: 'any', port: null },
-    destination: { address: 'any', port: 8000 },
-    state: ['new'],
-    logging: false
-  },
-  {
-    id: 'rule-block-malicious',
-    action: 'deny',
-    direction: 'input',
-    interface: 'eth0',
-    protocol: 'any',
-    source: { address: '198.51.100.0/24', port: null },
-    destination: { address: 'any', port: null },
-    state: [],
-    logging: true
-  }
-]
-
 async function apiFetch<T>(url: string, options: RequestInit = {}): Promise<T> {
   const token = localStorage.getItem(TOKEN_KEY)
   const headers = new Headers(options.headers || {})
@@ -134,36 +97,50 @@ async function apiFetch<T>(url: string, options: RequestInit = {}): Promise<T> {
     headers.set('Authorization', `Bearer ${token}`)
   }
 
-  const baseUrl = import.meta.env.VITE_API_BASE_URL
-  const targetUrl = (baseUrl && url.startsWith('/api')) ? `${baseUrl.replace(/\/$/, '')}${url}` : url
+  const targetUrl = url
 
-  const response = await fetch(targetUrl, { ...options, headers })
+  const controller = new AbortController()
+  const timeoutId = window.setTimeout(() => controller.abort(), 10000)
 
-  if (response.status === 401) {
-    // Session expired or unauthorized
-    localStorage.removeItem(TOKEN_KEY)
-    localStorage.removeItem(USERNAME_KEY)
-    window.location.href = '/login'
-    throw new Error('Unauthorized')
-  }
+  try {
+    const response = await fetch(targetUrl, {
+      ...options,
+      headers,
+      signal: controller.signal
+    })
 
-  if (!response.ok) {
-    const text = await response.text()
-    let errorDetail = 'API Request Failed'
-    try {
-      const parsed = JSON.parse(text)
-      errorDetail = parsed.detail || errorDetail
-    } catch {
-      errorDetail = text || errorDetail
+    if (response.status === 401) {
+      localStorage.removeItem(TOKEN_KEY)
+      localStorage.removeItem(USERNAME_KEY)
+      window.location.href = '/login'
+      throw new Error('Unauthorized')
     }
-    throw new Error(errorDetail)
-  }
 
-  if (response.status === 204) {
-    return null as T
-  }
+    if (!response.ok) {
+      const text = await response.text()
+      let errorDetail = 'API Request Failed'
+      try {
+        const parsed = JSON.parse(text)
+        errorDetail = parsed.detail || errorDetail
+      } catch {
+        errorDetail = text || errorDetail
+      }
+      throw new Error(errorDetail)
+    }
 
-  return response.json()
+    if (response.status === 204) {
+      return null as T
+    }
+
+    return await response.json()
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      throw new Error('API request timed out after 10 seconds')
+    }
+    throw error
+  } finally {
+    window.clearTimeout(timeoutId)
+  }
 }
 
 export const api = {
@@ -211,71 +188,50 @@ export const api = {
   },
 
   async getFirewallRules(): Promise<FirewallRule[]> {
-    try {
-      return await apiFetch<FirewallRule[]>('/api/v1/firewall/rules')
-    } catch (error) {
-      console.warn('API error fetching firewall rules, falling back to mock configurations:', error)
-      if (error instanceof Error && error.message === 'Unauthorized') {
-        throw error
-      }
-      return MOCK_RULES
-    }
+    return await apiFetch<FirewallRule[]>('/api/v1/firewall/rules')
   },
 
   async createFirewallRule(rule: FirewallRule): Promise<FirewallRule> {
-    try {
-      return await apiFetch<FirewallRule>('/api/v1/firewall/rules', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(rule)
-      })
-    } catch (error) {
-      console.warn('API offline: Simulating creation of firewall rule locally.')
-      if (error instanceof Error && error.message === 'Unauthorized') {
-        throw error
-      }
-      return rule
-    }
+    return await apiFetch<FirewallRule>('/api/v1/firewall/rules', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(rule)
+    })
   },
 
   async updateFirewallRule(ruleId: string, rule: FirewallRule): Promise<FirewallRule> {
-    try {
-      return await apiFetch<FirewallRule>(`/api/v1/firewall/rules/${ruleId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(rule)
-      })
-    } catch (error) {
-      console.warn('API offline: Simulating update of firewall rule locally.')
-      if (error instanceof Error && error.message === 'Unauthorized') {
-        throw error
-      }
-      return rule
-    }
+    return await apiFetch<FirewallRule>(`/api/v1/firewall/rules/${ruleId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(rule)
+    })
   },
 
   async deleteFirewallRule(ruleId: string): Promise<void> {
-    try {
-      await apiFetch<void>(`/api/v1/firewall/rules/${ruleId}`, {
-        method: 'DELETE'
-      })
-    } catch (error) {
-      console.warn('API offline: Simulating deletion of firewall rule locally.')
-      if (error instanceof Error && error.message === 'Unauthorized') {
-        throw error
-      }
-    }
+    await apiFetch<void>(`/api/v1/firewall/rules/${ruleId}`, {
+      method: 'DELETE'
+    })
   },
 
-  async getFirewallStatus(): Promise<any> { return await apiFetch<any>("/api/v1/firewall/status") },
+  async getFirewallStatus(): Promise<any> {
+    return await apiFetch<any>('/api/v1/firewall/status')
+  },
 
-  async validateFirewall(): Promise<{ valid: boolean; message: string }> { return await apiFetch<{ valid: boolean; message: string }>("/api/v1/firewall/validate", { method: "POST" }) },
+  async validateFirewall(): Promise<{ valid: boolean; message: string }> {
+    return await apiFetch<{ valid: boolean; message: string }>('/api/v1/firewall/validate', {
+      method: 'POST'
+    })
+  },
 
-  async applyFirewall(): Promise<any> { return await apiFetch<any>("/api/v1/firewall/apply", { method: "POST" }) },
+  async applyFirewall(): Promise<any> {
+    return await apiFetch<any>('/api/v1/firewall/apply', {
+      method: 'POST'
+    })
+  },
 
   async getNetworkInterfaces(): Promise<InterfaceConfig[]> {
     return await apiFetch<InterfaceConfig[]>('/api/v1/network/interfaces')
@@ -333,4 +289,3 @@ export const api = {
     }
   }
 }
-

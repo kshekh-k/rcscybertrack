@@ -1,18 +1,28 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   UserCheck,
   Layers,
-  X,
   AlertTriangle,
   Lock,
   RefreshCw,
   AlertCircle,
+  Users as UsersIcon,
+  ShieldCheck,
+  UserX,
+  Shield,
 } from 'lucide-react'
 import { UserTable } from '../components/cyber/UserTable'
 import { PermissionMatrix } from '../components/cyber/PermissionMatrix'
+import { CapabilityNotice } from '../components/cyber/CapabilityNotice'
+import { MetricCard } from '../components/cyber/MetricCard'
 import { User } from '../types/apiContracts'
 import { Button } from '../components/ui/button'
+import { PageHeader } from '../components/ui/page-header'
+import { Alert } from '../components/ui/alert'
+import { Dialog } from '../components/ui/dialog'
+import { Select } from '../components/ui/select'
+import { Input } from '../components/ui/input'
 
 export default function Users() {
   const queryClient = useQueryClient()
@@ -41,6 +51,7 @@ export default function Users() {
     isError,
     error,
     refetch,
+    isFetching,
   } = useQuery<User[]>({
     queryKey: ['users'],
     queryFn: async () => {
@@ -61,6 +72,14 @@ export default function Users() {
       }))
     },
   })
+
+  // Summary counts
+  const counts = useMemo(() => ({
+    total: users.length,
+    active: users.filter((u) => u.status === 'active').length,
+    disabled: users.filter((u) => u.status === 'disabled').length,
+    admins: users.filter((u) => u.role === 'admin').length,
+  }), [users])
 
   // Create User Mutation
   const createUserMutation = useMutation({
@@ -193,63 +212,111 @@ export default function Users() {
   }
 
   return (
-    <div className="space-y-6 pb-8">
+    <div className="space-y-6">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
-        <div>
-          <h1 className="text-2xl font-bold text-text-primary tracking-tight">Users & Role-Based Access Control (RBAC)</h1>
-          <p className="text-sm text-text-secondary mt-0.5">
-            Persistent administrative user governance, role permissions, and security controls
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <button
+      <PageHeader
+        icon={UserCheck}
+        title="Users & Role-Based Access Control (RBAC)"
+        description="Persistent administrative user governance, role permissions, and security controls"
+        actions={
+          <Button
+            variant="default"
+            size="icon"
             onClick={() => refetch()}
-            className="px-3 py-2 bg-surface hover:bg-slate-800 text-text-primary text-xs font-medium rounded-lg transition-colors flex items-center gap-2 shadow-sm"
+            disabled={isFetching}
+            title="Refresh"
           >
-            <RefreshCw className="size-3.5 text-accent" />
-            <span>Refresh</span>
-          </button>
+            <RefreshCw className={`size-3.5 ${isFetching ? 'animate-spin' : ''}`} />
+            <span className="sr-only">Refresh</span>
+          </Button>
+        }
+      />
+
+      {/* Backend Contract Banner */}
+      <CapabilityNotice
+        moduleName="User Administration & RBAC Subsystem"
+        expectedEndpoint="GET /api/v1/users"
+        description="Administrative account governance, permission roles, and persistent JWT session controls."
+      />
+
+      {/* Summary KPI Breakdown Cards */}
+      <div className="max-w-full overflow-x-auto on-hover-scroll pt-2 pb-3 -mt-2">
+        <div className="flex gap-3 w-full">
+          {[
+            {
+              title: 'Total Accounts',
+              value: counts.total,
+              icon: UsersIcon,
+              subtitle: 'Provisioned user accounts',
+              className: 'bg-gradient-to-r from-indigo-500 to-blue-500 shadow-md shadow-indigo-500/20 min-w-64',
+            },
+            {
+              title: 'Active Users',
+              value: counts.active,
+              icon: ShieldCheck,
+              subtitle: 'Enabled API / UI access',
+              className: 'bg-gradient-to-r from-emerald-500 to-teal-500 shadow-md shadow-emerald-500/20 min-w-64',
+            },
+            {
+              title: 'Disabled Accounts',
+              value: counts.disabled,
+              icon: UserX,
+              subtitle: 'Revoked access sessions',
+              className: 'bg-gradient-to-r from-rose-500 to-red-500 shadow-md shadow-rose-500/20 min-w-64',
+            },
+            {
+              title: 'Administrators',
+              value: counts.admins,
+              icon: Shield,
+              subtitle: 'Full access RBAC role',
+              className: 'bg-gradient-to-r from-purple-500 to-indigo-500 shadow-md shadow-purple-500/20 min-w-64',
+            },
+          ].map((item) => {
+            const Icon = item.icon
+            return (
+              <MetricCard
+                key={item.title}
+                title={item.title}
+                value={item.value}
+                icon={<Icon className="size-5 text-white" />}
+                subtitle={item.subtitle}
+                className={`w-full ${item.className}`}
+              />
+            )
+          })}
         </div>
       </div>
 
       {/* Navigation Bar */}
-      <div className="flex items-center gap-2 p-1 bg-app-bg rounded-lg w-fit">
-        <button
-          onClick={() => setActiveTab('users')}
-          className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-md transition-all ${
-            activeTab === 'users'
-              ? 'bg-primary text-white shadow-md'
-              : 'text-text-secondary hover:text-text-primary hover:bg-slate-800/50'
-          }`}
-        >
-          <UserCheck className="size-4" />
-          <span>User Accounts ({users.length})</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('matrix')}
-          className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-md transition-all ${
-            activeTab === 'matrix'
-              ? 'bg-primary text-white shadow-md'
-              : 'text-text-secondary hover:text-text-primary hover:bg-slate-800/50'
-          }`}
-        >
-          <Layers className="size-4" />
-          <span>Permission Matrix</span>
-        </button>
+      <div className="flex items-center gap-2 pb-3 overflow-x-auto on-hover-scroll max-w-full md:w-fit">
+        {[
+          { id: 'users', label: `User Accounts (${users.length})`, icon: UserCheck },
+          { id: 'matrix', label: 'Permission Matrix', icon: Layers },
+        ].map((tab) => {
+          const Icon = tab.icon
+          const isActive = activeTab === tab.id
+          return (
+            <Button
+              key={tab.id}
+              variant={isActive ? 'primary' : 'ghost'}
+              size="lg"
+              onClick={() => setActiveTab(tab.id as typeof activeTab)}
+              className="whitespace-nowrap gap-2 shadow-md bg-(--topbar-bg) hover:bg-blue-500 hover:text-white"
+            >
+              <Icon className="size-4 shrink-0" />
+              <span>{tab.label}</span>
+            </Button>
+          )
+        })}
       </div>
 
       {/* Error state alert banner */}
       {isError && (
-        <div className="p-4 bg-red-950/40 rounded-xl flex items-center gap-3 text-red-300 text-sm">
-          <AlertCircle className="size-5 text-red-400 shrink-0" />
-          <div>
-            <span className="font-semibold">User Data Fetch Error: </span>
-            {(error as Error).message}
-          </div>
-        </div>
+        <Alert
+          variant="error"
+          title="User Data Fetch Error"
+          message={(error as Error).message}
+        />
       )}
 
       {/* Content Rendering */}
@@ -272,294 +339,227 @@ export default function Users() {
       )}
 
       {/* CREATE USER DIALOG */}
-      {isCreateOpen && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-surface rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-            <div className="p-5 border-b border-slate-800 flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="p-2 bg-primary/10 rounded-lg text-primary">
-                  <UserCheck className="size-5" />
-                </div>
-                <h3 className="text-lg font-bold text-text-primary">Create User Account</h3>
-              </div>
-              <button
-                onClick={() => setIsCreateOpen(false)}
-                className="text-text-muted hover:text-text-primary p-1 rounded-lg transition-colors"
-              >
-                <X className="size-5" />
-              </button>
+      <Dialog
+        isOpen={isCreateOpen}
+        onClose={() => setIsCreateOpen(false)}
+        icon={<UserCheck className="size-7 text-blue-600 shrink-0" strokeWidth={1.5} />}
+        title="Create User Account"
+        description="Provision a new user account with assigned role and credentials."
+        maxWidth="max-w-md"
+      >
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            createUserMutation.mutate()
+          }}
+          className="space-y-4"
+        >
+          {actionError && (
+            <div className="p-3 bg-red-500/10 text-red-400 text-xs rounded-lg font-semibold flex items-center gap-2">
+              <AlertCircle className="size-4 shrink-0 text-red-400" />
+              <span>{actionError}</span>
             </div>
+          )}
 
-            <form
-              onSubmit={(e) => {
-                e.preventDefault()
-                createUserMutation.mutate()
-              }}
-              className="p-6 space-y-4"
+          <Input
+            label="Username *"
+            type="text"
+            required
+            value={formUsername}
+            onChange={(e) => setFormUsername(e.target.value)}
+            placeholder="e.g. secops-analyst"
+            className="font-mono text-xs"
+          />
+
+          <Input
+            label="Password * (Min 8 characters)"
+            type="password"
+            required
+            minLength={8}
+            value={formPassword}
+            onChange={(e) => setFormPassword(e.target.value)}
+            placeholder="••••••••••••"
+            className="font-mono text-xs"
+          />
+
+          <Input
+            label="Email Address *"
+            type="email"
+            required
+            value={formEmail}
+            onChange={(e) => setFormEmail(e.target.value)}
+            placeholder="analyst@rcs-cybertrack.local"
+            className="font-mono text-xs"
+          />
+
+          <Input
+            label="Full Name *"
+            type="text"
+            required
+            value={formFullName}
+            onChange={(e) => setFormFullName(e.target.value)}
+            placeholder="e.g. Alex Mercer"
+          />
+
+          <Select
+            label="Assigned RBAC Role *"
+            value={formRole}
+            onChange={(e) => setFormRole(e.target.value as any)}
+          >
+            <option value="admin">Administrator (Full Access)</option>
+            <option value="operator">Security Operator (Write Rules/Alerts)</option>
+            <option value="auditor">Compliance Auditor (Read Audit/Config)</option>
+            <option value="viewer">Read-Only Monitor (NOC View)</option>
+          </Select>
+
+          <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-end gap-3">
+            <Button
+              type="button"
+              variant="default"
+              className="bg-slate-200 hover:bg-slate-300 text-slate-900 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-100"
+              onClick={() => setIsCreateOpen(false)}
             >
-              {actionError && (
-                <div className="p-3 bg-red-950/50 rounded-lg text-xs text-red-300 flex items-center gap-2">
-                  <AlertCircle className="size-4 shrink-0 text-red-400" />
-                  <span>{actionError}</span>
-                </div>
-              )}
-
-              <div>
-                <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5">
-                  Username *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formUsername}
-                  onChange={(e) => setFormUsername(e.target.value)}
-                  placeholder="e.g. secops-analyst"
-                  className="w-full px-3.5 py-2.5 bg-app-bg rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5">
-                  Password * (Min 8 characters)
-                </label>
-                <input
-                  type="password"
-                  required
-                  minLength={8}
-                  value={formPassword}
-                  onChange={(e) => setFormPassword(e.target.value)}
-                  placeholder="••••••••••••"
-                  className="w-full px-3.5 py-2.5 bg-app-bg rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5">
-                  Email Address *
-                </label>
-                <input
-                  type="email"
-                  required
-                  value={formEmail}
-                  onChange={(e) => setFormEmail(e.target.value)}
-                  placeholder="analyst@rcs-cybertrack.local"
-                  className="w-full px-3.5 py-2.5 bg-app-bg rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5">
-                  Full Name *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formFullName}
-                  onChange={(e) => setFormFullName(e.target.value)}
-                  placeholder="e.g. Alex Mercer"
-                  className="w-full px-3.5 py-2.5 bg-app-bg rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5">
-                  Assigned RBAC Role *
-                </label>
-                <select
-                  value={formRole}
-                  onChange={(e) => setFormRole(e.target.value as any)}
-                  className="w-full px-3.5 py-2.5 bg-app-bg rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
-                >
-                  <option value="admin">Administrator (Full Access)</option>
-                  <option value="operator">Security Operator (Write Rules/Alerts)</option>
-                  <option value="auditor">Compliance Auditor (Read Audit/Config)</option>
-                  <option value="viewer">Read-Only Monitor (NOC View)</option>
-                </select>
-              </div>
-
-              <div className="pt-4 border-t border-slate-800 flex items-center justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setIsCreateOpen(false)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-text-secondary text-xs font-semibold rounded-lg transition-colors"
-                >
-                  Cancel
-                </button>
-                <Button
-                  type="submit"
-                  variant="primary"
-                  isLoading={createUserMutation.isPending}
-                  className="gap-2"
-                >
-                  {!createUserMutation.isPending && <Lock className="size-3.5" />}
-                  <span>Provision Account</span>
-                </Button>
-              </div>
-            </form>
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="primary"
+              isLoading={createUserMutation.isPending}
+              className="gap-2"
+            >
+              {!createUserMutation.isPending && <Lock className="size-3.5" />}
+              <span>Provision Account</span>
+            </Button>
           </div>
-        </div>
-      )}
+        </form>
+      </Dialog>
 
       {/* EDIT USER DIALOG */}
-      {isEditOpen && selectedUser && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-surface rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-            <div className="p-5 border-b border-slate-800 flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="p-2 bg-primary/10 rounded-lg text-primary">
-                  <UserCheck className="size-5" />
-                </div>
-                <h3 className="text-lg font-bold text-text-primary">Edit Account: {selectedUser.username}</h3>
-              </div>
-              <button
-                onClick={() => setIsEditOpen(false)}
-                className="text-text-muted hover:text-text-primary p-1 rounded-lg transition-colors"
-              >
-                <X className="size-5" />
-              </button>
+      <Dialog
+        isOpen={isEditOpen && !!selectedUser}
+        onClose={() => setIsEditOpen(false)}
+        icon={<UserCheck className="size-7 text-blue-600 shrink-0" strokeWidth={1.5} />}
+        title={`Edit Account: ${selectedUser?.username}`}
+        description="Update email address, full name, assigned role, or reset password."
+        maxWidth="max-w-md"
+      >
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            editUserMutation.mutate()
+          }}
+          className="space-y-4"
+        >
+          {actionError && (
+            <div className="p-3 bg-red-500/10 text-red-400 text-xs rounded-lg font-semibold flex items-center gap-2">
+              <AlertCircle className="size-4 shrink-0 text-red-400" />
+              <span>{actionError}</span>
             </div>
+          )}
 
-            <form
-              onSubmit={(e) => {
-                e.preventDefault()
-                editUserMutation.mutate()
-              }}
-              className="p-6 space-y-4"
+          <Input
+            label="Email Address"
+            type="email"
+            required
+            value={formEmail}
+            onChange={(e) => setFormEmail(e.target.value)}
+            className="font-mono text-xs"
+          />
+
+          <Input
+            label="Full Name"
+            type="text"
+            required
+            value={formFullName}
+            onChange={(e) => setFormFullName(e.target.value)}
+          />
+
+          <Select
+            label="Assigned Role"
+            value={formRole}
+            onChange={(e) => setFormRole(e.target.value as any)}
+          >
+            <option value="admin">Administrator</option>
+            <option value="operator">Security Operator</option>
+            <option value="auditor">Compliance Auditor</option>
+            <option value="viewer">Read-Only Monitor</option>
+          </Select>
+
+          <Input
+            label="Reset Password (Optional)"
+            type="password"
+            minLength={8}
+            value={formPassword}
+            onChange={(e) => setFormPassword(e.target.value)}
+            placeholder="Leave blank to keep existing password"
+            className="font-mono text-xs"
+          />
+
+          <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-end gap-3">
+            <Button
+              type="button"
+              variant="default"
+              className="bg-slate-200 hover:bg-slate-300 text-slate-900 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-100"
+              onClick={() => setIsEditOpen(false)}
             >
-              {actionError && (
-                <div className="p-3 bg-red-950/50 rounded-lg text-xs text-red-300 flex items-center gap-2">
-                  <AlertCircle className="size-4 shrink-0 text-red-400" />
-                  <span>{actionError}</span>
-                </div>
-              )}
-
-              <div>
-                <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  required
-                  value={formEmail}
-                  onChange={(e) => setFormEmail(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-app-bg rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formFullName}
-                  onChange={(e) => setFormFullName(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-app-bg rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5">
-                  Assigned Role
-                </label>
-                <select
-                  value={formRole}
-                  onChange={(e) => setFormRole(e.target.value as any)}
-                  className="w-full px-3.5 py-2.5 bg-app-bg rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
-                >
-                  <option value="admin">Administrator</option>
-                  <option value="operator">Security Operator</option>
-                  <option value="auditor">Compliance Auditor</option>
-                  <option value="viewer">Read-Only Monitor</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5">
-                  Reset Password (Optional)
-                </label>
-                <input
-                  type="password"
-                  minLength={8}
-                  value={formPassword}
-                  onChange={(e) => setFormPassword(e.target.value)}
-                  placeholder="Leave blank to keep existing password"
-                  className="w-full px-3.5 py-2.5 bg-app-bg rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
-                />
-              </div>
-
-              <div className="pt-4 border-t border-slate-800 flex items-center justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setIsEditOpen(false)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-text-secondary text-xs font-semibold rounded-lg transition-colors"
-                >
-                  Cancel
-                </button>
-                <Button
-                  type="submit"
-                  variant="primary"
-                  isLoading={editUserMutation.isPending}
-                  className="gap-2"
-                >
-                  {!editUserMutation.isPending && <Lock className="size-3.5" />}
-                  <span>Save Changes</span>
-                </Button>
-              </div>
-            </form>
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="primary"
+              isLoading={editUserMutation.isPending}
+              className="gap-2"
+            >
+              {!editUserMutation.isPending && <Lock className="size-3.5" />}
+              <span>Save Changes</span>
+            </Button>
           </div>
-        </div>
-      )}
+        </form>
+      </Dialog>
 
       {/* DISABLE USER CONFIRMATION DIALOG */}
-      {isDisableOpen && selectedUser && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-surface rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-            <div className="p-5 border-b border-red-900/40 bg-red-950/30 flex items-center gap-3">
-              <div className="p-2.5 bg-red-500/10 rounded-xl text-red-400">
-                <AlertTriangle className="size-5" />
-              </div>
-              <div>
-                <h3 className="text-base font-bold text-text-primary">Disable Account Access</h3>
-                <p className="text-xs text-red-300/80">Target User: {selectedUser.username}</p>
-              </div>
+      <Dialog
+        isOpen={isDisableOpen && !!selectedUser}
+        onClose={() => setIsDisableOpen(false)}
+        maxWidth="max-w-md"
+        icon={<AlertTriangle className="size-7 text-rose-500 shrink-0" strokeWidth={1.5} />}
+        title="Disable Account Access"
+        description={`Target User: ${selectedUser?.username}`}
+      >
+        <div className="space-y-4">
+          {actionError && (
+            <div className="p-3 bg-red-500/10 text-red-400 text-xs rounded-lg font-semibold flex items-center gap-2">
+              <AlertCircle className="size-4 shrink-0 text-red-400" />
+              <span>{actionError}</span>
             </div>
+          )}
 
-            <div className="p-6 space-y-4">
-              {actionError && (
-                <div className="p-3 bg-red-950/50 rounded-lg text-xs text-red-300 flex items-center gap-2">
-                  <AlertCircle className="size-4 shrink-0 text-red-400" />
-                  <span>{actionError}</span>
-                </div>
-              )}
+          <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Disabling <strong className="font-mono text-slate-900 dark:text-slate-100">{selectedUser?.username}</strong> will immediately revoke all active JWT session tokens and block access to the RCS CyberTrack management API.
+          </p>
 
-              <p className="text-xs text-text-secondary leading-relaxed">
-                Disabling <strong className="text-text-primary">{selectedUser.username}</strong> will immediately revoke all active JWT session tokens and block access to the RCS CyberTrack management API.
-              </p>
-
-              <div className="pt-2 flex items-center justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setIsDisableOpen(false)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-text-secondary text-xs font-semibold rounded-lg transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={() => disableUserMutation.mutate()}
-                  disabled={disableUserMutation.isPending}
-                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50"
-                >
-                  {disableUserMutation.isPending ? <RefreshCw className="size-3.5 animate-spin" /> : <AlertTriangle className="size-3.5" />}
-                  <span>Disable User</span>
-                </button>
-              </div>
-            </div>
+          <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-end gap-3">
+            <Button
+              type="button"
+              variant="default"
+              className="bg-slate-200 hover:bg-slate-300 text-slate-900 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-100"
+              onClick={() => setIsDisableOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={() => disableUserMutation.mutate()}
+              isLoading={disableUserMutation.isPending}
+              className="gap-2"
+            >
+              {!disableUserMutation.isPending && <AlertTriangle className="size-3.5" />}
+              <span>Disable User</span>
+            </Button>
           </div>
         </div>
-      )}
+      </Dialog>
     </div>
   )
 }
